@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm, type Control } from 'react-hook-form'
 import type { z } from 'zod'
 import { Modal } from '@/components/common/ui/Modal'
 import { Button } from '@/components/common/ui/Button'
@@ -27,6 +27,10 @@ export function RoleCreateModal({ open, onClose }: RoleCreateModalProps) {
     resolver: zodResolver(createRoleSchema),
     defaultValues: { roleName: '', description: '' },
   })
+  // FormInput/FormSelect는 여러 폼에서 재사용하는 공용 컴포넌트라 Control<any, any, any>를 받는데,
+  // react-hook-form의 Control<T>는 내부 validate 함수 프로퍼티가 반공변이라 구체 타입 → any 캐스팅이
+  // 자동으로 되지 않는다. 호출부에서 한 번만 캐스팅해서 재사용한다.
+  const control = methods.control as Control<any, any, any>
 
   const handleSubmit = methods.handleSubmit(
     async (values) => {
@@ -39,20 +43,23 @@ export function RoleCreateModal({ open, onClose }: RoleCreateModalProps) {
 
   return (
     <Modal open={open} title="역할 등록" onClose={onClose}>
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <FormInput name="roleName" label={createRoleRules.roleName.label} required />
-          <FormInput name="description" label={createRoleRules.description.label} />
-          <div className="mt-2 flex justify-end gap-2">
-            <Button type="button" variant="secondary" onClick={onClose}>
-              취소
-            </Button>
-            <Button type="submit" variant="primary" disabled={createRole.isPending}>
-              저장
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
+        <FormInput
+          name="roleName"
+          control={control}
+          label={createRoleRules.roleName.label}
+          required
+        />
+        <FormInput name="description" control={control} label={createRoleRules.description.label} />
+        <div className="mt-2 flex justify-end gap-2">
+          <Button type="button" variant="secondary" onClick={onClose}>
+            취소
+          </Button>
+          <Button type="submit" variant="primary" disabled={createRole.isPending}>
+            저장
+          </Button>
+        </div>
+      </form>
     </Modal>
   )
 }

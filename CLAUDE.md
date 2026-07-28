@@ -27,7 +27,7 @@ src/
 ├── components/
 │   ├── common/       🔧 공통 컴포넌트
 │   │   ├── ui/       🧱 기본 UI (Button, Modal, Badge 등)
-│   │   ├── form/     📝 RHF 연동 폼 (FormInput, FormSelect 등)
+│   │   ├── form/     📝 RHF 연동 폼 (FormInput, FormSelect — control prop으로 연결, FormProvider 안 씀)
 │   │   └── …         Pagination, LoadingOverlay 등
 │   ├── layout/       🏗️ 앱 골격 (MainLayout 등 — 보통 @vanta/common 사용)
 │   ├── auth/         🔐 AuthGuard, GuestGuard, Authorized
@@ -61,13 +61,14 @@ src/
 모든 페이지는 **`PageTitle` → `PageSearch` → 본문**(그리드·폼 등) 순서로 조합합니다. 실제 예시는 `사용자 관리`(`src/pages/UserManagement.tsx`), `메뉴 관리`(`src/pages/MenuManagement.tsx`)를 참고하세요.
 
 - **`PageTitle`** (`components/common/PageTitle.tsx`): 제목 영역 (즐겨찾기 ☆ / 설명 ⓘ / 액션 버튼 포함). `breadcrumb`을 생략하면 `data/menu.json`에서 현재 라우트의 상위 메뉴를 자동으로 찾아 표시합니다.
-- **`PageSearch`** (`components/common/PageSearch.tsx`): 조회 영역. 내부에 화면 전용 검색 컴포넌트(`{도메인}Search`)를 넣습니다. 초기화 버튼을 기본 포함하며, 클릭 시 폼을 리셋하고 `onReset` 콜백을 호출합니다.
+- **`PageSearch`** (`components/common/PageSearch.tsx`): 조회 영역. 내부에 화면 전용 검색 컴포넌트(`{도메인}Search`)를 넣습니다. 초기화 버튼을 기본 포함하며, 클릭 시 `onReset` 콜백을 호출합니다 (폼 리셋은 `onReset` 안에서 `methods.reset(...)`을 호출하는 페이지의 책임입니다 — `PageSearch`는 폼 상태를 들고 있지 않습니다).
 - **본문**: 그리드·페이지네이션 등은 화면 전용 `{도메인}Content` 컴포넌트(`components/{도메인}/{화면}/`)로 분리해 페이지를 얇게 유지합니다.
 - 등록·상세처럼 조회 영역이 없는 화면은 `PageSearch`를 생략하고 본문에 폼을 바로 조합합니다.
+- **`FormProvider`는 쓰지 않습니다.** `FormInput`/`FormSelect`/`{도메인}Search`는 모두 `control`을 명시적으로 prop으로 받습니다(`useController` 기반). 페이지에서 `useForm()`으로 얻은 `methods.control`을 그대로 내려주세요.
 
 ```tsx
 // src/pages/UserManagement.tsx → URL: /userManagement
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PageSearch } from '@/components/common/PageSearch';
 import { PageTitle } from '@/components/common/PageTitle';
@@ -83,25 +84,32 @@ export default function UserManagement() {
   const { data, isFetching } = useUsersQuery(params);
 
   const handleSearch = methods.handleSubmit((values) => setParams((prev) => ({ ...prev, ...values, page: 1 })));
+  const handleReset = () => {
+    const defaults = {/* 초기값 */};
+    methods.reset(defaults); // 폼 리셋은 페이지가 직접 호출
+    setParams((prev) => ({ ...prev, ...defaults, page: 1 }));
+  };
 
   return (
-    <FormProvider {...methods}>
+    <>
       {/* 1. 타이틀 영역 — breadcrumb, 즐겨찾기 등은 공통 컴포넌트에서 주입 */}
       <PageTitle title="사용자 목록" actionButtonsProps={{ onSearch: handleSearch, onRegister: () => setCreateOpen(true) }} />
 
-      {/* 2. 조회 영역 — form reset 버튼 기본 포함 */}
-      <PageSearch onReset={() => setParams(/* 초기값 */)}>
-        <UserSearch />
+      {/* 2. 조회 영역 — control을 직접 전달, 리셋은 onReset이 담당 */}
+      <PageSearch onReset={handleReset}>
+        <UserSearch control={methods.control} />
       </PageSearch>
 
       {/* 3. 본문 — 그리드·페이지네이션은 화면 전용 컴포넌트로 분리 */}
       <UserContent data={data} isLoading={isFetching} /* ... */ />
-    </FormProvider>
+    </>
   );
 }
 ```
 
 레이어 연결: `types/*.ts` → `api/*-api.ts` (axios) → `query/*-query.ts` (React Query, optional) → `components/{도메인}/{화면}/*.tsx` (`{도메인}Search`, `{도메인}Content`, Ag-Grid, 폼) → `pages/*.tsx` (`PageTitle`+`PageSearch`+본문 조립).
+
+> **TypeScript 팁**: `FormInput`/`FormSelect`의 `control` prop은 `Control<any, any, any>`로 선언되어 있습니다. react-hook-form의 `Control<T>`는 내부 `validate` 함수 프로퍼티가 반공변이라, 구체 타입(`Control<{keyword: string}>` 등)을 그냥 `any`로 좁힌 타입에 넘기면 타입 에러가 납니다. 페이지/모달에서 `const control = methods.control as Control<any, any, any>`로 한 번만 캐스팅해서 하위에 내려주세요 (기존 페이지들 참고).
 
 ## 폼 검증 가이드 (RHF + Zod)
 
@@ -135,7 +143,7 @@ export type CreateRoleFormValues = z.infer<typeof createRoleSchema>;
 ```
 
 ```tsx
-<FormInput name="roleName" label={createRoleRules.roleName.label} required />
+<FormInput name="roleName" control={control} label={createRoleRules.roleName.label} required />
 ```
 
 ```ts
@@ -165,12 +173,13 @@ const createUserSchema = z.object({
 
 ### 에러 표시
 
-- **인라인**: `FormInput`/`FormSelect`가 `useFormContext().formState.errors`를 읽어 필드 바로 아래 표시 (자동).
+- **인라인**: `FormInput`/`FormSelect`가 `useController({ name, control })`의 `fieldState.error`를 읽어 필드 바로 아래 표시 (자동).
 - **토스트(팝업)**: `handleSubmit`의 두 번째 콜백에서 `showFormErrors(errors, rules)` 호출 → `useToastStore`에 쌓이고 `ToastHost`(모든 페이지 공통, `AppProviders`에 마운트)가 화면 우상단에 띄운 뒤 4초 후 자동으로 사라집니다.
 
 ### 제출 시점 · `<form>` 태그
 
-이 프로젝트의 페이지들은 `<form>` 태그를 쓰지 않습니다 — `PageTitle`의 조회/등록 버튼은 `type="button"` + `onClick={handleSearch}`로 직접 `handleSubmit(...)`을 호출합니다. 네이티브 submit과 섞지 마세요.
+- **`PageSearch` 안의 검색 폼**: `<form>` 태그를 쓰지 않습니다 — `PageTitle`의 조회/등록 버튼은 `type="button"` + `onClick={handleSearch}`로 직접 `handleSubmit(...)`을 호출합니다.
+- **등록 모달**: 실제 `<form onSubmit={handleSubmit} noValidate>`을 씁니다. **`noValidate`를 반드시 붙이세요** — 안 붙이면 `required` 속성이 붙은 `<input>`에서 브라우저 네이티브 검증(`Please fill out this field`)이 Zod 검증보다 먼저 가로채서 `showFormErrors`/`onSubmit`이 아예 실행되지 않습니다 (실제로 겪었던 버그).
 
 ## 라우팅 규칙
 

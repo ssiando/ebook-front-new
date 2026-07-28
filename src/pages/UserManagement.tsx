@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm, type Control } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { PageSearch } from '@/components/common/PageSearch'
 import { UserSearch } from '@/components/user/list/UserSearch'
@@ -40,6 +40,9 @@ export default function UserManagement() {
     resolver: zodResolver(searchSchema),
     defaultValues: defaultSearchValues(),
   })
+  // Control<T>는 내부 validate 함수 프로퍼티가 반공변이라 재사용 컴포넌트가 받는
+  // Control<any, any, any>로 자동 캐스팅되지 않는다 — 호출부에서 한 번만 캐스팅한다.
+  const control = methods.control as Control<any, any, any>
 
   const { data, isFetching } = useUsersQuery(params)
 
@@ -51,11 +54,13 @@ export default function UserManagement() {
   )
 
   const handleReset = () => {
-    setParams((prev) => ({ ...prev, ...defaultSearchValues(), page: 1 }))
+    const defaults = defaultSearchValues()
+    methods.reset(defaults)
+    setParams((prev) => ({ ...prev, ...defaults, page: 1 }))
   }
 
   return (
-    <FormProvider {...methods}>
+    <>
       {/* 1. 타이틀 영역 — breadcrumb, 즐겨찾기 등은 공통 컴포넌트에서 주입 */}
       <PageTitle
         title={t('title')}
@@ -69,7 +74,7 @@ export default function UserManagement() {
 
       {/* 2. 조회 영역 — form reset 버튼 기본 포함 */}
       <PageSearch onReset={handleReset}>
-        <UserSearch />
+        <UserSearch control={control} />
       </PageSearch>
 
       {/* 3. 본문 — 그리드·페이지네이션은 화면 전용 컴포넌트로 분리 */}
@@ -83,6 +88,6 @@ export default function UserManagement() {
       />
 
       <UserCreateModal open={createOpen} onClose={() => setCreateOpen(false)} />
-    </FormProvider>
+    </>
   )
 }

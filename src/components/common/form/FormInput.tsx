@@ -1,18 +1,19 @@
 import type { InputHTMLAttributes } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { useController, type Control } from 'react-hook-form'
 import { clsx } from '@/utils/clsx'
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
+  // 여러 폼에서 재사용하는 공용 컴포넌트라 특정 폼의 필드 타입에 묶이지 않도록 Control<any, any, any>를 사용합니다.
+  control: Control<any, any, any>
   label?: string
 }
 
-export function FormInput({ name, label, className, ...props }: FormInputProps) {
+export function FormInput({ name, control, label, className, ...props }: FormInputProps) {
   const {
-    register,
-    formState: { errors },
-  } = useFormContext()
-  const error = errors[name]?.message as string | undefined
+    field,
+    fieldState: { error },
+  } = useController({ name, control })
 
   return (
     <div className="flex flex-col gap-1">
@@ -24,7 +25,11 @@ export function FormInput({ name, label, className, ...props }: FormInputProps) 
       )}
       <input
         id={name}
-        {...register(name)}
+        ref={field.ref}
+        name={field.name}
+        value={field.value ?? ''}
+        onChange={field.onChange}
+        onBlur={field.onBlur}
         className={clsx(
           'h-8 rounded border border-gray-300 px-2 text-sm focus:border-rose-500 focus:outline-none',
           error && 'border-red-500',
@@ -32,7 +37,7 @@ export function FormInput({ name, label, className, ...props }: FormInputProps) 
         )}
         {...props}
       />
-      {error && <span className="text-xs text-red-500">{error}</span>}
+      {error && <span className="text-xs text-red-500">{error.message}</span>}
     </div>
   )
 }

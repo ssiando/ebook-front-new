@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm, type Control } from 'react-hook-form'
 import type { z } from 'zod'
 import { Modal } from '@/components/common/ui/Modal'
 import { Button } from '@/components/common/ui/Button'
@@ -28,6 +28,10 @@ export function MenuCreateModal({ open, onClose }: MenuCreateModalProps) {
     resolver: zodResolver(createMenuSchema),
     defaultValues: { label: '', parentLabel: '-', path: '' },
   })
+  // FormInput/FormSelect는 여러 폼에서 재사용하는 공용 컴포넌트라 Control<any, any, any>를 받는데,
+  // react-hook-form의 Control<T>는 내부 validate 함수 프로퍼티가 반공변이라 구체 타입 → any 캐스팅이
+  // 자동으로 되지 않는다. 호출부에서 한 번만 캐스팅해서 재사용한다.
+  const control = methods.control as Control<any, any, any>
 
   const handleSubmit = methods.handleSubmit(
     async (values) => {
@@ -40,21 +44,29 @@ export function MenuCreateModal({ open, onClose }: MenuCreateModalProps) {
 
   return (
     <Modal open={open} title="메뉴 등록" onClose={onClose}>
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <FormInput name="label" label={createMenuRules.label.label} required />
-          <FormInput name="parentLabel" label={createMenuRules.parentLabel.label} placeholder="-" />
-          <FormInput name="path" label={createMenuRules.path.label} placeholder="/example" />
-          <div className="mt-2 flex justify-end gap-2">
-            <Button type="button" variant="secondary" onClick={onClose}>
-              취소
-            </Button>
-            <Button type="submit" variant="primary" disabled={createMenu.isPending}>
-              저장
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
+        <FormInput name="label" control={control} label={createMenuRules.label.label} required />
+        <FormInput
+          name="parentLabel"
+          control={control}
+          label={createMenuRules.parentLabel.label}
+          placeholder="-"
+        />
+        <FormInput
+          name="path"
+          control={control}
+          label={createMenuRules.path.label}
+          placeholder="/example"
+        />
+        <div className="mt-2 flex justify-end gap-2">
+          <Button type="button" variant="secondary" onClick={onClose}>
+            취소
+          </Button>
+          <Button type="submit" variant="primary" disabled={createMenu.isPending}>
+            저장
+          </Button>
+        </div>
+      </form>
     </Modal>
   )
 }
