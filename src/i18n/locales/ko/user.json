@@ -1,0 +1,34 @@
+{
+  "title": "사용자 목록",
+  "search": "조회",
+  "register": "등록",
+  "updatedAt": "수정일",
+  "keyword": "사용자명/ID",
+  "keywordPlaceholder": "사용자명 또는 ID를 입력해 주세요",
+  "totalCount": "목록 총 {{count}}건",
+  "columns": {
+    "no": "No",
+    "userId": "사용자ID",
+    "userName": "사용자명",
+    "department": "소속",
+    "role": "권한",
+    "isActive": "사용여부",
+    "projects": "담당 프로젝트",
+    "registrant": "등록자",
+    "updatedAt": "수정일"
+  },
+  "role": {
+    "ADMIN": "관리자",
+    "MANAGER": "매니저",
+    "MEMBER": "일반"
+  },
+  "modal": {
+    "title": "사용자 등록",
+    "userId": "사용자ID",
+    "userName": "사용자명",
+    "department": "소속",
+    "role": "권한",
+    "submit": "저장",
+    "cancel": "취소"
+  }
+}
