@@ -14,26 +14,26 @@
 
 ```tsx
 // src/pages/products/ProductList.tsx → URL: /products/productList
-import { PageSearch, PageTabs, PageTitle } from '@vanta/common';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { PageSearch, PageTabs, PageTitle } from '@vanta/common'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import ProductContent from '@/components/products/list/ProductContent';
-import ProductSearch from '@/components/products/list/ProductSearch';
-import { productFormSchema } from '@/components/products/list/validation/formSchema';
+import ProductContent from '@/components/products/list/ProductContent'
+import ProductSearch from '@/components/products/list/ProductSearch'
+import { productFormSchema } from '@/components/products/list/validation/formSchema'
 
 const TABS = [
   { key: 'all', label: t('product.list.tabAll') },
   { key: 'active', label: t('product.list.tabActive') },
   { key: 'inactive', label: t('product.list.tabInactive') },
-] as const;
+] as const
 
 export default function ProductList() {
   const { control, reset } = useForm({
     resolver: zodResolver(productFormSchema),
     defaultValues: { name: '', status: '' },
-  });
-  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]['key']>('all');
+  })
+  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]['key']>('all')
 
   return (
     <>
@@ -59,7 +59,7 @@ export default function ProductList() {
       {/* 4. 본문 — 그리드·폼은 화면 전용 컴포넌트로 분리 */}
       <ProductContent activeTab={activeTab} />
     </>
-  );
+  )
 }
 ```
 
@@ -78,21 +78,19 @@ export default function ProductList() {
 
 `control`과 `name`을 넘기면 RHF와 자동 연결됩니다.
 
-
-| 컴포넌트             | 용도                   |
-| ---------------- | -------------------- |
-| `FormInput`      | 텍스트·숫자 등 단일 행 입력     |
-| `FormSelect`     | 단일 / 멀티 셀렉트          |
-| `FormCheckbox`   | 체크박스                 |
-| `FormRadioGroup` | 라디오 그룹               |
-| `FormTextarea`   | 여러 줄 텍스트             |
-| `FormDatePicker` | 연·월·일·시간·기간 (`mode`) |
-| `FormTiptap`     | 리치 텍스트 (HTML 문자열)    |
-| `FormSearchLookup` | 돋보기 팝업 기반 단일 선택 룩업 |
-| `FormSearchChips` | 돋보기 팝업 기반 다중 선택(칩) |
-| `FormAutocomplete` | 검색 기반 단일 선택 자동완성    |
-| `FormAutocompleteChips` | 검색 기반 다중 선택(칩)     |
-
+| 컴포넌트                | 용도                            |
+| ----------------------- | ------------------------------- |
+| `FormInput`             | 텍스트·숫자 등 단일 행 입력     |
+| `FormSelect`            | 단일 / 멀티 셀렉트              |
+| `FormCheckbox`          | 체크박스                        |
+| `FormRadioGroup`        | 라디오 그룹                     |
+| `FormTextarea`          | 여러 줄 텍스트                  |
+| `FormDatePicker`        | 연·월·일·시간·기간 (`mode`)     |
+| `FormTiptap`            | 리치 텍스트 (HTML 문자열)       |
+| `FormSearchLookup`      | 돋보기 팝업 기반 단일 선택 룩업 |
+| `FormSearchChips`       | 돋보기 팝업 기반 다중 선택(칩)  |
+| `FormAutocomplete`      | 검색 기반 단일 선택 자동완성    |
+| `FormAutocompleteChips` | 검색 기반 다중 선택(칩)         |
 
 ### 2.2 검증 — `validateForm` (권장)
 
@@ -103,9 +101,9 @@ export default function ProductList() {
 규칙 객체를 분리할 때는 `defineFormRules`로 감싸면 `as const` 없이도 타입 추론이 정확하게 동작합니다.
 
 ```tsx
-import { defineFormRules, showFormErrors, validateForm } from '@vanta/common';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { defineFormRules, showFormErrors, validateForm } from '@vanta/common'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 const userFormRules = defineFormRules({
   name: {
@@ -121,26 +119,30 @@ const userFormRules = defineFormRules({
   email: { type: 'string', required: true, email: true, label: 'product.list.email' },
   age: { type: 'number', min: 0, max: 150, label: 'product.list.age' },
   agree: { type: 'boolean', mustBeTrue: true, label: 'product.list.agree' },
-});
+})
 
-const schema = validateForm(userFormRules);
+const schema = validateForm(userFormRules)
 
 const { control, handleSubmit } = useForm({
   resolver: zodResolver(schema),
   defaultValues: { name: '', email: '', age: 0, agree: false },
-});
+})
 
 // FormInput label은 같은 i18n 키를 t()로 표시
-<FormInput
+;<FormInput
   control={control}
   name="name"
   label={t(userFormRules.name.label!)}
   required={userFormRules.name.required}
   maxLength={userFormRules.name.maxLength}
-/>;
+/>
 
 // 저장 시 handleSubmit이 검증을 트리거, 실패 시 showFormErrors가 팝업 알림
-<Button onClick={() => void handleSubmit(onSave, (errors) => showFormErrors(errors, userFormRules))()}>저장</Button>;
+;<Button
+  onClick={() => void handleSubmit(onSave, (errors) => showFormErrors(errors, userFormRules))()}
+>
+  저장
+</Button>
 ```
 
 - `type`: `'string'` · `'boolean'` · `'number'` · `'enum'` 중 하나 (필수).
@@ -158,11 +160,11 @@ const { control, handleSubmit } = useForm({
 ### 3.1 기본 골격
 
 ```tsx
-import { DataGrid, GridBtn, createColumns } from '@vanta/common';
-import type { DataGridHandle } from '@vanta/common';
-import { useRef } from 'react';
+import { DataGrid, GridBtn, createColumns } from '@vanta/common'
+import type { DataGridHandle } from '@vanta/common'
+import { useRef } from 'react'
 
-type ProductRow = { id: number; name: string; status: string };
+type ProductRow = { id: number; name: string; status: string }
 
 // ⚠️ 컬럼 정의는 컴포넌트 밖에 — 매 렌더마다 재생성하면 그리드 상태가 리셋됨
 const COLUMNS = createColumns<ProductRow>([
@@ -177,16 +179,16 @@ const COLUMNS = createColumns<ProductRow>([
       { label: '중지', value: 'inactive' },
     ],
   },
-]);
+])
 
 const GRID_OPTIONS = {
   rowHeaders: [{ type: 'rowNum' as const }, { type: 'checkbox' as const }],
   editingEvent: 'click' as const,
   height: 400,
-};
+}
 
 function ProductGrid({ data, onSave }: Props) {
-  const gridRef = useRef<DataGridHandle<ProductRow>>(null);
+  const gridRef = useRef<DataGridHandle<ProductRow>>(null)
 
   return (
     <div className="flex flex-col gap-3">
@@ -201,7 +203,7 @@ function ProductGrid({ data, onSave }: Props) {
       />
       <DataGrid ref={gridRef} columns={COLUMNS} data={data} options={GRID_OPTIONS} />
     </div>
-  );
+  )
 }
 ```
 
@@ -213,7 +215,7 @@ function ProductGrid({ data, onSave }: Props) {
 - **이벤트 처리**: `on*` prop 없음. `**onReady` 콜백에서 `api.bind('cellClick', ...)`** 또는 `**gridRef.current?.bind(...)**`. `before*` 이벤트(`beforeChange` / `beforeRemoveRow` / `beforeCellClick` 등)는 핸들러에서 `e.preventDefault()`로 후속 동작 차단 가능.
 - **편집 중 키보드**: 내장 에디터는 Enter 커밋 / Escape 취소 / Tab → 커밋 후 다음 편집 셀로 이동·자동 편집 시작 (Shift+Tab은 이전 셀). 별도 옵션·코드 없이 동작.
 - **체크박스가 행 처리의 표준**: 체크된 행은 `getCheckedRows()` / `getCheckedRowKeys()`로 조회, 일괄 삭제는 `removeCheckedRows()`. `selectionConstraint` 기반의 `getSelectedRow*()`는 셀 단위 선택 등 별도 시나리오에만 사용.
-- **GridBtn `isMinus` default 동작**: `minusFunction` 미제공 시 *체크된 행 중* `'I'`(신규 추가) 상태인 행만 즉시 제거합니다. 기존 행을 백엔드와 함께 지우려면 `minusFunction`을 직접 주입하거나 `extraButtons`로 별도 "삭제" 버튼을 추가하세요.
+- **GridBtn `isMinus` default 동작**: `minusFunction` 미제공 시 _체크된 행 중_ `'I'`(신규 추가) 상태인 행만 즉시 제거합니다. 기존 행을 백엔드와 함께 지우려면 `minusFunction`을 직접 주입하거나 `extraButtons`로 별도 "삭제" 버튼을 추가하세요.
 
 ### 3.3 변경 추적과 저장
 
@@ -221,14 +223,14 @@ DataGrid는 행마다 `_rowStatus`(`normal`/`I`/`U`/`D`)를 자동 추적합니�
 
 ```tsx
 const handleSave = async () => {
-  const { createdRows, updatedRows, deletedRows } = gridRef.current!.getModifiedRows();
+  const { createdRows, updatedRows, deletedRows } = gridRef.current!.getModifiedRows()
   if (createdRows.length === 0 && updatedRows.length === 0 && deletedRows.length === 0) {
-    toast('저장할 변경이 없습니다.');
-    return;
+    toast('저장할 변경이 없습니다.')
+    return
   }
-  await api.saveProducts({ createdRows, updatedRows, deletedRows });
-  await refetch();
-};
+  await api.saveProducts({ createdRows, updatedRows, deletedRows })
+  await refetch()
+}
 ```
 
 `showRowStatus`는 기본값 `true`로 좌측에 색상 점이 표시돼 어떤 행이 추가·수정됐는지 사용자에게도 보입니다. 숨기려면 `showRowStatus: false`로 설정합니다.
@@ -257,20 +259,18 @@ const handleSave = async () => {
 
 ### 3.5 자주 쓰는 그리드 옵션
 
-
-| 옵션                     | 효과                                                      |
-| ---------------------- | ------------------------------------------------------- |
-| `height`               | 스크롤 컨테이너 높이.                                            |
+| 옵션                   | 효과                                                          |
+| ---------------------- | ------------------------------------------------------------- |
+| `height`               | 스크롤 컨테이너 높이.                                         |
 | `rowHeaders`           | 좌측 부가 컬럼 — `[{ type: 'rowNum' }, { type: 'checkbox' }]` |
-| `editingEvent`         | 편집 진입 트리거 — `'click'` / `'dblclick'` (기본)               |
-| `showRowStatus`        | 변경된 행에 색상 점 표시 (기본 `true`, 숨기려면 `false`)          |
-| `enableRowDragDrop`    | 행 DnD                                                   |
+| `editingEvent`         | 편집 진입 트리거 — `'click'` / `'dblclick'` (기본)            |
+| `showRowStatus`        | 변경된 행에 색상 점 표시 (기본 `true`, 숨기려면 `false`)      |
+| `enableRowDragDrop`    | 행 DnD                                                        |
 | `enableColumnDragDrop` | 컬럼 순서 변경 DnD                                            |
-| `enableRangeSelection` | 셀 범위 드래그 선택 + 클립보드                                      |
-| `enableUndoRedo`       | Undo/Redo 스택 (`undo()` / `redo()` 메서드 사용 가능)            |
-| `selectionConstraint`  | 선택 모드(`'singleRow'` 등) · 선택 가능 컬럼·행 제약                  |
-| `footerData`           | 합계 행 표시                                                 |
-
+| `enableRangeSelection` | 셀 범위 드래그 선택 + 클립보드                                |
+| `enableUndoRedo`       | Undo/Redo 스택 (`undo()` / `redo()` 메서드 사용 가능)         |
+| `selectionConstraint`  | 선택 모드(`'singleRow'` 등) · 선택 가능 컬럼·행 제약          |
+| `footerData`           | 합계 행 표시                                                  |
 
 ### 3.6 트리 그리드
 
@@ -295,22 +295,20 @@ const handleSave = async () => {
 
 ### 4.1 공통 스토어 — `@vanta/common`
 
-
-| 스토어               | 저장 데이터               |
-| ----------------- | -------------------- |
-| `useAuthStore`    | 로그인 유저 정보, 토큰        |
-| `useLoadingStore` | API 로딩 상태            |
-| `useProgramStore` | 사이드바 메뉴 구조           |
-| `useTabStore`     | 열린 탭 목록              |
+| 스토어            | 저장 데이터            |
+| ----------------- | ---------------------- |
+| `useAuthStore`    | 로그인 유저 정보, 토큰 |
+| `useLoadingStore` | API 로딩 상태          |
+| `useProgramStore` | 사이드바 메뉴 구조     |
+| `useTabStore`     | 열린 탭 목록           |
 | `usePopupStore`   | 모달 / alert / confirm |
-| `useCodeStore`    | 공통코드 캐시              |
-
+| `useCodeStore`    | 공통코드 캐시          |
 
 ```tsx
-import { EMPTY_CODE_LIST, useAuthStore, useCodeStore } from '@vanta/common';
+import { EMPTY_CODE_LIST, useAuthStore, useCodeStore } from '@vanta/common'
 
-const userName = useAuthStore((s) => s.user?.name);
-const statusOptions = useCodeStore((s) => s.getCodeList('STATUS_CD')) ?? EMPTY_CODE_LIST;
+const userName = useAuthStore((s) => s.user?.name)
+const statusOptions = useCodeStore((s) => s.getCodeList('STATUS_CD')) ?? EMPTY_CODE_LIST
 ```
 
 > `**EMPTY_CODE_LIST` 사용 필수**: 셀렉터에서 인라인 `?? []`를 쓰면 매 렌더마다 새 배열 참조가 생겨 무한 리렌더를 유발합니다.
@@ -321,19 +319,19 @@ const statusOptions = useCodeStore((s) => s.getCodeList('STATUS_CD')) ?? EMPTY_C
 
 ```ts
 // src/store/biz/sample-store.ts
-import { create } from 'zustand';
+import { create } from 'zustand'
 
 interface SampleState {
-  selectedId: string | null;
-  setSelectedId: (id: string | null) => void;
-  reset: () => void;
+  selectedId: string | null
+  setSelectedId: (id: string | null) => void
+  reset: () => void
 }
 
 export const useSampleStore = create<SampleState>()((set) => ({
   selectedId: null,
   setSelectedId: (id) => set({ selectedId: id }),
   reset: () => set({ selectedId: null }),
-}));
+}))
 ```
 
 > 서버에서 받아온 목록·상세는 React Query가 캐시하므로 **biz 스토어에 다시 저장하지 않습니다.** 화면 간 공유가 필요한 클라이언트 상태만 둡니다.
@@ -356,8 +354,8 @@ export const useSampleStore = create<SampleState>()((set) => ({
 
 ```tsx
 // src/components/products/list/ProductSearch.tsx
-import { FormInput, FormSelect } from '@/components/common/form';
-import type { Control } from 'react-hook-form';
+import { FormInput, FormSelect } from '@/components/common/form'
+import type { Control } from 'react-hook-form'
 
 export default function ProductSearch({ control }: { control: Control }) {
   return (
@@ -373,7 +371,7 @@ export default function ProductSearch({ control }: { control: Control }) {
         ]}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -385,35 +383,35 @@ export default function ProductSearch({ control }: { control: Control }) {
 
 ```tsx
 // src/pages/products/ProductList.tsx → URL: /products/productList
-import { PageSearch, PageTabs, PageTitle } from '@vanta/common';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { PageSearch, PageTabs, PageTitle } from '@vanta/common'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import ProductContent from '@/components/products/list/ProductContent';
-import ProductSearch from '@/components/products/list/ProductSearch';
-import type { ProductSearchValues, ProductTabKey } from '@/components/products/list/types';
-import { productFormSchema } from '@/components/products/list/validation/formSchema';
+import ProductContent from '@/components/products/list/ProductContent'
+import ProductSearch from '@/components/products/list/ProductSearch'
+import type { ProductSearchValues, ProductTabKey } from '@/components/products/list/types'
+import { productFormSchema } from '@/components/products/list/validation/formSchema'
 
 const TABS: { key: ProductTabKey; label: string }[] = [
   { key: 'all', label: t('product.list.tabAll') },
   { key: 'active', label: t('product.list.tabActive') },
   { key: 'inactive', label: t('product.list.tabInactive') },
-];
+]
 
 export default function ProductList() {
-  const [activeTab, setActiveTab] = useState<ProductTabKey>('all');
-  const [appliedSearch, setAppliedSearch] = useState<ProductSearchValues>({ name: '', status: '' });
+  const [activeTab, setActiveTab] = useState<ProductTabKey>('all')
+  const [appliedSearch, setAppliedSearch] = useState<ProductSearchValues>({ name: '', status: '' })
 
   const { control, handleSubmit, reset } = useForm<ProductSearchValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: { name: '', status: '' },
-  });
+  })
 
-  const handleSearch = handleSubmit((values) => setAppliedSearch(values));
+  const handleSearch = handleSubmit((values) => setAppliedSearch(values))
   const handleReset = () => {
-    reset({ name: '', status: '' });
-    setAppliedSearch({ name: '', status: '' });
-  };
+    reset({ name: '', status: '' })
+    setAppliedSearch({ name: '', status: '' })
+  }
 
   return (
     <>
@@ -435,7 +433,7 @@ export default function ProductList() {
       {/* 4. 본문 — 그리드/페이지네이션/저장 로직은 컴포넌트 내부에 캡슐화 */}
       <ProductContent activeTab={activeTab} search={appliedSearch} />
     </>
-  );
+  )
 }
 ```
 
@@ -449,26 +447,26 @@ axios 호출 함수는 도메인별로 `src/api/{도메인}-api.ts`에 모읍니
 
 ```ts
 // src/api/product-api.ts
-import { http } from '@vanta/common';
-import type { Product, ProductSearchParams } from '@/types/product';
+import { http } from '@vanta/common'
+import type { Product, ProductSearchParams } from '@/types/product'
 
 export async function getProductList(params: ProductSearchParams) {
-  const { data } = await http.get('/products', { params });
-  return data;
+  const { data } = await http.get('/products', { params })
+  return data
 }
 
 export async function createProduct(payload: Omit<Product, 'id' | 'regDtm' | 'updDtm' | 'delDtm'>) {
-  const { data } = await http.post('/products', payload);
-  return data;
+  const { data } = await http.post('/products', payload)
+  return data
 }
 
 export async function updateProduct(id: string, payload: Partial<Product>) {
-  const { data } = await http.patch(`/products/${id}`, payload);
-  return data;
+  const { data } = await http.patch(`/products/${id}`, payload)
+  return data
 }
 
 export async function deleteProduct(id: string) {
-  await http.delete(`/products/${id}`);
+  await http.delete(`/products/${id}`)
 }
 ```
 
@@ -560,29 +558,25 @@ src/
 
 ### 7.1 파일/폴더 네이밍
 
-
-| 종류                         | 규칙                                      | 예시                                      |
-| -------------------------- | --------------------------------------- | --------------------------------------- |
-| 일반 파일                      | kebab-case                              | `create-crud-service.ts`                |
-| 컴포넌트 파일                    | PascalCase                              | `Button.tsx`, `ProductSearch.tsx`       |
-| 페이지 컴포넌트                   | PascalCase (`vite-plugin-pages` 자동 라우트) | `ProductList.tsx` → `/productList`      |
-| 훅 파일                       | `use-*.ts` (kebab-case)                 | `use-authorized.ts`                     |
-| API 모듈                     | `{도메인}-api.ts`                          | `product-api.ts`                        |
-| Query 모듈                   | `{도메인}-query.ts`                        | `product-query.ts`                      |
-| Zustand (`src/store/biz/`) | `{도메인}-store.ts`                        | `sample-store.ts`                       |
-| 화면 전용 상수/타입                | `constants.ts`, `types.ts`              | `components/products/list/constants.ts` |
-| i18n 번역 파일                 | `{대메뉴}.json`                            | `i18n/locales/ko/product.json`          |
-
+| 종류                       | 규칙                                         | 예시                                    |
+| -------------------------- | -------------------------------------------- | --------------------------------------- |
+| 일반 파일                  | kebab-case                                   | `create-crud-service.ts`                |
+| 컴포넌트 파일              | PascalCase                                   | `Button.tsx`, `ProductSearch.tsx`       |
+| 페이지 컴포넌트            | PascalCase (`vite-plugin-pages` 자동 라우트) | `ProductList.tsx` → `/productList`      |
+| 훅 파일                    | `use-*.ts` (kebab-case)                      | `use-authorized.ts`                     |
+| API 모듈                   | `{도메인}-api.ts`                            | `product-api.ts`                        |
+| Query 모듈                 | `{도메인}-query.ts`                          | `product-query.ts`                      |
+| Zustand (`src/store/biz/`) | `{도메인}-store.ts`                          | `sample-store.ts`                       |
+| 화면 전용 상수/타입        | `constants.ts`, `types.ts`                   | `components/products/list/constants.ts` |
+| i18n 번역 파일             | `{대메뉴}.json`                              | `i18n/locales/ko/product.json`          |
 
 ### 7.2 코드 네이밍
 
-
-| 종류                | 규칙               | 예시                                      |
-| ----------------- | ---------------- | --------------------------------------- |
+| 종류                         | 규칙             | 예시                                    |
+| ---------------------------- | ---------------- | --------------------------------------- |
 | 컴포넌트 / 타입 / 인터페이스 | PascalCase       | `ProductList`, `interface Product`      |
-| 함수 / 변수 / 훅       | camelCase        | `getProductList`, `useProductListQuery` |
-| 상수                | UPPER_SNAKE_CASE | `MAX_PAGE_SIZE`                         |
-
+| 함수 / 변수 / 훅             | camelCase        | `getProductList`, `useProductListQuery` |
+| 상수                         | UPPER_SNAKE_CASE | `MAX_PAGE_SIZE`                         |
 
 ### 7.3 Import 규칙
 
@@ -591,9 +585,9 @@ src/
 - import 정렬은 ESLint(`simple-import-sort`)가 자동 처리.
 
 ```tsx
-import { Button } from '@/components/common/ui';
-import { getProductList } from '@/api/product-api';
-import { http } from '@vanta/common';
+import { Button } from '@/components/common/ui'
+import { getProductList } from '@/api/product-api'
+import { http } from '@vanta/common'
 ```
 
 ### 7.4 페이지 / API / Query export 규칙
@@ -607,15 +601,13 @@ import { http } from '@vanta/common';
 
 ### 7.6 감사 컬럼 (DB 표준)
 
-
-| 변경 전        | 변경 후     | 용도     |
-| ----------- | -------- | ------ |
-| `createdAt` | `regDtm` | 등록일시   |
-| `updatedAt` | `updDtm` | 수정일시   |
-| `deletedAt` | `delDtm` | 삭제일시   |
+| 변경 전     | 변경 후  | 용도      |
+| ----------- | -------- | --------- |
+| `createdAt` | `regDtm` | 등록일시  |
+| `updatedAt` | `updDtm` | 수정일시  |
+| `deletedAt` | `delDtm` | 삭제일시  |
 | `createdBy` | `regrId` | 등록자 ID |
 | `updatedBy` | `updrId` | 수정자 ID |
-
 
 ### 7.7 커밋 메시지
 
@@ -627,4 +619,3 @@ fix: 로그인 시 토큰 갱신 오류 수정
 refactor: API 서비스 팩토리 패턴 적용
 docs: 가이드 요약본 추가
 ```
-

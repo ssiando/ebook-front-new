@@ -99,14 +99,14 @@
 진짜 문제는 **토큰 엔진의 책임 경계가 어긋나 있다**는 것이다. common 은 자체 토큰 파일
 (`src/assets/styles/tokens/colors.css` 등)을 갖고 일부 별칭을 정의하지만, 일부는 빠져 admin 이 메우고 있다.
 
-| 토큰/레이어 | common 0.1.242 (배포본) | admin `index.css` |
-|---|---|---|
-| 라이트 별칭 `--text` `--text-h` `--bg-white` `--border` `--accent` `--primary` | ✅ 정의 | ✅ **중복 정의**(충돌 소지) |
-| 라이트 별칭 `--text-heading` `--text-muted` `--text-secondary` `--bg-hover` | ❌ **없음** | ✅ admin 이 정의(2026-06-16 추가) |
-| 다크 토큰 엔진 — `:root[data-theme='dark']` 의 `--color-bg`/`--bg-white`/`--text` override | ❌ **없음** | ✅ admin 전용 |
-| 다크 회색 반전 `--color-gray-*` | ❌ **없음** | ✅ admin 전용 |
-| 컴포넌트 다크 CSS(헤더/사이드바/그리드 등) | ✅ 있음(48 규칙) | — |
-| `--dg-*` 다크 토큰 | ✅ 있음 | ✅ **중복**(값 동일, fallback) |
+| 토큰/레이어                                                                                | common 0.1.242 (배포본) | admin `index.css`                 |
+| ------------------------------------------------------------------------------------------ | ----------------------- | --------------------------------- |
+| 라이트 별칭 `--text` `--text-h` `--bg-white` `--border` `--accent` `--primary`             | ✅ 정의                 | ✅ **중복 정의**(충돌 소지)       |
+| 라이트 별칭 `--text-heading` `--text-muted` `--text-secondary` `--bg-hover`                | ❌ **없음**             | ✅ admin 이 정의(2026-06-16 추가) |
+| 다크 토큰 엔진 — `:root[data-theme='dark']` 의 `--color-bg`/`--bg-white`/`--text` override | ❌ **없음**             | ✅ admin 전용                     |
+| 다크 회색 반전 `--color-gray-*`                                                            | ❌ **없음**             | ✅ admin 전용                     |
+| 컴포넌트 다크 CSS(헤더/사이드바/그리드 등)                                                 | ✅ 있음(48 규칙)        | —                                 |
+| `--dg-*` 다크 토큰                                                                         | ✅ 있음                 | ✅ **중복**(값 동일, fallback)    |
 
 **핵심 결론**
 
@@ -136,13 +136,14 @@ admin 의 중복·임시 정의를 제거한다(§4 / §5).
   - 초기 테마 출처: 현재 localStorage. `/auth/me` 응답에 `theme` 를 포함시키면 서버 개인화로 일원화 가능
     (현재 `/auth/me` 에 theme 없음 → 추가 검토).
 - [ ] **common CSS 의 산발적 다크 override 일원화**: 위 3.4 의 파일별 `[data-theme='dark']` 블록을
-  토큰 기반으로 정리(가능한 것은 토큰 반전만으로 처리, 다크 전용 리터럴 최소화).
+      토큰 기반으로 정리(가능한 것은 토큰 반전만으로 처리, 다크 전용 리터럴 최소화).
 - [ ] **DataGrid `--dg-*` 토큰을 전역 테마 토큰과 연결**(중복 정의 제거 검토).
 - [x] **Chart 토큰화 + 라이브 토글**(2026-06-16, common `Chart.tsx`): 축/범례/제목/툴팁 색을 CSS 토큰
-  (`--text`/`--text-h`/`--border`)에서 읽어 **라이트·다크 모두** 적용. 라이트에서 축 텍스트가 안 보이던 문제
-  (다크 흰색 라벨이 머지 모드로 잔존)와 토글 잔상 해소. ⚠️ common 재빌드/배포 필요(§3.5).
+      (`--text`/`--text-h`/`--border`)에서 읽어 **라이트·다크 모두** 적용. 라이트에서 축 텍스트가 안 보이던 문제
+      (다크 흰색 라벨이 머지 모드로 잔존)와 토글 잔상 해소. ⚠️ common 재빌드/배포 필요(§3.5).
 - [ ] **샘플 외 실제 화면 잔여 하드코딩 색 스윕**(필요 시): `bg-white` 리터럴/`rgba(0,0,0,…)`/회색 hex 점검.
 - [ ] **common 색 토큰 파일 확보**: common 이 `color-primitives.css`/`color-semantic.css` 를 보유/배포하도록(현재 admin 소유). 토큰 엔진 승격의 전제(§3.5-(1)).
+
 ### 이관 후 admin 에서 제거/이동할 것 (현재 admin 임시 보유 — §3.5)
 
 - `src/store/theme-store.ts` → common (또는 토글 UI 만 admin 유지)
@@ -162,12 +163,12 @@ admin 의 중복·임시 정의를 제거한다(§4 / §5).
 
 ### 5.1 색 토큰 (가장 먼저 — 90%는 여기서 끝)
 
-| 무엇을 | 파일 | 블록 |
-|---|---|---|
-| **라이트 기본 색** | [src/index.css](../../src/index.css) | `@theme { … }` (Tailwind 토큰) + `:root { … }` (별칭) |
-| **다크 색 override** | [src/index.css](../../src/index.css) | `:root[data-theme='dark'] { … }` |
-| 원시 색 팔레트 | `src/assets/styles/tokens/color-primitives.css` | gray/blue 등 raw 색 |
-| 시맨틱 매핑 | `src/assets/styles/tokens/color-semantic.css` | 용도별 색 |
+| 무엇을               | 파일                                            | 블록                                                  |
+| -------------------- | ----------------------------------------------- | ----------------------------------------------------- |
+| **라이트 기본 색**   | [src/index.css](../../src/index.css)            | `@theme { … }` (Tailwind 토큰) + `:root { … }` (별칭) |
+| **다크 색 override** | [src/index.css](../../src/index.css)            | `:root[data-theme='dark'] { … }`                      |
+| 원시 색 팔레트       | `src/assets/styles/tokens/color-primitives.css` | gray/blue 등 raw 색                                   |
+| 시맨틱 매핑          | `src/assets/styles/tokens/color-semantic.css`   | 용도별 색                                             |
 
 - 예) "다크 배경을 더 어둡게" → `:root[data-theme='dark']` 의 `--color-bg`, `--bg`, `--color-bg-white`, `--bg-white` 수정.
 - 예) "다크 본문 글자색" → 같은 블록의 `--color-text`, `--text` 수정.

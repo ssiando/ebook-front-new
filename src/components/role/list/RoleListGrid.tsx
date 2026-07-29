@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { AgGridReact } from 'ag-grid-react'
-import { themeQuartz, type ColDef, type ValueGetterParams } from 'ag-grid-community'
-import { Badge } from '@/components/common/ui/Badge'
+import type { ColDef, SelectionChangedEvent } from 'ag-grid-community'
+import { themeQuartz } from 'ag-grid-community'
 import type { Role } from '@/types/role'
 
 const gridTheme = themeQuartz.withParams({
@@ -15,56 +15,35 @@ const gridTheme = themeQuartz.withParams({
 interface RoleListGridProps {
   rows: Role[]
   loading: boolean
-  onConfigureMenus: (role: Role) => void
+  selectedId: string | null
+  onSelectRow: (id: string) => void
+  onCellChange: (id: string, field: keyof Role, value: string) => void
+  onSelectionChange: (ids: string[]) => void
 }
 
-export function RoleListGrid({ rows, loading, onConfigureMenus }: RoleListGridProps) {
+export function RoleListGrid({
+  rows,
+  loading,
+  selectedId,
+  onSelectRow,
+  onCellChange,
+  onSelectionChange,
+}: RoleListGridProps) {
   const columnDefs = useMemo<ColDef<Role>[]>(
     () => [
-      {
-        headerName: 'No',
-        width: 70,
-        valueGetter: (p: ValueGetterParams<Role>) => (p.node?.rowIndex ?? 0) + 1,
-      },
-      { field: 'roleName', headerName: '역할명', width: 160 },
-      { field: 'description', headerName: '설명', flex: 1, minWidth: 200 },
-      {
-        field: 'menuIds',
-        headerName: '설정된 메뉴',
-        width: 120,
-        valueGetter: (p) => (p.data ? `${p.data.menuIds.length}개` : ''),
-      },
-      {
-        field: 'useYn',
-        headerName: '사용여부',
-        width: 100,
-        cellRenderer: (p: { value: boolean }) => (
-          <Badge tone={p.value ? 'green' : 'gray'}>{p.value ? 'Y' : 'N'}</Badge>
-        ),
-      },
-      { field: 'registrant', headerName: '등록자', width: 100 },
-      { field: 'updatedAt', headerName: '수정일', width: 120 },
-      {
-        headerName: '메뉴 설정',
-        width: 110,
-        sortable: false,
-        cellRenderer: (p: { data?: Role }) =>
-          p.data ? (
-            <button
-              type="button"
-              onClick={() => onConfigureMenus(p.data!)}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              메뉴 설정
-            </button>
-          ) : null,
-      },
+      { headerCheckboxSelection: true, checkboxSelection: true, width: 44, pinned: 'left' },
+      { field: 'roleName', headerName: '역할명', width: 160, editable: true },
+      { field: 'description', headerName: '설명', flex: 1, minWidth: 180, editable: true },
+      { field: 'system', headerName: '시스템명', width: 110, editable: true },
+      { field: 'memberCount', headerName: '소속 인원', width: 100 },
+      { field: 'createdAt', headerName: '등록일시', width: 160 },
+      { field: 'updatedAt', headerName: '수정일시', width: 160 },
     ],
-    [onConfigureMenus],
+    [],
   )
 
   return (
-    <div style={{ height: 480 }}>
+    <div style={{ height: 420 }}>
       <AgGridReact<Role>
         theme={gridTheme}
         rowData={rows}
@@ -72,7 +51,18 @@ export function RoleListGrid({ rows, loading, onConfigureMenus }: RoleListGridPr
         loading={loading}
         rowHeight={40}
         headerHeight={40}
-        suppressCellFocus
+        rowSelection="multiple"
+        suppressRowClickSelection
+        getRowId={(p) => p.data.id}
+        onRowClicked={(e) => e.data && onSelectRow(e.data.id)}
+        onSelectionChanged={(e: SelectionChangedEvent<Role>) =>
+          onSelectionChange(e.api.getSelectedRows().map((row) => row.id))
+        }
+        getRowStyle={(p) => (p.data?.id === selectedId ? { background: '#fef2f2' } : undefined)}
+        onCellValueChanged={(e) => {
+          if (!e.data || !e.colDef.field) return
+          onCellChange(e.data.id, e.colDef.field as keyof Role, e.newValue)
+        }}
       />
     </div>
   )

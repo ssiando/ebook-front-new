@@ -227,9 +227,9 @@ Zustand 스토어는 두 갈래로 나뉜다.
 - 공통 UI 묶음처럼 소비 편의가 중요한 경우에만 `index.ts` 배럴 export를 둔다.
 
 ```ts
-import { Button } from '@/components/common/ui';
-import { useServiceQuery } from '@/query/service-query';
-import { fetchServices } from '@/api/service-api';
+import { Button } from '@/components/common/ui'
+import { useServiceQuery } from '@/query/service-query'
+import { fetchServices } from '@/api/service-api'
 ```
 
 ### 4.3 라우팅
@@ -264,9 +264,9 @@ import { fetchServices } from '@/api/service-api';
 **정석 형태 — `src/api/service-api.ts`**
 
 ```ts
-import { http } from '@/api/http-client';
-import type { ServiceResponse } from '@/api/types/service';
-import type { ApiResponse, PaginatedResponse } from '@/types';
+import { http } from '@/api/http-client'
+import type { ServiceResponse } from '@/api/types/service'
+import type { ApiResponse, PaginatedResponse } from '@/types'
 
 export async function fetchServices(
   workspaceId: string,
@@ -275,8 +275,8 @@ export async function fetchServices(
   const { data } = await http.get<ApiResponse<PaginatedResponse<ServiceResponse>>>(
     `/api/workspaces/${workspaceId}/services`,
     { params },
-  );
-  return data.data;
+  )
+  return data.data
 }
 ```
 
@@ -290,27 +290,27 @@ export async function fetchServices(
 **정석 형태 — `src/query/service-query.ts`**
 
 ```ts
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { fetchServices } from '@/api/service-api';
+import { fetchServices } from '@/api/service-api'
 
 export const serviceQueryKeys = {
   all: ['services'] as const,
   list: (workspaceId: string, params: Record<string, unknown>) =>
     [...serviceQueryKeys.all, workspaceId, params] as const,
-};
+}
 
 export function useServiceQuery(workspaceId: string, params?: { page?: number; size?: number }) {
   return useQuery({
     queryKey: serviceQueryKeys.list(workspaceId, params ?? {}),
     queryFn: () => fetchServices(workspaceId, params),
     enabled: !!workspaceId,
-  });
+  })
 }
 
 export function useInvalidateServiceQueries() {
-  const qc = useQueryClient();
-  return () => qc.invalidateQueries({ queryKey: serviceQueryKeys.all });
+  const qc = useQueryClient()
+  return () => qc.invalidateQueries({ queryKey: serviceQueryKeys.all })
 }
 ```
 
@@ -371,15 +371,15 @@ export function useInvalidateServiceQueries() {
 따라가려면 **색을 하드코딩하지 말고 토큰을 참조**해야 한다. 새 화면/컴포넌트 작성 시 아래를 지킨다.
 
 - **하드코딩 색 금지**: `bg-white`, `text-gray-700`, `#fff`, `rgba(0,0,0,…)`, `bg-[#f5f5f7]` 등을 직접 쓰지 않는다.
-  | 쓰지 말 것 | 대신 쓸 것 |
-  |---|---|
-  | `bg-white`, `#fff` | `bg-bg-white` / `var(--bg-white)` |
-  | `bg-gray-50/100` | `bg-bg` / `var(--bg)` |
-  | `text-gray-400/500/600` | `text-text` / `var(--text)` |
-  | `text-gray-700/800`, `#1d1d1f` | `text-text-heading` / `var(--text-heading)` |
-  | `border-gray-*`, `rgba(0,0,0,0.1)` 테두리 | `border-border` / `var(--border)` |
-  | 옅은 회색 muted 텍스트 `rgba(0,0,0,0.x)` | `var(--text-muted)` |
-  | 선택/활성 배경 라이트블루 | `var(--accent-light)` (다크 자동 전환) |
+  | 쓰지 말 것                                | 대신 쓸 것                                  |
+  | ----------------------------------------- | ------------------------------------------- |
+  | `bg-white`, `#fff`                        | `bg-bg-white` / `var(--bg-white)`           |
+  | `bg-gray-50/100`                          | `bg-bg` / `var(--bg)`                       |
+  | `text-gray-400/500/600`                   | `text-text` / `var(--text)`                 |
+  | `text-gray-700/800`, `#1d1d1f`            | `text-text-heading` / `var(--text-heading)` |
+  | `border-gray-*`, `rgba(0,0,0,0.1)` 테두리 | `border-border` / `var(--border)`           |
+  | 옅은 회색 muted 텍스트 `rgba(0,0,0,0.x)`  | `var(--text-muted)`                         |
+  | 선택/활성 배경 라이트블루                 | `var(--accent-light)` (다크 자동 전환)      |
 - **테마 전환의 단일 출처**: 컴포넌트는 토큰만 참조하고, 다크 값은 [src/index.css](src/index.css) 의
   `:root[data-theme='dark']` 블록에서 토큰을 override 한다. (시맨틱 토큰 + 별칭 + 회색 프리미티브 반전)
 - **컴포넌트 CSS 도 동일**: `.css` 파일에서도 `var(--bg-white)`, `var(--text)`, `var(--border)` 등 토큰을 쓴다.

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, type Control } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Modal } from '@/components/common/ui/Modal'
@@ -32,10 +32,6 @@ export function UserCreateModal({ open, onClose }: UserCreateModalProps) {
     resolver: zodResolver(createUserSchema),
     defaultValues: { userId: '', userName: '', department: '', role: 'MEMBER' },
   })
-  // FormInput/FormSelect는 여러 폼에서 재사용하는 공용 컴포넌트라 Control<any, any, any>를 받는데,
-  // react-hook-form의 Control<T>는 내부 validate 함수 프로퍼티가 반공변이라 구체 타입 → any 캐스팅이
-  // 자동으로 되지 않는다. 호출부에서 한 번만 캐스팅해서 재사용한다.
-  const control = methods.control as Control<any, any, any>
 
   // 패턴 B에서도 showFormErrors에 라벨만 넘기기 위한 최소 매핑
   const errorLabels: FormRules = {
@@ -57,12 +53,17 @@ export function UserCreateModal({ open, onClose }: UserCreateModalProps) {
   return (
     <Modal open={open} title={t('modal.title')} onClose={onClose}>
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
-        <FormInput name="userId" control={control} label={t('modal.userId')} required />
-        <FormInput name="userName" control={control} label={t('modal.userName')} required />
-        <FormInput name="department" control={control} label={t('modal.department')} required />
+        <FormInput name="userId" control={methods.control} label={t('modal.userId')} required />
+        <FormInput name="userName" control={methods.control} label={t('modal.userName')} required />
+        <FormInput
+          name="department"
+          control={methods.control}
+          label={t('modal.department')}
+          required
+        />
         <FormSelect
           name="role"
-          control={control}
+          control={methods.control}
           label={t('modal.role')}
           required
           options={[

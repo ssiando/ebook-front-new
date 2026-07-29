@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, type Control } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { PageSearch } from '@/components/common/PageSearch'
 import { UserSearch } from '@/components/user/list/UserSearch'
-import { searchSchema, userSearchRules, type UserSearchFormValues } from '@/components/user/list/searchSchema'
+import {
+  searchSchema,
+  userSearchRules,
+  type UserSearchFormValues,
+} from '@/components/user/list/searchSchema'
 import { UserContent } from '@/components/user/list/UserContent'
 import { UserCreateModal } from '@/components/user/list/UserCreateModal'
 import { useUsersQuery } from '@/query/user-query'
@@ -36,17 +40,14 @@ export default function UserManagement() {
   })
   const [createOpen, setCreateOpen] = useState(false)
 
-  const methods = useForm<UserSearchFormValues>({
+  const { control, reset, handleSubmit } = useForm<UserSearchFormValues>({
     resolver: zodResolver(searchSchema),
     defaultValues: defaultSearchValues(),
   })
-  // Control<T>는 내부 validate 함수 프로퍼티가 반공변이라 재사용 컴포넌트가 받는
-  // Control<any, any, any>로 자동 캐스팅되지 않는다 — 호출부에서 한 번만 캐스팅한다.
-  const control = methods.control as Control<any, any, any>
 
   const { data, isFetching } = useUsersQuery(params)
 
-  const handleSearch = methods.handleSubmit(
+  const handleSearch = handleSubmit(
     (values) => {
       setParams((prev) => ({ ...prev, ...values, page: 1 }))
     },
@@ -55,7 +56,7 @@ export default function UserManagement() {
 
   const handleReset = () => {
     const defaults = defaultSearchValues()
-    methods.reset(defaults)
+    reset(defaults)
     setParams((prev) => ({ ...prev, ...defaults, page: 1 }))
   }
 

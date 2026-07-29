@@ -57,7 +57,11 @@ export function UserListGrid({ rows, loading, page, pageSize }: UserListGridProp
           if (!p.value?.length) return null
           const [first, ...rest] = p.value
           return (
-            <a href="#" className="text-blue-600 hover:underline" onClick={(e) => e.preventDefault()}>
+            <a
+              href="#"
+              className="text-blue-600 hover:underline"
+              onClick={(e) => e.preventDefault()}
+            >
               {first.name}
               {rest.length > 0 ? ` 외 ${rest.length}건` : ''}
             </a>

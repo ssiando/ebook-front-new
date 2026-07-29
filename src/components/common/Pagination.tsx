@@ -22,9 +22,7 @@ export function Pagination({ page, pageSize, totalCount, onPageChange }: Paginat
           onClick={() => onPageChange(p)}
           className={clsx(
             'flex h-7 w-7 items-center justify-center rounded-full text-sm',
-            p === page
-              ? 'bg-gray-900 font-medium text-white'
-              : 'text-gray-500 hover:bg-gray-100',
+            p === page ? 'bg-gray-900 font-medium text-white' : 'text-gray-500 hover:bg-gray-100',
           )}
         >
           {p}

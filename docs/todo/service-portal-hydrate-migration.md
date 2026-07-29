@@ -4,6 +4,7 @@
 > 상태: **`@vanta/common` 에 기능 + admin 에서 opt-in 적용.** 하위 시스템(genx/asset/4dx 등)은
 > GNB 시스템 전환 UI 가 없어 비활성화 상태. 추후 이관 시 시스템별로 opt-in.
 > 연관 문서:
+>
 > - [워크스페이스 slug URL 마이그레이션](./workspace-slug-url-migration.md)
 > - [다크 테마 마이그레이션](./theme-dark-mode-migration.md)
 
@@ -21,8 +22,8 @@ dev/stg/prd     : https://{env}-{system}.vanta.ai/{slug}
 ```
 
 - system: `cm_system_std.cd` (대소문자 무관, host 에는 소문자)
-- slug  : `cm_workspace_bas.slug` (URL `:workspace` segment 와 동일 값)
-- env   : 현재 호스트명으로 추론 — `resolveCurrentEnv()`
+- slug : `cm_workspace_bas.slug` (URL `:workspace` segment 와 동일 값)
+- env : 현재 호스트명으로 추론 — `resolveCurrentEnv()`
 
 ---
 
@@ -92,11 +93,7 @@ dev/stg/prd     : https://{env}-{system}.vanta.ai/{slug}
 ### 4.1 `routes/index.tsx`
 
 ```tsx
-<MainLayout
-  routes={mainLayoutOutletRoutes}
-  slots={mainLayoutSlots}
-  autoHydratePortals
-/>
+<MainLayout routes={mainLayoutOutletRoutes} slots={mainLayoutSlots} autoHydratePortals />
 ```
 
 → admin 진입 시 `useHydrateServicePortals(true)` 발동 → `/me/workspaces` 1회 호출 → 카탈로그 채워짐.
@@ -123,7 +120,7 @@ dev/stg/prd     : https://{env}-{system}.vanta.ai/{slug}
   "slug": "cj4dplex",
   "systems": [
     { "systemId": 1, "code": "ADMIN", "name": "관리자", "deployed": true },
-    { "systemId": 2, "code": "VFX",   "name": "VFX",     "deployed": false }
+    { "systemId": 2, "code": "VFX", "name": "VFX", "deployed": false }
   ]
 }
 ```
@@ -160,14 +157,14 @@ dev/stg/prd     : https://{env}-{system}.vanta.ai/{slug}
 
 ## 8. 관련 변경 파일
 
-| 위치 | 파일 | 종류 |
-|---|---|---|
-| common | `src/utils/system-portal-url.ts` | 신규 |
-| common | `src/api/me-api.ts` | 신규 (admin → 승격) |
-| common | `src/hooks/use-hydrate-service-portals.ts` | 신규 |
-| common | `src/components/layout/MainLayout.tsx` | `autoHydratePortals` prop 추가 |
-| common | `src/components/layout/ServiceListLayer.tsx` | navigation 시 resolver 사용 |
-| common | `src/config/service-portal-defaults.ts` | 삭제 |
-| common | `src/store/service-portal-store.ts` | 주석 갱신 (동작 변화 없음) |
-| common | `src/index.ts` | export 갱신 |
-| admin | `src/routes/index.tsx` | `<MainLayout autoHydratePortals />` |
+| 위치   | 파일                                         | 종류                                |
+| ------ | -------------------------------------------- | ----------------------------------- |
+| common | `src/utils/system-portal-url.ts`             | 신규                                |
+| common | `src/api/me-api.ts`                          | 신규 (admin → 승격)                 |
+| common | `src/hooks/use-hydrate-service-portals.ts`   | 신규                                |
+| common | `src/components/layout/MainLayout.tsx`       | `autoHydratePortals` prop 추가      |
+| common | `src/components/layout/ServiceListLayer.tsx` | navigation 시 resolver 사용         |
+| common | `src/config/service-portal-defaults.ts`      | 삭제                                |
+| common | `src/store/service-portal-store.ts`          | 주석 갱신 (동작 변화 없음)          |
+| common | `src/index.ts`                               | export 갱신                         |
+| admin  | `src/routes/index.tsx`                       | `<MainLayout autoHydratePortals />` |

@@ -170,31 +170,31 @@ src/
 
 ```ts
 // src/api/product-api.ts
-import { http } from '@vanta/common';
-import type { Product, ProductSearchParams } from '@/types/product';
+import { http } from '@vanta/common'
+import type { Product, ProductSearchParams } from '@/types/product'
 
 export async function getProductList(params: ProductSearchParams) {
-  const { data } = await http.get('/products', { params });
-  return data;
+  const { data } = await http.get('/products', { params })
+  return data
 }
 
 export async function getProduct(id: string) {
-  const { data } = await http.get(`/products/${id}`);
-  return data;
+  const { data } = await http.get(`/products/${id}`)
+  return data
 }
 
 export async function createProduct(payload: Omit<Product, 'id' | 'regDtm' | 'updDtm' | 'delDtm'>) {
-  const { data } = await http.post('/products', payload);
-  return data;
+  const { data } = await http.post('/products', payload)
+  return data
 }
 
 export async function updateProduct(id: string, payload: Partial<Product>) {
-  const { data } = await http.patch(`/products/${id}`, payload);
-  return data;
+  const { data } = await http.patch(`/products/${id}`, payload)
+  return data
 }
 
 export async function deleteProduct(id: string) {
-  await http.delete(`/products/${id}`);
+  await http.delete(`/products/${id}`)
 }
 ```
 
@@ -206,10 +206,10 @@ export async function deleteProduct(id: string) {
 
 ```ts
 // src/api/product-api.ts
-import { createCrudService } from '@vanta/common';
-import type { Product } from '@/types/product';
+import { createCrudService } from '@vanta/common'
+import type { Product } from '@/types/product'
 
-export const productService = createCrudService<Product>('/products');
+export const productService = createCrudService<Product>('/products')
 // → getAll(params), getById(id), create(data), update(id, data), delete(id)
 ```
 
@@ -226,23 +226,23 @@ export const productService = createCrudService<Product>('/products');
 
 ```ts
 // src/query/product-query.ts
-import { useQuery } from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
-import { getProductList, getProduct } from '@/api/product-api';
-import type { ProductSearchParams } from '@/types/product';
+import { getProductList, getProduct } from '@/api/product-api'
+import type { ProductSearchParams } from '@/types/product'
 
 export const productQueryKeys = {
   root: ['products'] as const,
   list: (params: ProductSearchParams) => [...productQueryKeys.root, 'list', params] as const,
   detail: (id: string) => [...productQueryKeys.root, 'detail', id] as const,
-};
+}
 
 export function useProductListQuery(params: ProductSearchParams) {
   return useQuery({
     queryKey: productQueryKeys.list(params),
     queryFn: () => getProductList(params),
-  });
+  })
 }
 
 export function useProductDetailQuery(id: string) {
@@ -250,12 +250,12 @@ export function useProductDetailQuery(id: string) {
     queryKey: productQueryKeys.detail(id),
     queryFn: () => getProduct(id),
     enabled: !!id,
-  });
+  })
 }
 
 export function useInvalidateProductQueries() {
-  const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: productQueryKeys.root });
+  const queryClient = useQueryClient()
+  return () => queryClient.invalidateQueries({ queryKey: productQueryKeys.root })
 }
 ```
 
@@ -263,8 +263,8 @@ export function useInvalidateProductQueries() {
 
 ```tsx
 function ProductListPage() {
-  const [params, setParams] = useState<ProductSearchParams>({ page: 0, size: 20 });
-  const { data, isFetching } = useProductListQuery(params);
+  const [params, setParams] = useState<ProductSearchParams>({ page: 0, size: 20 })
+  const { data, isFetching } = useProductListQuery(params)
 
   return (
     <>
@@ -274,7 +274,7 @@ function ProductListPage() {
         onPageChange={(page) => setParams((p) => ({ ...p, page }))}
       />
     </>
-  );
+  )
 }
 ```
 
@@ -299,13 +299,13 @@ function ProductListPage() {
 개념·패턴·팀 규칙(`validateForm`)은 **「6.3 폼 검증 가이드」** 에서 자세히 다룹니다.
 
 ```tsx
-import { defineFormRules, showFormErrors, validateForm } from '@vanta/common';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { defineFormRules, showFormErrors, validateForm } from '@vanta/common'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { FormInput } from '@/components/common/form';
-import { Button } from '@/components/common/ui';
+import { FormInput } from '@/components/common/form'
+import { Button } from '@/components/common/ui'
 
 const formRules = defineFormRules({
   name: {
@@ -320,18 +320,18 @@ const formRules = defineFormRules({
     label: 'user.form.email',
     messages: { email: 'user.form.validation.emailCustom' }, // 선택 오버라이드
   },
-});
+})
 
-const formSchema = validateForm(formRules);
+const formSchema = validateForm(formRules)
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
 function CreateUserForm() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const { control, handleSubmit } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: '', email: '' },
-  });
+  })
 
   return (
     <div className="space-y-4 max-w-md">
@@ -352,16 +352,16 @@ function CreateUserForm() {
         onClick={() => {
           void handleSubmit(
             async (data) => {
-              await createUser(data);
+              await createUser(data)
             },
             (errors) => showFormErrors(errors, formRules),
-          )();
+          )()
         }}
       >
         저장
       </Button>
     </div>
-  );
+  )
 }
 ```
 
@@ -372,12 +372,12 @@ function CreateUserForm() {
 
 `validateForm`은 필드 설정 객체를 받아 Zod 스키마를 자동 생성합니다. 각 필드는 `type`으로 종류를 구분하는 discriminated union이며, 규칙 객체를 변수로 분리할 때는 `defineFormRules`로 감싸면 `as const` 없이도 타입 추론이 정확해집니다.
 
-| `type`      | 옵션                                                                                                  | 예시                                                                 |
-| ----------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `type`      | 옵션                                                                                                     | 예시                                                              |
+| ----------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | `'string'`  | `label`, `messages`, `required`, `email`, `phoneKR`, `optionalPhoneKR`, `minLength`, `maxLength`, `trim` | `{ type: 'string', required: true, label: 'user.form.name' }`     |
-| `'boolean'` | `label`, `messages`, `mustBeTrue`                                                                     | `{ type: 'boolean', mustBeTrue: true, label: 'user.form.agree' }` |
-| `'number'`  | `label`, `messages`, `required`, `min`, `max`                                                         | `{ type: 'number', min: 0, max: 150, label: 'user.form.age' }`    |
-| `'enum'`    | `label`, `messages`, `values` (필수), `required`                                                      | `{ type: 'enum', values: ['a', 'b'] as const, label: '상태' }`       |
+| `'boolean'` | `label`, `messages`, `mustBeTrue`                                                                        | `{ type: 'boolean', mustBeTrue: true, label: 'user.form.agree' }` |
+| `'number'`  | `label`, `messages`, `required`, `min`, `max`                                                            | `{ type: 'number', min: 0, max: 150, label: 'user.form.age' }`    |
+| `'enum'`    | `label`, `messages`, `values` (필수), `required`                                                         | `{ type: 'enum', values: ['a', 'b'] as const, label: '상태' }`    |
 
 - **`label`**: 기본 검증 메시지가 바라보는 값. **i18n 키 권장**. UI에는 `t(label)`로 전달.
 - **`messages`**: 필요 시 `required` / `email` / `maxLength` / `minLength` / `phone` / `numberInvalid` / `mustAgree` 를 오버라이드 (i18n 키, `{{label}}` 보간).
@@ -414,11 +414,11 @@ Zustand는 두 갈래로 나뉩니다.
 | `useCodeStore`    | 공통코드 캐시          |
 
 ```tsx
-import { useAuthStore } from '@vanta/common';
+import { useAuthStore } from '@vanta/common'
 
 function UserProfile() {
-  const user = useAuthStore((state) => state.user);
-  return <p>{user?.name}님 안녕하세요!</p>;
+  const user = useAuthStore((state) => state.user)
+  return <p>{user?.name}님 안녕하세요!</p>
 }
 ```
 
@@ -430,17 +430,17 @@ function UserProfile() {
 
 ```ts
 // src/store/biz/sample-store.ts
-import { create } from 'zustand';
+import { create } from 'zustand'
 
 interface SampleBizState {
-  selectedId: string | null;
-  keyword: string;
+  selectedId: string | null
+  keyword: string
 }
 
 interface SampleBizActions {
-  select: (id: string | null) => void;
-  setKeyword: (keyword: string) => void;
-  reset: () => void;
+  select: (id: string | null) => void
+  setKeyword: (keyword: string) => void
+  reset: () => void
 }
 
 export const useSampleBizStore = create<SampleBizState & SampleBizActions>()((set) => ({
@@ -449,7 +449,7 @@ export const useSampleBizStore = create<SampleBizState & SampleBizActions>()((se
   select: (id) => set({ selectedId: id }),
   setKeyword: (keyword) => set({ keyword }),
   reset: () => set({ selectedId: null, keyword: '' }),
-}));
+}))
 ```
 
 > 서버에서 받아온 목록·상세는 React Query가 캐시하므로 **business 스토어에 다시 저장하지 않습니다.** 화면 간 공유가 필요한 클라이언트 상태(선택, 토글, 임시 필터 등)만 둡니다.
@@ -465,13 +465,13 @@ export const useSampleBizStore = create<SampleBizState & SampleBizActions>()((se
 ```ts
 // src/types/product.ts
 export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-  status: 'active' | 'inactive';
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  name: string
+  price: number
+  category: string
+  status: 'active' | 'inactive'
+  createdAt: string
+  updatedAt: string
 }
 ```
 
@@ -481,17 +481,17 @@ axios 호출 함수를 도메인 단위로 모읍니다. 페이지/컴포넌트�
 
 ```ts
 // src/api/product-api.ts
-import { http } from '@vanta/common';
-import type { Product, ProductSearchParams } from '@/types/product';
+import { http } from '@vanta/common'
+import type { Product, ProductSearchParams } from '@/types/product'
 
 export async function getProductList(params: ProductSearchParams) {
-  const { data } = await http.get('/products', { params });
-  return data;
+  const { data } = await http.get('/products', { params })
+  return data
 }
 
 export async function createProduct(payload: Omit<Product, 'id' | 'regDtm' | 'updDtm' | 'delDtm'>) {
-  const { data } = await http.post('/products', payload);
-  return data;
+  const { data } = await http.post('/products', payload)
+  return data
 }
 // 필요한 만큼만 정의 — getById, update, delete 등
 ```
@@ -502,26 +502,26 @@ export async function createProduct(payload: Omit<Product, 'id' | 'regDtm' | 'up
 
 ```ts
 // src/query/product-query.ts
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { getProductList } from '@/api/product-api';
-import type { ProductSearchParams } from '@/types/product';
+import { getProductList } from '@/api/product-api'
+import type { ProductSearchParams } from '@/types/product'
 
 export const productQueryKeys = {
   root: ['products'] as const,
   list: (params: ProductSearchParams) => [...productQueryKeys.root, 'list', params] as const,
-};
+}
 
 export function useProductListQuery(params: ProductSearchParams) {
   return useQuery({
     queryKey: productQueryKeys.list(params),
     queryFn: () => getProductList(params),
-  });
+  })
 }
 
 export function useInvalidateProductQueries() {
-  const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: productQueryKeys.root });
+  const queryClient = useQueryClient()
+  return () => queryClient.invalidateQueries({ queryKey: productQueryKeys.root })
 }
 ```
 
@@ -540,25 +540,25 @@ export function useInvalidateProductQueries() {
 
 ```tsx
 // src/pages/products/ProductList.tsx  → URL: /products/productList
-import { PageSearch, PageTitle } from '@vanta/common';
-import { useForm } from 'react-hook-form';
+import { PageSearch, PageTitle } from '@vanta/common'
+import { useForm } from 'react-hook-form'
 
-import ProductContent from '@/components/products/list/ProductContent';
-import ProductSearch from '@/components/products/list/ProductSearch';
-import { useProductQuery } from '@/query/product-query';
-import { productFormSchema } from '@/components/product/form/validation/formSchema';
+import ProductContent from '@/components/products/list/ProductContent'
+import ProductSearch from '@/components/products/list/ProductSearch'
+import { useProductQuery } from '@/query/product-query'
+import { productFormSchema } from '@/components/product/form/validation/formSchema'
 
 export default function ProductList() {
   const { control, reset } = useForm({
     resolver: zodResolver(productFormSchema),
     defaultValues: { name: '', status: '' },
-  });
+  })
 
-  const { data, isLoading, refetch } = useProductQuery(/* params */);
+  const { data, isLoading, refetch } = useProductQuery(/* params */)
 
   const handleSearch = () => {
-    void refetch();
-  };
+    void refetch()
+  }
 
   return (
     <>
@@ -573,7 +573,7 @@ export default function ProductList() {
       {/* 3. 본문 — 그리드·폼은 화면 전용 컴포넌트로 분리 */}
       <ProductContent data={data} isLoading={isLoading} />
     </>
-  );
+  )
 }
 ```
 
@@ -644,11 +644,11 @@ export default function ProductList() {
 **Button** — 기본 버튼 (`type` 기본값은 `button`; 폼 제출 시 `type="submit"` 명시)
 
 ```tsx
-import { Button } from '@/components/common/ui';
+import { Button } from '@/components/common/ui'
 
-<Button variant="primary" size="md" onClick={handleClick}>
+;<Button variant="primary" size="md" onClick={handleClick}>
   저장
-</Button>;
+</Button>
 
 // variant: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline'
 // size: 'sm' | 'md' | 'lg'
@@ -660,11 +660,11 @@ import { Button } from '@/components/common/ui';
 **Modal** — 포털·오버레이·Esc 처리 포함 모달 셸
 
 ```tsx
-import { Modal } from '@/components/common/ui';
+import { Modal } from '@/components/common/ui'
 
-<Modal open={open} onClose={() => setOpen(false)} title="확인">
+;<Modal open={open} onClose={() => setOpen(false)} title="확인">
   <p>정말 삭제하시겠습니까?</p>
-</Modal>;
+</Modal>
 ```
 
 **ConfirmDialog** — 확인/취소 패턴이 자주 필요할 때 `Modal` 대신 검토
@@ -672,9 +672,9 @@ import { Modal } from '@/components/common/ui';
 **Spinner** — 로딩 인디케이터
 
 ```tsx
-import { Spinner } from '@/components/common/ui';
+import { Spinner } from '@/components/common/ui'
 
-<Spinner size="lg" />;
+;<Spinner size="lg" />
 // size: 'sm' | 'md' | 'lg'
 ```
 
@@ -695,9 +695,9 @@ import { Badge } from '@/components/common/ui';
 `page`는 **0-base**, `onPageChange`에도 0-base 페이지 번호가 전달됩니다.
 
 ```tsx
-import Pagination from '@/components/common/Pagination';
+import Pagination from '@/components/common/Pagination'
 
-<Pagination
+;<Pagination
   pageResponse={{
     page: 0,
     size: 20,
@@ -707,7 +707,7 @@ import Pagination from '@/components/common/Pagination';
     hasPrevious: false,
   }}
   onPageChange={(nextPage) => setPage(nextPage)}
-/>;
+/>
 ```
 
 `components/common/ui/Pagination.tsx`는 **1-base `page` + `total` 건수** 기반의 다른 API를 쓰므로, 백엔드 목록과 묶을 때는 위 **common/Pagination**을 사용합니다.
@@ -752,8 +752,8 @@ react-hook-form과 연동되는 필드입니다. `import { FormInput, … } from
 UI 표시(`required`, `maxLength` 등)와 검증 조건을 **동일한 규칙 객체에서 꺼내 사용**하면 항상 일치할 수 있어 유지보수가 쉽습니다.
 
 ```ts
-import { defineFormRules, showFormErrors, validateForm } from '@vanta/common';
-import { z } from 'zod';
+import { defineFormRules, showFormErrors, validateForm } from '@vanta/common'
+import { z } from 'zod'
 
 // 1. 필드 검증 규칙 정의
 //    - label: 기본 메시지가 바라봄 (i18n 키 권장)
@@ -766,30 +766,35 @@ const myFormRules = defineFormRules({
     label: 'samples.form.validationLabelDisplayName',
     messages: { required: 'samples.form.validationMsgDisplayNameRequired' },
   },
-  email: { type: 'string', required: true, email: true, label: 'samples.form.validationLabelEmail' },
+  email: {
+    type: 'string',
+    required: true,
+    email: true,
+    label: 'samples.form.validationLabelEmail',
+  },
   age: { type: 'number', min: 0, max: 150, label: 'samples.form.validationLabelAge' },
   agree: { type: 'boolean', mustBeTrue: true, label: 'samples.form.validationLabelAgree' },
-});
+})
 
 // 2. Zod 스키마 생성
-const myFormSchema = validateForm(myFormRules);
+const myFormSchema = validateForm(myFormRules)
 
 // 3. 타입 자동 유추
-type MyFormValues = z.infer<typeof myFormSchema>;
+type MyFormValues = z.infer<typeof myFormSchema>
 ```
 
 ```tsx
 // 4. FormInput — UI label은 같은 i18n 키를 t()로
-<FormInput
+;<FormInput
   control={control}
   name="name"
   label={t(myFormRules.name.label!)}
   required={myFormRules.name.required}
   maxLength={myFormRules.name.maxLength}
-/>;
+/>
 
 // 5. 검증 실패 시 showFormErrors (label·messages 반영된 문구)
-void handleSubmit(onSave, (errors) => showFormErrors(errors, myFormRules))();
+void handleSubmit(onSave, (errors) => showFormErrors(errors, myFormRules))()
 ```
 
 - 예: `sampleFormRules`/`sampleFormSchema` (`src/components/samples/form/validation/form-schema.ts`)
@@ -810,12 +815,12 @@ void handleSubmit(onSave, (errors) => showFormErrors(errors, myFormRules))();
 직접 메시지를 넣거나, 고급 커스텀 밸리데이션이 필요할 때 적합합니다.
 
 ```ts
-import { z } from 'zod';
+import { z } from 'zod'
 
 const schema = z.object({
   title: z.string().min(1, 'common.validation.msg.required'),
   email: z.string().email('common.validation.msg.email'),
-});
+})
 ```
 
 - 검증 규칙/화면 재사용성이 낮거나, 동적 필드 등 복잡한 조건일 때 권장
@@ -825,11 +830,11 @@ const schema = z.object({
 
 `validateForm`(패턴 A) 기본 메시지:
 
-| 항목 | 설명 |
-| ---- | ---- |
-| 기본 키 | `@vanta/common` `common.validation.msg.*` (`required`, `email`, …) |
-| `label` | 메시지 `{{label}}`에 보간. **i18n 키 권장** |
-| `messages` | 필드별로 기본 키를 오버라이드 (같은 `{{label}}` 보간) |
+| 항목       | 설명                                                               |
+| ---------- | ------------------------------------------------------------------ |
+| 기본 키    | `@vanta/common` `common.validation.msg.*` (`required`, `email`, …) |
+| `label`    | 메시지 `{{label}}`에 보간. **i18n 키 권장**                        |
+| `messages` | 필드별로 기본 키를 오버라이드 (같은 `{{label}}` 보간)              |
 
 표시는 필드 하단 인라인 + `showFormErrors(errors, formRules)` 팝업.  
 `showFormErrors`는 검증 시점에 이미 label·messages가 반영된 문구를 그대로 띄우거나, 남은 i18n 키를 번역합니다 (§4.4 예시).
@@ -854,11 +859,11 @@ const schema = z.object({
 #### 기본 구조
 
 ```tsx
-import { DataGrid, GridBtn, createColumns } from '@vanta/common';
-import type { DataGridHandle } from '@vanta/common';
-import { useRef } from 'react';
+import { DataGrid, GridBtn, createColumns } from '@vanta/common'
+import type { DataGridHandle } from '@vanta/common'
+import { useRef } from 'react'
 
-type ProductRow = { id: number; name: string; status: string };
+type ProductRow = { id: number; name: string; status: string }
 
 // 컬럼 정의는 컴포넌트 밖에서 (매 렌더마다 재생성 방지)
 const COLUMNS = createColumns<ProductRow>([
@@ -874,16 +879,16 @@ const COLUMNS = createColumns<ProductRow>([
       { label: '중지', value: 'inactive' },
     ],
   },
-]);
+])
 
 const GRID_OPTIONS = {
   rowHeaders: [{ type: 'rowNum' as const }, { type: 'checkbox' as const }],
   editingEvent: 'click' as const,
   height: 400,
-};
+}
 
 function ProductGrid({ data, onSave }: Props) {
-  const gridRef = useRef<DataGridHandle<ProductRow>>(null);
+  const gridRef = useRef<DataGridHandle<ProductRow>>(null)
 
   return (
     <div className="flex flex-col gap-3">
@@ -898,7 +903,7 @@ function ProductGrid({ data, onSave }: Props) {
       />
       <DataGrid ref={gridRef} columns={COLUMNS} data={data} options={GRID_OPTIONS} />
     </div>
-  );
+  )
 }
 ```
 
@@ -918,7 +923,7 @@ function ProductGrid({ data, onSave }: Props) {
 `@vanta/common`에서 import해 `cellRenderer`로 지정합니다.
 
 ```tsx
-import { BadgeCell, CheckboxCell, DateTimeCell } from '@vanta/common';
+import { BadgeCell, CheckboxCell, DateTimeCell } from '@vanta/common'
 
 createColumns<ProductRow>([
   { header: '상태', name: 'status', cellRenderer: BadgeCell },
@@ -930,7 +935,7 @@ createColumns<ProductRow>([
     checkboxOptions: { trueValue: 'Y', falseValue: 'N' },
   },
   { header: '등록일', name: 'regDtm', cellRenderer: DateTimeCell },
-]);
+])
 ```
 
 | 렌더러         | 용도                                   |
@@ -954,17 +959,17 @@ DataGrid는 `on*` 콜백 prop이 없습니다. **이벤트는 `onReady`에서 `a
   onReady={(api) => {
     // 행 클릭 → 상세 패널 갱신
     api.bind('cellClick', (e) => {
-      const row = e.row as ProductRow;
-      onRowSelect(row.id);
-    });
+      const row = e.row as ProductRow
+      onRowSelect(row.id)
+    })
 
     // 저장 전 검증 차단
     api.bind('beforeChange', (e) => {
       if (e.columnId === 'name' && !String(e.value).trim()) {
-        toast.error('상품명은 필수입니다.');
-        e.preventDefault?.();
+        toast.error('상품명은 필수입니다.')
+        e.preventDefault?.()
       }
-    });
+    })
   }}
 />
 ```
@@ -973,53 +978,53 @@ DataGrid는 `on*` 콜백 prop이 없습니다. **이벤트는 `onReady`에서 `a
 > `onReady`는 마운트 시 한 번만 실행되므로, 클로저가 초기 값을 캡처합니다.
 
 ```tsx
-const onRowSelectRef = useRef(onRowSelect);
-onRowSelectRef.current = onRowSelect; // 렌더마다 최신값 갱신
+const onRowSelectRef = useRef(onRowSelect)
+onRowSelectRef.current = onRowSelect // 렌더마다 최신값 갱신
 
-<DataGrid
+;<DataGrid
   onReady={(api) => {
     api.bind('cellClick', (e) => {
-      onRowSelectRef.current((e.row as ProductRow).id); // 항상 최신 콜백 호출
-    });
+      onRowSelectRef.current((e.row as ProductRow).id) // 항상 최신 콜백 호출
+    })
   }}
-/>;
+/>
 ```
 
 #### 저장 패턴 — `getModifiedRows`
 
 ```tsx
 const handleSave = async () => {
-  const api = gridRef.current;
-  if (!api) return;
+  const api = gridRef.current
+  if (!api) return
 
-  const { createdRows, updatedRows, deletedRows } = api.getModifiedRows();
+  const { createdRows, updatedRows, deletedRows } = api.getModifiedRows()
 
   if (!createdRows.length && !updatedRows.length && !deletedRows.length) {
-    toast('저장할 변경이 없습니다.');
-    return;
+    toast('저장할 변경이 없습니다.')
+    return
   }
 
   try {
     for (const row of deletedRows) {
-      if (row.id > 0) await deleteProduct(row.id);
+      if (row.id > 0) await deleteProduct(row.id)
     }
     for (const row of updatedRows) {
-      await updateProduct(row.id, { name: row.name, status: row.status });
+      await updateProduct(row.id, { name: row.name, status: row.status })
     }
     for (const row of createdRows) {
       if (!row.name.trim()) {
-        toast.error('상품명을 입력하세요.');
-        return;
+        toast.error('상품명을 입력하세요.')
+        return
       }
-      await createProduct({ name: row.name, status: row.status });
+      await createProduct({ name: row.name, status: row.status })
     }
 
-    toast.success('저장했습니다.');
-    await invalidateProductQueries();
+    toast.success('저장했습니다.')
+    await invalidateProductQueries()
   } catch (e) {
-    toast.error(e instanceof Error ? e.message : '저장에 실패했습니다.');
+    toast.error(e instanceof Error ? e.message : '저장에 실패했습니다.')
   }
-};
+}
 ```
 
 #### 행 추가 / 체크된 행 삭제
@@ -1034,37 +1039,37 @@ const handleAddRow = () => {
   gridRef.current?.addRow(
     { id: 0, name: '', status: 'active' },
     'first', // 'first' | 'last'
-  );
-};
+  )
+}
 
 // (🔒일반적으로 필요 없음) 체크된 행 삭제 커스텀 – 예: 서버 데이터가 있으면 컨펌 후 삭제
 const handleRemoveChecked = async () => {
-  const api = gridRef.current;
-  if (!api) return;
+  const api = gridRef.current
+  if (!api) return
 
-  const checkedRows = api.getCheckedRows() as ProductRow[];
+  const checkedRows = api.getCheckedRows() as ProductRow[]
   if (!checkedRows.length) {
-    toast('삭제할 행을 선택하세요.');
-    return;
+    toast('삭제할 행을 선택하세요.')
+    return
   }
 
-  const persisted = checkedRows.filter((r) => r.id > 0);
+  const persisted = checkedRows.filter((r) => r.id > 0)
   if (persisted.length > 0) {
     // 서버 데이터가 있으면 확인 후 삭제
     openConfirm({
       title: '삭제',
       message: `${persisted.length}건을 삭제하시겠습니까?`,
       onOk: async () => {
-        for (const row of persisted) await deleteProduct(row.id);
-        await invalidateProductQueries();
-        toast.success('삭제했습니다.');
+        for (const row of persisted) await deleteProduct(row.id)
+        await invalidateProductQueries()
+        toast.success('삭제했습니다.')
       },
-    });
+    })
   } else {
     // 미저장 신규 행은 바로 제거
-    api.removeCheckedRows();
+    api.removeCheckedRows()
   }
-};
+}
 ```
 
 #### GridBtn 옵션
@@ -1097,7 +1102,7 @@ const options: DataGridOptions<T> = {
   rowHeaders: [{ type: 'rowNum' }, { type: 'checkbox' }], // 행번호 + 체크박스
   editingEvent: 'click', // 'click' | 'dblclick' (기본: dblclick)
   showRowStatus: false, // 추가/수정/삭제 상태 점 표시 X
-};
+}
 ```
 
 #### 실제 구현 참고 파일
@@ -1205,10 +1210,10 @@ viewer (뷰어) → manager (매니저) → admin (관리자)
 ### 8.3 권한 체크 방법
 
 ```tsx
-import { useAuthorized } from '@vanta/common';
+import { useAuthorized } from '@vanta/common'
 
 function AdminPanel() {
-  const { hasPermission, hasMinRole } = useAuthorized();
+  const { hasPermission, hasMinRole } = useAuthorized()
 
   return (
     <div>
@@ -1218,7 +1223,7 @@ function AdminPanel() {
       {/* 최소 역할 체크 */}
       {hasMinRole('admin') && <Button variant="danger">관리자 설정</Button>}
     </div>
-  );
+  )
 }
 ```
 
@@ -1317,14 +1322,14 @@ const { hasProgramCode, hasMinRole, hasAnyPermission } = useAuthorized();
 ```tsx
 function MyComponent() {
   // useTranslation은 auto-import 되어 있어 별도 import 불필요
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div>
       <h1>{t('common.confirm')}</h1>
       <p>{t('common.auth.login')}</p>
     </div>
-  );
+  )
 }
 ```
 
@@ -1441,11 +1446,11 @@ default namespace 키 예시:
 
 ```tsx
 // ✅ 경로 별칭 사용
-import { Button } from '@/components/common/ui';
-import { useProductListQuery } from '@/query/product-query';
+import { Button } from '@/components/common/ui'
+import { useProductListQuery } from '@/query/product-query'
 
 // ❌ 상대 경로 사용 금지 (깊은 참조 시)
-import { Button } from '../../../components/common/ui/Button';
+import { Button } from '../../../components/common/ui/Button'
 ```
 
 ### 10.4 커밋 메시지 규칙
@@ -1529,8 +1534,8 @@ npm run build-prd   # 운영 환경 (.env.prd)
 ```tsx
 // import 없이 바로 사용 가능!
 function MyPage() {
-  const [count, setCount] = useState(0);
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+  const [count, setCount] = useState(0)
+  const navigate = useNavigate()
+  const { t } = useTranslation()
 }
 ```

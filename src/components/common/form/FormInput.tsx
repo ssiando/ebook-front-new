@@ -1,15 +1,23 @@
 import type { InputHTMLAttributes } from 'react'
-import { useController, type Control } from 'react-hook-form'
+import { useController, type Control, type FieldPath, type FieldValues } from 'react-hook-form'
 import { clsx } from '@/utils/clsx'
 
-interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  name: string
-  // 여러 폼에서 재사용하는 공용 컴포넌트라 특정 폼의 필드 타입에 묶이지 않도록 Control<any, any, any>를 사용합니다.
-  control: Control<any, any, any>
+interface FormInputProps<TFieldValues extends FieldValues> extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'onChange' | 'onBlur'
+> {
+  name: FieldPath<TFieldValues>
+  control: Control<TFieldValues>
   label?: string
 }
 
-export function FormInput({ name, control, label, className, ...props }: FormInputProps) {
+export function FormInput<TFieldValues extends FieldValues>({
+  name,
+  control,
+  label,
+  className,
+  ...props
+}: FormInputProps<TFieldValues>) {
   const {
     field,
     fieldState: { error },

@@ -1,5 +1,5 @@
 import type { SelectHTMLAttributes } from 'react'
-import { useController, type Control } from 'react-hook-form'
+import { useController, type Control, type FieldPath, type FieldValues } from 'react-hook-form'
 import { clsx } from '@/utils/clsx'
 
 interface Option {
@@ -7,22 +7,24 @@ interface Option {
   value: string
 }
 
-interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  name: string
-  // 여러 폼에서 재사용하는 공용 컴포넌트라 특정 폼의 필드 타입에 묶이지 않도록 Control<any, any, any>를 사용합니다.
-  control: Control<any, any, any>
+interface FormSelectProps<TFieldValues extends FieldValues> extends Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  'name' | 'value' | 'onChange' | 'onBlur'
+> {
+  name: FieldPath<TFieldValues>
+  control: Control<TFieldValues>
   label?: string
   options: Option[]
 }
 
-export function FormSelect({
+export function FormSelect<TFieldValues extends FieldValues>({
   name,
   control,
   label,
   options,
   className,
   ...props
-}: FormSelectProps) {
+}: FormSelectProps<TFieldValues>) {
   const { field } = useController({ name, control })
 
   return (

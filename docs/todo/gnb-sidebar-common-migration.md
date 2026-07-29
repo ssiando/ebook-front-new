@@ -5,6 +5,7 @@
 > common `MainLayout` 의 슬롯(`headerWorkspaceArea`, `headerUserMenu`, `sidebarBottom`)에 주입돼 있다.
 > 이 슬롯 "내용물"을 common 으로 승격해 모든 시스템이 동일한 GNB/사이드바/테마를 공유하게 한다.
 > 연관 문서:
+>
 > - [서비스 포털 카탈로그 이관](./service-portal-hydrate-migration.md) — `/me/workspaces` hydrate, `buildSystemPortalUrl`
 > - [다크 테마 토큰화 이관](./theme-dark-mode-migration.md) — `:root[data-theme='dark']` 토큰 레이어
 > - [워크스페이스 slug URL 마이그레이션](./workspace-slug-url-migration.md) — basename slug
@@ -31,11 +32,11 @@ admin 에만 있는 아래 3개를 `@vanta/common` 으로 올려, **하위 시�
 
 common `MainLayout` 은 shell 을 고정 구조로 제공하고, 앱별 차이는 슬롯으로만 받는다. **슬롯은 이미 존재**한다.
 
-| 슬롯 (`MainLayoutSlots`) | 위치 | admin 이 주입하는 것 |
-|---|---|---|
-| `headerWorkspaceArea` | 헤더 워크스페이스 타이틀 영역 교체 | `<HeaderWorkspaceSwitcher />` |
-| `headerUserMenu` | 유저 드롭다운 항목 | `<MainLayoutUserMenuSlot>` (다크 토글 포함) |
-| `sidebarBottom` | 사이드바 메뉴 아래 | `<SidebarServiceList />` |
+| 슬롯 (`MainLayoutSlots`) | 위치                               | admin 이 주입하는 것                        |
+| ------------------------ | ---------------------------------- | ------------------------------------------- |
+| `headerWorkspaceArea`    | 헤더 워크스페이스 타이틀 영역 교체 | `<HeaderWorkspaceSwitcher />`               |
+| `headerUserMenu`         | 유저 드롭다운 항목                 | `<MainLayoutUserMenuSlot>` (다크 토글 포함) |
+| `sidebarBottom`          | 사이드바 메뉴 아래                 | `<SidebarServiceList />`                    |
 
 > 즉 이관은 "슬롯을 새로 파는 것"이 아니라 **슬롯에 꽂히는 컴포넌트를 common 으로 옮기고,
 > 각 시스템이 그걸 재사용**하게 만드는 작업이다. shell 변경은 최소.
@@ -49,19 +50,19 @@ common `MainLayout` 은 shell 을 고정 구조로 제공하고, 앱별 차이�
 
 ### 2.2 admin 에만 있는 것 (이관 대상)
 
-| 파일 | 역할 | 이관 시 행선지 |
-|---|---|---|
-| `src/components/layout/HeaderWorkspaceSwitcher.tsx` | GNB ws/sys 드롭다운 | common 컴포넌트 |
-| `src/assets/styles/layout/header-workspace-switcher.css` (159줄) | 위 스타일(`.hws*`) | common CSS |
-| `src/components/layout/SidebarServiceList.tsx` | 사이드바 서비스 목록 | common 컴포넌트 |
-| `src/assets/styles/layout/sidebar-service-list.css` (74줄) | 위 스타일(`.sidebar-service*`) | common CSS |
-| `src/components/layout/system-card-icons.tsx` | 시스템 아이콘 렌더러(`renderSystemIcon`) | common (GNB/사이드바/홈/모달 공용) |
-| `src/components/layout/MainLayoutUserMenuSlot.tsx` | 유저메뉴 항목 + **다크 토글** | 토글은 common, 항목 일부(접속기록/사이트맵)는 시스템별 |
-| `src/store/theme-store.ts` | 테마 store | common |
-| `src/lib/system-fe-url.ts` | 시스템 FE URL(**env 기반**) | common 으로 일원화(아래 §4 충돌 참고) |
-| `src/lib/workspace-basename.ts` | slug basename store | slug 문서 의존 (§5) |
-| `src/query/me-query.ts` (`useMyWorkspacesQuery`) | `/me/workspaces` 캐시 | common me-query 로 승격 검토 |
-| `src/index.css` `:root[data-theme='dark']` 블록 | 다크 토큰 레이어 | common 테마 레이어 (테마 문서) |
+| 파일                                                             | 역할                                     | 이관 시 행선지                                         |
+| ---------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| `src/components/layout/HeaderWorkspaceSwitcher.tsx`              | GNB ws/sys 드롭다운                      | common 컴포넌트                                        |
+| `src/assets/styles/layout/header-workspace-switcher.css` (159줄) | 위 스타일(`.hws*`)                       | common CSS                                             |
+| `src/components/layout/SidebarServiceList.tsx`                   | 사이드바 서비스 목록                     | common 컴포넌트                                        |
+| `src/assets/styles/layout/sidebar-service-list.css` (74줄)       | 위 스타일(`.sidebar-service*`)           | common CSS                                             |
+| `src/components/layout/system-card-icons.tsx`                    | 시스템 아이콘 렌더러(`renderSystemIcon`) | common (GNB/사이드바/홈/모달 공용)                     |
+| `src/components/layout/MainLayoutUserMenuSlot.tsx`               | 유저메뉴 항목 + **다크 토글**            | 토글은 common, 항목 일부(접속기록/사이트맵)는 시스템별 |
+| `src/store/theme-store.ts`                                       | 테마 store                               | common                                                 |
+| `src/lib/system-fe-url.ts`                                       | 시스템 FE URL(**env 기반**)              | common 으로 일원화(아래 §4 충돌 참고)                  |
+| `src/lib/workspace-basename.ts`                                  | slug basename store                      | slug 문서 의존 (§5)                                    |
+| `src/query/me-query.ts` (`useMyWorkspacesQuery`)                 | `/me/workspaces` 캐시                    | common me-query 로 승격 검토                           |
+| `src/index.css` `:root[data-theme='dark']` 블록                  | 다크 토큰 레이어                         | common 테마 레이어 (테마 문서)                         |
 
 ---
 
@@ -85,13 +86,13 @@ common `MainLayout` 은 shell 을 고정 구조로 제공하고, 앱별 차이�
 
 ### 3.2 시스템 URL 조립 전략이 **둘**로 갈려 있다 (가장 큰 리스크)
 
-| | admin `lib/system-fe-url.ts` | common `utils/system-portal-url.ts` |
-|---|---|---|
-| 소스 | Vite env `VITE_SYSTEM_FE_URL_<CODE>` | 호스트명 패턴 추론 `resolveCurrentEnv()` |
-| local | env 값 (`http://localhost:818x`) | `localPorts[systemName]` 또는 `location.origin` |
-| dev/stg/prd | env 값 | `https://{env}-{system}.vanta.ai/{slug}` |
-| 식별자 | `system.name` 소문자 | `system.code` (= `cm_system_std.cd`) |
-| ws slug | query `?wsId=&sysId=` 만 부착 | path `/{slug}` prefix 조립 |
+|             | admin `lib/system-fe-url.ts`         | common `utils/system-portal-url.ts`             |
+| ----------- | ------------------------------------ | ----------------------------------------------- |
+| 소스        | Vite env `VITE_SYSTEM_FE_URL_<CODE>` | 호스트명 패턴 추론 `resolveCurrentEnv()`        |
+| local       | env 값 (`http://localhost:818x`)     | `localPorts[systemName]` 또는 `location.origin` |
+| dev/stg/prd | env 값                               | `https://{env}-{system}.vanta.ai/{slug}`        |
+| 식별자      | `system.name` 소문자                 | `system.code` (= `cm_system_std.cd`)            |
+| ws slug     | query `?wsId=&sysId=` 만 부착        | path `/{slug}` prefix 조립                      |
 
 → **두 전략이 공존하면 시스템마다 URL 이 달라진다.** 이관 전에 하나로 통일해야 한다.
 
@@ -168,12 +169,12 @@ GNB 알림 벨(`NotificationBellV2`)과 수신함(`Inbox`)을 common 으로 올�
 
 관련 파일(이관 대상):
 
-| 파일 | 비고 |
-|---|---|
-| `src/components/layout/NotificationBellV2.tsx` | GNB 벨 — common 이관 시 알림 base URL 분리 필요 |
-| `src/components/system/notification/inbox/Inbox.tsx` | 수신함 — 동일 |
-| `src/api/notification/inbox-api.ts` | `/notifications/inbox*` — base URL override 적용 지점 |
-| `src/query/notification/notification-v2-query.ts` | 위 API 의 query 훅 |
+| 파일                                                 | 비고                                                  |
+| ---------------------------------------------------- | ----------------------------------------------------- |
+| `src/components/layout/NotificationBellV2.tsx`       | GNB 벨 — common 이관 시 알림 base URL 분리 필요       |
+| `src/components/system/notification/inbox/Inbox.tsx` | 수신함 — 동일                                         |
+| `src/api/notification/inbox-api.ts`                  | `/notifications/inbox*` — base URL override 적용 지점 |
+| `src/query/notification/notification-v2-query.ts`    | 위 API 의 query 훅                                    |
 
 > 단, **알림 "관리" 화면**(템플릿/발송이력/대상자 등 `notification-api.ts`, `template-api.ts`,
 > `dispatch-log-api.ts`, `workspace-template-api.ts`)은 admin 전용 관리 기능이므로 하위 시스템 이관 대상이 아니다.
@@ -202,15 +203,15 @@ GNB 시스템 드롭다운과 사이드바 서비스 목록에 뿌리는 시스�
 
 GNB/사이드바 컴포넌트가 쓰는 의존성과 이관 가능 여부:
 
-| 의존 | 현재 위치 | 이관 |
-|---|---|---|
-| `useActiveContextStore` | common ✅ | 그대로 |
-| `useMyWorkspacesQuery` | admin me-query | common me-query 로 승격(또는 `servicePortalStore` 재사용) |
-| `renderSystemIcon` | admin system-card-icons | common 으로 (홈/모달도 같이 쓰므로 공용 자산) |
-| `buildSystemSwitchUrl` | admin system-fe-url(env) | **common `buildSystemPortalUrl` 로 대체**(§3.2) |
-| `useWorkspaceBasenameStore` | admin(slug) | 콜백으로 분리(§3.5) |
-| `ACTIVE_CONTEXT_OVERRIDE_KEY` / `WORKSPACE_SESSION_PICKED_KEY` | common / admin | 전자는 common, 후자는 common 승격 검토 |
-| i18n `common.nav.*` | `defaultValue` 인라인 | 그대로(공통 네임스페이스) |
+| 의존                                                           | 현재 위치                | 이관                                                      |
+| -------------------------------------------------------------- | ------------------------ | --------------------------------------------------------- |
+| `useActiveContextStore`                                        | common ✅                | 그대로                                                    |
+| `useMyWorkspacesQuery`                                         | admin me-query           | common me-query 로 승격(또는 `servicePortalStore` 재사용) |
+| `renderSystemIcon`                                             | admin system-card-icons  | common 으로 (홈/모달도 같이 쓰므로 공용 자산)             |
+| `buildSystemSwitchUrl`                                         | admin system-fe-url(env) | **common `buildSystemPortalUrl` 로 대체**(§3.2)           |
+| `useWorkspaceBasenameStore`                                    | admin(slug)              | 콜백으로 분리(§3.5)                                       |
+| `ACTIVE_CONTEXT_OVERRIDE_KEY` / `WORKSPACE_SESSION_PICKED_KEY` | common / admin           | 전자는 common, 후자는 common 승격 검토                    |
+| i18n `common.nav.*`                                            | `defaultValue` 인라인    | 그대로(공통 네임스페이스)                                 |
 
 ---
 
@@ -219,27 +220,31 @@ GNB/사이드바 컴포넌트가 쓰는 의존성과 이관 가능 여부:
 > 원칙: **URL 일원화 → 다크 토큰 레이어 → 컴포넌트 이동 → opt-in 노출.** 시스템 하나씩 끊어서.
 
 ### 단계 0 — 사전 정리 (admin 안에서)
+
 - [ ] admin GNB/사이드바의 `buildSystemSwitchUrl` 호출을 common `buildSystemPortalUrl` 로 교체.
   - 동작(새 탭 진입, wsId/sysId 부팅) 동일 검증. query vs slug-path 차이 확인(§3.2).
 - [ ] `HeaderWorkspaceSwitcher` / `SidebarServiceList` 의 "admin 하드코딩"을 `currentSystemCode` 파라미터로 추출(§3.1).
 - [ ] 워크스페이스 전환의 slug 부작용을 `onWorkspaceSwitch` 콜백으로 분리(§3.5).
 
 ### 단계 1 — 다크 토큰 레이어 common 승격 (테마 문서 TODO 와 공동)
+
 - [ ] `index.css` 의 `:root[data-theme='dark']` 블록(토큰 override + 별칭 + 회색 반전)을 common 토큰 파일로.
 - [ ] `theme-store` → common, 키 `admin_theme` → `vanta_theme`(마이그레이션 처리), `updateMyTheme` 는 common me-api 사용.
 - [ ] 다크 토글 버튼을 common 의 재사용 컴포넌트(`ThemeToggleMenuItem` 등)로. 유저메뉴 슬롯에서 호출.
 - [ ] 검증: 하위 시스템에서 `data-theme="dark"` 토글 시 헤더/사이드바/그리드/폼 전부 다크 전환(이미 common CSS 에 다크 규칙 존재).
 
 ### 단계 2 — GNB/사이드바 컴포넌트 common 이동
+
 - [ ] `system-card-icons.tsx` → common (`renderSystemIcon`). 아이콘 SVG 팔레트/시스템 코드 매핑 정리.
 - [ ] `HeaderWorkspaceSwitcher` → common. props: `currentSystemCode`, `onWorkspaceSwitch?`, (옵션) 데이터 출처.
   - `header-workspace-switcher.css`(`.hws*`) → common CSS, 다크 규칙 포함.
 - [ ] `SidebarServiceList` → common. props: `currentSystemCode`, URL 빌더는 common.
   - `sidebar-service-list.css` → common CSS.
 - [ ] 데이터 출처 통일: `servicePortalStore`(hydrate) 또는 common `useMyWorkspacesQuery` 중 하나로.
-  (admin main.tsx 중복 `fetchMyWorkspaces` 정리도 이때 — 서비스 포털 문서 §4.2/§7.)
+      (admin main.tsx 중복 `fetchMyWorkspaces` 정리도 이때 — 서비스 포털 문서 §4.2/§7.)
 
 ### 단계 2.5 — 알림 벨/수신함 common 이동 + 알림 base URL 분리 (§3.6)
+
 - [ ] 알림 전용 axios 인스턴스(또는 base URL override) 를 common 에 추가. `VITE_ADMIN_API_BASE_URL` env.
   - common 싱글턴 인터셉터(토큰/리프레시/컨텍스트 헤더) 를 알림 인스턴스에도 적용(재사용 구조).
   - admin 은 env 미설정 시 자기 BE(default) 사용 → 동작 불변 검증.
@@ -249,13 +254,15 @@ GNB/사이드바 컴포넌트가 쓰는 의존성과 이관 가능 여부:
 - [ ] 새 탭 컨텍스트 전파(`?wsId=&sysId=`)·linkUrl 새 탭 열기 동작 유지 검증.
 
 ### 단계 3 — admin 을 common 소비로 전환 + 잔재 제거
+
 - [ ] admin slots 가 common 컴포넌트를 주입하도록 변경(`headerWorkspaceArea: <CommonHeaderWorkspaceSwitcher currentSystemCode="admin" onWorkspaceSwitch={applySlug} />`).
 - [ ] admin 에서 이동 완료된 파일 삭제: `system-fe-url.ts`(대체됐으면), `system-card-icons.tsx`,
-  `HeaderWorkspaceSwitcher.tsx`, `SidebarServiceList.tsx`, 관련 CSS, `theme-store.ts`,
-  `index.css` 다크 블록(common 으로 이동분).
+      `HeaderWorkspaceSwitcher.tsx`, `SidebarServiceList.tsx`, 관련 CSS, `theme-store.ts`,
+      `index.css` 다크 블록(common 으로 이동분).
 - [ ] admin `me-api.ts`/`me-query.ts` 중복 제거(서비스 포털 문서 §4.3 — 호환 확인 후).
 
 ### 단계 4 — 하위 시스템 opt-in
+
 - [ ] 각 시스템: `@vanta/common` 최신 버전 업.
 - [ ] GNB 전환 UI 가 필요한 시스템만 슬롯 주입 + `autoHydratePortals`.
 - [ ] 다크 토글은 유저메뉴에 공통 노출(시스템 무관).
@@ -266,14 +273,14 @@ GNB/사이드바 컴포넌트가 쓰는 의존성과 이관 가능 여부:
 ## 5. BE / 인프라 의존
 
 - [ ] **`/me/workspaces` 의 `systems[]` 는 사용자 권한 시스템만** 내려준다 — GNB/사이드바의 단일 소스(§3.7).
-  FE 는 권한 판정을 하지 않고 받은 목록만 렌더(자기 자신 숨김 제외).
+      FE 는 권한 판정을 하지 않고 받은 목록만 렌더(자기 자신 숨김 제외).
 - [ ] `/me/workspaces` 응답 `code`(시스템 코드) 필수 — URL 조립 소스(서비스 포털 문서 §5.1).
 - [ ] `/me/workspaces` 응답 `deployed` 권장 — 미배포 시스템 안내(`ServicePortalNotReady`)용(서비스 포털 문서 §5.2).
 - [ ] (선택) `/auth/me` 응답에 `theme` 추가 — 테마 서버 개인화 일원화(§3.4, 테마 문서 §4).
 - [ ] 시스템별 호스트 컨벤션 확정 — `prd-admin.vanta.ai` vs `admin.vanta.ai`(서비스 포털 문서 §7).
 - [ ] (slug 문서) slug URL 표준이 모든 시스템 라우터에 적용되는지 — wsId query 제거 가능 여부 판단(§3.2).
 - [ ] **알림 BE CORS**: admin BE 가 하위 시스템 FE origin(genx/asset/4dx/vfx 등)의 `/notifications/inbox*` 요청을
-  허용하도록 CORS 설정(§3.6). 인증 토큰·컨텍스트 헤더(`X-Workspace-Id`/`X-System-Id`) 포함 허용.
+      허용하도록 CORS 설정(§3.6). 인증 토큰·컨텍스트 헤더(`X-Workspace-Id`/`X-System-Id`) 포함 허용.
 - [ ] 알림 base URL env(`VITE_ADMIN_API_BASE_URL`) 를 각 시스템 환경(.env.dev/stg/prd)에 배포.
 
 ---
@@ -295,21 +302,21 @@ GNB/사이드바 컴포넌트가 쓰는 의존성과 이관 가능 여부:
 
 ## 7. 관련 변경 파일 (예상)
 
-| 위치 | 파일 | 작업 |
-|---|---|---|
-| common | `src/components/layout/HeaderWorkspaceSwitcher.tsx` | 신규(admin 이관, 파라미터화) |
-| common | `src/components/layout/SidebarServiceList.tsx` | 신규(admin 이관) |
-| common | `src/components/layout/system-card-icons.tsx` | 신규(admin 이관) |
-| common | `src/assets/styles/layout/header-workspace-switcher.css` | 신규(다크 포함) |
-| common | `src/assets/styles/layout/sidebar-service-list.css` | 신규(다크 포함) |
-| common | `src/components/layout/NotificationBellV2.tsx` | 신규(admin 이관, 알림 base URL 분리) |
-| common | 알림 전용 axios 인스턴스 / base URL override | 신규(`VITE_ADMIN_API_BASE_URL`, §3.6) |
-| common | `src/api/notification/inbox-api.ts` + inbox query | 신규(admin 이관, inbox 계열만) |
-| common | `src/store/theme-store.ts` | 신규(키 중립화) |
-| common | 테마 토큰 파일(`color-semantic.css` 등) | `[data-theme='dark']` 레이어 추가 |
-| common | `src/utils/system-portal-url.ts` | URL 단일 진입점 확정(query/slug 정리) |
-| common | `src/index.ts` | export 갱신 |
-| admin | `src/routes/index.tsx` | 슬롯을 common 컴포넌트로 주입 |
-| admin | `HeaderWorkspaceSwitcher/SidebarServiceList/system-card-icons/theme-store/system-fe-url` | 삭제(이관 후) |
-| admin | `src/index.css` 다크 블록 | common 으로 이동분 제거 |
-| admin | `me-api.ts`/`me-query.ts` | 중복 제거 검토 |
+| 위치   | 파일                                                                                     | 작업                                  |
+| ------ | ---------------------------------------------------------------------------------------- | ------------------------------------- |
+| common | `src/components/layout/HeaderWorkspaceSwitcher.tsx`                                      | 신규(admin 이관, 파라미터화)          |
+| common | `src/components/layout/SidebarServiceList.tsx`                                           | 신규(admin 이관)                      |
+| common | `src/components/layout/system-card-icons.tsx`                                            | 신규(admin 이관)                      |
+| common | `src/assets/styles/layout/header-workspace-switcher.css`                                 | 신규(다크 포함)                       |
+| common | `src/assets/styles/layout/sidebar-service-list.css`                                      | 신규(다크 포함)                       |
+| common | `src/components/layout/NotificationBellV2.tsx`                                           | 신규(admin 이관, 알림 base URL 분리)  |
+| common | 알림 전용 axios 인스턴스 / base URL override                                             | 신규(`VITE_ADMIN_API_BASE_URL`, §3.6) |
+| common | `src/api/notification/inbox-api.ts` + inbox query                                        | 신규(admin 이관, inbox 계열만)        |
+| common | `src/store/theme-store.ts`                                                               | 신규(키 중립화)                       |
+| common | 테마 토큰 파일(`color-semantic.css` 등)                                                  | `[data-theme='dark']` 레이어 추가     |
+| common | `src/utils/system-portal-url.ts`                                                         | URL 단일 진입점 확정(query/slug 정리) |
+| common | `src/index.ts`                                                                           | export 갱신                           |
+| admin  | `src/routes/index.tsx`                                                                   | 슬롯을 common 컴포넌트로 주입         |
+| admin  | `HeaderWorkspaceSwitcher/SidebarServiceList/system-card-icons/theme-store/system-fe-url` | 삭제(이관 후)                         |
+| admin  | `src/index.css` 다크 블록                                                                | common 으로 이동분 제거               |
+| admin  | `me-api.ts`/`me-query.ts`                                                                | 중복 제거 검토                        |

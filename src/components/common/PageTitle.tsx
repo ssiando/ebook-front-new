@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Info, Star } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import { Button } from '@/components/common/ui/Button'
@@ -22,42 +23,50 @@ interface PageTitleActionButtonsProps {
   searchLabel?: string
   onRegister?: () => void
   registerLabel?: string
+  /** 조회/등록 버튼 앞에 끼워 넣을 화면 전용 버튼 (예: 그룹 저장, 항목 저장). */
+  extra?: ReactNode
 }
 
 interface PageTitleProps {
   title: string
   breadcrumb?: string
+  /** 제목 아래에 표시할 안내 문구 (선택). */
+  description?: string
   actionButtonsProps?: PageTitleActionButtonsProps
 }
 
-export function PageTitle({ title, breadcrumb, actionButtonsProps }: PageTitleProps) {
+export function PageTitle({ title, breadcrumb, description, actionButtonsProps }: PageTitleProps) {
   const location = useLocation()
   const resolvedBreadcrumb = breadcrumb ?? findBreadcrumb(menuData as MenuItem[], location.pathname)
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <h1 className="text-lg font-semibold text-gray-800">{title}</h1>
-        <Star size={16} className="text-gray-300" />
-        <Info size={16} className="text-gray-300" />
-        {resolvedBreadcrumb && (
-          <span className="ml-2 text-sm text-gray-400">{resolvedBreadcrumb}</span>
-        )}
-      </div>
-      {actionButtonsProps && (
-        <div className="flex gap-2">
-          {actionButtonsProps.onSearch && (
-            <Button type="button" variant="secondary" onClick={actionButtonsProps.onSearch}>
-              {actionButtonsProps.searchLabel ?? '조회'}
-            </Button>
-          )}
-          {actionButtonsProps.onRegister && (
-            <Button type="button" variant="primary" onClick={actionButtonsProps.onRegister}>
-              {actionButtonsProps.registerLabel ?? '등록'}
-            </Button>
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-semibold text-gray-800">{title}</h1>
+          <Star size={16} className="text-gray-300" />
+          <Info size={16} className="text-gray-300" />
+          {resolvedBreadcrumb && (
+            <span className="ml-2 text-sm text-gray-400">{resolvedBreadcrumb}</span>
           )}
         </div>
-      )}
+        {actionButtonsProps && (
+          <div className="flex gap-2">
+            {actionButtonsProps.extra}
+            {actionButtonsProps.onSearch && (
+              <Button type="button" variant="secondary" onClick={actionButtonsProps.onSearch}>
+                {actionButtonsProps.searchLabel ?? '조회'}
+              </Button>
+            )}
+            {actionButtonsProps.onRegister && (
+              <Button type="button" variant="primary" onClick={actionButtonsProps.onRegister}>
+                {actionButtonsProps.registerLabel ?? '등록'}
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+      {description && <p className="text-xs text-gray-400">{description}</p>}
     </div>
   )
 }

@@ -79,16 +79,16 @@
 ### 배치 예시 — 탭 + 검색 + 그리드 화면
 
 ```tsx
-import { PageTitle, PageTabs, PageSearch } from '@vanta/common';
+import { PageTitle, PageTabs, PageSearch } from '@vanta/common'
 
 const TAB_ITEMS = [
   { key: 'list', label: '목록' },
   { key: 'detail', label: '상세' },
-];
+]
 
 export default function SamplePage() {
-  const [activeTab, setActiveTab] = useState<'list' | 'detail'>('list');
-  const { control, handleSubmit } = useForm({ defaultValues: { keyword: '' } });
+  const [activeTab, setActiveTab] = useState<'list' | 'detail'>('list')
+  const { control, handleSubmit } = useForm({ defaultValues: { keyword: '' } })
 
   return (
     <>
@@ -112,7 +112,7 @@ export default function SamplePage() {
       {activeTab === 'list' && <ListContent data={gridData} />}
       {activeTab === 'detail' && <DetailContent data={detailData} />}
     </>
-  );
+  )
 }
 ```
 
@@ -137,12 +137,12 @@ react-hook-form의 `control`을 받아 동작하는 폼 필드 컴포넌트. 모
 
 상세 조회·승인 대기 등 **값은 폼에 남기되 사용자 입력만 막을 때** `readOnly`를 쓴다. `disabled`와 RHF 동작이 다르다.
 
-| 구분 | `disabled` | `readOnly` |
-| ---- | ---------- | ---------- |
-| UI | 입력·클릭 불가 | 입력 잠금 (컴포넌트별 보조 UI 예외는 아래 표 참고) |
-| `getValues()` / `watch()` | ✅ 값 유지 | ✅ 값 유지 |
-| `setValue()` / `reset()` | ✅ 가능 | ✅ 가능 |
-| `handleSubmit` payload | ❌ **필드 제외** | ✅ **필드 포함** |
+| 구분                      | `disabled`       | `readOnly`                                         |
+| ------------------------- | ---------------- | -------------------------------------------------- |
+| UI                        | 입력·클릭 불가   | 입력 잠금 (컴포넌트별 보조 UI 예외는 아래 표 참고) |
+| `getValues()` / `watch()` | ✅ 값 유지       | ✅ 값 유지                                         |
+| `setValue()` / `reset()`  | ✅ 가능          | ✅ 가능                                            |
+| `handleSubmit` payload    | ❌ **필드 제외** | ✅ **필드 포함**                                   |
 
 - RHF `Controller`에는 **`disabled`만** 전달한다. `readOnly`는 UI 잠금용이며 submit 제외에 쓰이지 않는다.
 - 상세 API 응답을 `setValue`로 채운 뒤 `readOnly`로 보여 주면, 저장 API에 그대로 실을 수 있다.
@@ -150,15 +150,15 @@ react-hook-form의 `control`을 받아 동작하는 폼 필드 컴포넌트. 모
 
 **지원 컴포넌트** (공통 `@vanta/common` Form 계열)
 
-| 컴포넌트 | 비고 |
-| -------- | ---- |
-| `FormInput`, `FormTextarea`, `FormNumberInput` | native `readOnly` + CSS |
-| `FormSelect` (단일·멀티) | 드롭다운·칩 제거 클릭 차단 |
-| `FormCheckbox`, `FormToggle`, `FormRadioGroup`, `FormRadioButtonGroup` | `onChange` 가드 |
-| `FormDatePicker` | 입력·달력 버튼 잠금 |
-| `FormTiptap` | 편집·툴바 비활성 |
-| `FormSearchLookup`, `FormSearchChips` | 검색 input·Enter(`onKeyDown`) 잠금. 돋보기(`onSearchClick`)는 활성. `searchIconDisabled`로 아이콘만 별도 차단 |
-| `FormAutocomplete`, `FormAutocompleteChips` | 드롭다운·칩 조작 차단 |
+| 컴포넌트                                                               | 비고                                                                                                          |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `FormInput`, `FormTextarea`, `FormNumberInput`                         | native `readOnly` + CSS                                                                                       |
+| `FormSelect` (단일·멀티)                                               | 드롭다운·칩 제거 클릭 차단                                                                                    |
+| `FormCheckbox`, `FormToggle`, `FormRadioGroup`, `FormRadioButtonGroup` | `onChange` 가드                                                                                               |
+| `FormDatePicker`                                                       | 입력·달력 버튼 잠금                                                                                           |
+| `FormTiptap`                                                           | 편집·툴바 비활성                                                                                              |
+| `FormSearchLookup`, `FormSearchChips`                                  | 검색 input·Enter(`onKeyDown`) 잠금. 돋보기(`onSearchClick`)는 활성. `searchIconDisabled`로 아이콘만 별도 차단 |
+| `FormAutocomplete`, `FormAutocompleteChips`                            | 드롭다운·칩 조작 차단                                                                                         |
 
 ```tsx
 // 상세 조회 — API 로드 후 setValue, UI는 readOnly
@@ -354,12 +354,12 @@ const { control, handleSubmit } = useForm({
 
 날짜·기간 선택 컴포넌트. `mode`에 따라 폼 값 타입이 달라진다.
 
-| 고유 prop          | 타입                                                                   | 설명                                                                            |
-| ------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `mode`             | `'year' \| 'month' \| 'date' \| 'time' \| 'monthRange' \| 'dateRange'` | **필수**. 단일 모드 → `string \| null`, range 모드 → `[string, string] \| null` |
-| `inputClassName`   | `string`                                                               | 입력 박스 className                                                             |
-| `id`               | `string`                                                               | label 연결용 id                                                                 |
-| `placeholder`      | `string`                                                               | 빈 입력 placeholder                                                             |
+| 고유 prop                | 타입                                                                   | 설명                                                                            |
+| ------------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `mode`                   | `'year' \| 'month' \| 'date' \| 'time' \| 'monthRange' \| 'dateRange'` | **필수**. 단일 모드 → `string \| null`, range 모드 → `[string, string] \| null` |
+| `inputClassName`         | `string`                                                               | 입력 박스 className                                                             |
+| `id`                     | `string`                                                               | label 연결용 id                                                                 |
+| `placeholder`            | `string`                                                               | 빈 입력 placeholder                                                             |
 | `showRangePresets`       | `boolean`                                                              | 기간 모드 — **캘린더 패널** 하단 1년/6개월/1개월. 기본 `true` (오늘 기준 과거)  |
 | `showInlineRangePresets` | `boolean`                                                              | 기간 모드 — **입력 오른쪽** 인라인 1년/6개월/1개월. 기본 `false` (시작일 기준)  |
 | `emptyHint`              | `string`                                                               | 빈 값일 때 안내 문구. 미지정 시 i18n `datePicker.hint*` 사용                    |
@@ -368,10 +368,10 @@ const { control, handleSubmit } = useForm({
 
 기간 모드(`monthRange` · `dateRange`)에서 빠른 선택 버튼 위치를 나눕니다.
 
-| prop | 위치 | 기본 | 세팅 규칙 |
-| --- | --- | --- | --- |
-| `showRangePresets` | 캘린더 패널 안 | `true` | 오늘(이번 달)을 **끝**으로 N 기간 **과거** |
-| `showInlineRangePresets` | 기간 입력 오른쪽 | `false` | 시작일(없으면 오늘)부터 N 기간 **미래** |
+| prop                     | 위치             | 기본    | 세팅 규칙                                  |
+| ------------------------ | ---------------- | ------- | ------------------------------------------ |
+| `showRangePresets`       | 캘린더 패널 안   | `true`  | 오늘(이번 달)을 **끝**으로 N 기간 **과거** |
+| `showInlineRangePresets` | 기간 입력 오른쪽 | `false` | 시작일(없으면 오늘)부터 N 기간 **미래**    |
 
 ```tsx
 {/* 기본: 캘린더 안에만 프리셋 (기존 동작) */}
@@ -415,19 +415,19 @@ const { control, handleSubmit } = useForm({
 담당한다(Autocomplete처럼 자체 드롭다운을 열지 않음). 검색어를 모두 지우면 선택 결과도 해제된다.
 폼 값은 **두 필드**로 나뉜다 — `name`(선택 결과 `{ value, label }` \| `null`), `queryName`(검색어 문자열).
 
-| 고유 prop           | 타입                            | 설명                                                        |
-| ------------------- | ------------------------------- | ----------------------------------------------------------- |
-| `queryName`         | `FieldPath`                     | **필수**. 검색어(입력창 텍스트) 필드                        |
-| `onSearchClick`     | `() => void`                    | 돋보기 클릭 핸들러(보통 검색 팝업 오픈)                     |
-| `onKeyDown`         | `(e) => void`                   | 검색어 input keydown(Enter 검색 트리거 등은 소비처가 판단)  |
-| `searchIconDisabled`| `boolean`                       | `true`면 돋보기 버튼만 비활성. Enter(`onKeyDown`) 팝업 검색은 유지 |
-| `searchIconLabel`   | `string`                        | 돋보기 버튼 aria-label                                      |
-| `showResultLabel`   | `boolean`                       | 결과 라벨 박스 노출. 기본 `true`                            |
-| `resultPlaceholder` | `string`                        | 결과 박스 placeholder(값 없을 때)                           |
-| `placeholder`       | `string`                        | 검색어 input placeholder                                    |
-| `maxLength`         | `number`                        | 검색어 input 최대 길이                                      |
-| `inputClassName` / `resultClassName` | `string`       | 검색어 input / 결과 박스 className                          |
-| `inputProps`        | `input 속성`                    | 제어 관련 속성 제외한 나머지 `<input>` 속성                 |
+| 고유 prop                            | 타입          | 설명                                                               |
+| ------------------------------------ | ------------- | ------------------------------------------------------------------ |
+| `queryName`                          | `FieldPath`   | **필수**. 검색어(입력창 텍스트) 필드                               |
+| `onSearchClick`                      | `() => void`  | 돋보기 클릭 핸들러(보통 검색 팝업 오픈)                            |
+| `onKeyDown`                          | `(e) => void` | 검색어 input keydown(Enter 검색 트리거 등은 소비처가 판단)         |
+| `searchIconDisabled`                 | `boolean`     | `true`면 돋보기 버튼만 비활성. Enter(`onKeyDown`) 팝업 검색은 유지 |
+| `searchIconLabel`                    | `string`      | 돋보기 버튼 aria-label                                             |
+| `showResultLabel`                    | `boolean`     | 결과 라벨 박스 노출. 기본 `true`                                   |
+| `resultPlaceholder`                  | `string`      | 결과 박스 placeholder(값 없을 때)                                  |
+| `placeholder`                        | `string`      | 검색어 input placeholder                                           |
+| `maxLength`                          | `number`      | 검색어 input 최대 길이                                             |
+| `inputClassName` / `resultClassName` | `string`      | 검색어 input / 결과 박스 className                                 |
+| `inputProps`                         | `input 속성`  | 제어 관련 속성 제외한 나머지 `<input>` 속성                        |
 
 ```tsx
 <FormSearchLookup
@@ -463,21 +463,21 @@ const { control, handleSubmit } = useForm({
 Autocomplete와 달리 자체 드롭다운 필터가 없고, 항목 추가는 소비처가 `onSearchClick` 팝업에서 처리한다.
 폼 값은 `FormSearchChipItem[]` — **문자열 배열** 또는 `{ value }`(+extra) **객체 배열**을 모두 허용한다.
 
-| 고유 prop         | 타입                                   | 설명                                                     |
-| ----------------- | -------------------------------------- | -------------------------------------------------------- |
-| `onSearchClick`   | `() => void`                           | 돋보기 클릭 핸들러(보통 검색 팝업 오픈)                  |
-| `onKeyDown`       | `(e) => void`                          | 검색어 input keydown                                     |
-| `searchIconDisabled` | `boolean`                           | `true`면 돋보기 버튼만 비활성. Enter(`onKeyDown`) 팝업 검색은 유지 |
-| `getChipLabel`    | `(item) => string`                     | 칩 라벨 변환. 없으면 문자열/`item.value` 표시            |
-| `searchIconLabel` | `string`                               | 돋보기 버튼 aria-label                                   |
-| `placeholder`     | `string`                               | 검색어 input placeholder                                 |
-| `inputClassName`  | `string`                               | 검색어 input className                                   |
-| `inputProps`      | `input 속성`                           | 제어 관련 속성 제외한 나머지 `<input>` 속성              |
+| 고유 prop            | 타입               | 설명                                                               |
+| -------------------- | ------------------ | ------------------------------------------------------------------ |
+| `onSearchClick`      | `() => void`       | 돋보기 클릭 핸들러(보통 검색 팝업 오픈)                            |
+| `onKeyDown`          | `(e) => void`      | 검색어 input keydown                                               |
+| `searchIconDisabled` | `boolean`          | `true`면 돋보기 버튼만 비활성. Enter(`onKeyDown`) 팝업 검색은 유지 |
+| `getChipLabel`       | `(item) => string` | 칩 라벨 변환. 없으면 문자열/`item.value` 표시                      |
+| `searchIconLabel`    | `string`           | 돋보기 버튼 aria-label                                             |
+| `placeholder`        | `string`           | 검색어 input placeholder                                           |
+| `inputClassName`     | `string`           | 검색어 input className                                             |
+| `inputProps`         | `input 속성`       | 제어 관련 속성 제외한 나머지 `<input>` 속성                        |
 
 ```tsx
 <FormSearchChips
   control={control}
-  name="targets"       // string[] 또는 { value }[] 
+  name="targets"       // string[] 또는 { value }[]
   label="대상"
   placeholder="대상 검색"
   onSearchClick={openTargetSearchModal}
@@ -502,20 +502,20 @@ Autocomplete와 달리 자체 드롭다운 필터가 없고, 항목 추가는 �
 `{ value, label }`(+ 필요 시 extra 필드) 또는 `null`이다. 입력값이 선택 라벨과 달라지거나 비면
 선택이 해제(`null`)된다.
 
-| 고유 prop             | 타입                                                         | 설명                                                                         |
-| --------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| `items`               | `FormAutocompleteValue<TExtra>[]`                            | 후보 목록 `{ value, label }`(+extra). **필수**                               |
-| `placeholder`         | `string`                                                     | 입력 placeholder                                                             |
-| `emptyText`           | `string`                                                     | 검색 결과 없음 문구. 기본 i18n `common.ui.msg.noData`                        |
-| `maxLength`           | `number`                                                     | 입력 최대 길이                                                               |
-| `layout`              | `'horizontal' \| 'vertical'`                                 | 라벨·필드 정렬                                                               |
-| `modified`            | `boolean`                                                    | 수정 표시 스타일                                                             |
-| `getOptionLabel`      | `(item) => string`                                           | 목록·선택 표시 라벨 커스터마이즈                                             |
-| `getOptionSearchText` | `(item) => string \| string[]`                               | 검색 매칭 대상 텍스트(라벨 외 필드로 검색)                                   |
-| `renderOption`        | `(args) => ReactNode`                                        | 옵션 항목 커스텀 렌더(`highlight`, `select` 제공)                            |
-| `onSelect`            | `(item) => void`                                             | 선택 콜백                                                                    |
-| `ariaLabel`           | `string`                                                     | 접근성 라벨(미지정 시 `label`)                                               |
-| `inputProps`          | `input 속성`                                                 | 제어 관련 속성 제외한 나머지 `<input>` 속성                                  |
+| 고유 prop             | 타입                              | 설명                                                  |
+| --------------------- | --------------------------------- | ----------------------------------------------------- |
+| `items`               | `FormAutocompleteValue<TExtra>[]` | 후보 목록 `{ value, label }`(+extra). **필수**        |
+| `placeholder`         | `string`                          | 입력 placeholder                                      |
+| `emptyText`           | `string`                          | 검색 결과 없음 문구. 기본 i18n `common.ui.msg.noData` |
+| `maxLength`           | `number`                          | 입력 최대 길이                                        |
+| `layout`              | `'horizontal' \| 'vertical'`      | 라벨·필드 정렬                                        |
+| `modified`            | `boolean`                         | 수정 표시 스타일                                      |
+| `getOptionLabel`      | `(item) => string`                | 목록·선택 표시 라벨 커스터마이즈                      |
+| `getOptionSearchText` | `(item) => string \| string[]`    | 검색 매칭 대상 텍스트(라벨 외 필드로 검색)            |
+| `renderOption`        | `(args) => ReactNode`             | 옵션 항목 커스텀 렌더(`highlight`, `select` 제공)     |
+| `onSelect`            | `(item) => void`                  | 선택 콜백                                             |
+| `ariaLabel`           | `string`                          | 접근성 라벨(미지정 시 `label`)                        |
+| `inputProps`          | `input 속성`                      | 제어 관련 속성 제외한 나머지 `<input>` 속성           |
 
 ```tsx
 <FormAutocomplete
@@ -533,19 +533,19 @@ Autocomplete와 달리 자체 드롭다운 필터가 없고, 항목 추가는 �
 입력영역에 마우스를 올리면 선택 목록 팝업이 떠서 항목 클릭으로 개별 제거할 수 있다.
 폼 값은 선택 객체 배열 `FormAutocompleteChipValue[]`(`{ value, label }`(+extra))이다.
 
-| 고유 prop             | 타입                                   | 설명                                                        |
-| --------------------- | -------------------------------------- | ----------------------------------------------------------- |
-| `items`               | `FormAutocompleteChipValue<TExtra>[]`  | 후보 목록 `{ value, label }`(+extra). **필수**. 이미 선택된 항목은 후보에서 자동 제외 |
-| `placeholder`         | `string`                               | 입력 placeholder                                            |
-| `emptyText`           | `string`                               | 검색 결과 없음 문구. 기본 i18n `common.ui.msg.noData`       |
-| `maxLength`           | `number`                               | 입력 최대 길이                                              |
-| `layout`              | `'horizontal' \| 'vertical'`           | 라벨·필드 정렬                                              |
-| `modified`            | `boolean`                              | 수정 표시 스타일                                            |
-| `getOptionLabel`      | `(item) => string`                     | 목록 표시 라벨 커스터마이즈                                 |
-| `getOptionSearchText` | `(item) => string \| string[]`         | 검색 매칭 대상 텍스트                                       |
-| `getChipLabel`        | `(item) => string`                     | 칩·선택 팝업 표시 라벨 커스터마이즈                         |
-| `onSelect`            | `(item) => void`                       | 선택 콜백                                                   |
-| `inputProps`          | `input 속성`                           | 제어 관련 속성 제외한 나머지 `<input>` 속성                 |
+| 고유 prop             | 타입                                  | 설명                                                                                  |
+| --------------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `items`               | `FormAutocompleteChipValue<TExtra>[]` | 후보 목록 `{ value, label }`(+extra). **필수**. 이미 선택된 항목은 후보에서 자동 제외 |
+| `placeholder`         | `string`                              | 입력 placeholder                                                                      |
+| `emptyText`           | `string`                              | 검색 결과 없음 문구. 기본 i18n `common.ui.msg.noData`                                 |
+| `maxLength`           | `number`                              | 입력 최대 길이                                                                        |
+| `layout`              | `'horizontal' \| 'vertical'`          | 라벨·필드 정렬                                                                        |
+| `modified`            | `boolean`                             | 수정 표시 스타일                                                                      |
+| `getOptionLabel`      | `(item) => string`                    | 목록 표시 라벨 커스터마이즈                                                           |
+| `getOptionSearchText` | `(item) => string \| string[]`        | 검색 매칭 대상 텍스트                                                                 |
+| `getChipLabel`        | `(item) => string`                    | 칩·선택 팝업 표시 라벨 커스터마이즈                                                   |
+| `onSelect`            | `(item) => void`                      | 선택 콜백                                                                             |
+| `inputProps`          | `input 속성`                          | 제어 관련 속성 제외한 나머지 `<input>` 속성                                           |
 
 ```tsx
 <FormAutocompleteChips
@@ -585,11 +585,11 @@ Autocomplete와 달리 자체 드롭다운 필터가 없고, 항목 추가는 �
 `onPageSizeChange`, `pageSizeOptions`는 **deprecated** — UI 없음. page size는 `GridBtn` 사용.
 
 ```tsx
-import { DataGrid, GridBtn, Pagination } from '@vanta/common';
+import { DataGrid, GridBtn, Pagination } from '@vanta/common'
 
-const [params, setParams] = useState({ page: 0, size: 20 });
+const [params, setParams] = useState({ page: 0, size: 20 })
 
-<>
+;<>
   <GridBtn
     gridRef={gridRef}
     gridTitle="목록"
@@ -603,7 +603,7 @@ const [params, setParams] = useState({ page: 0, size: 20 });
   />
   <DataGrid ref={gridRef} columns={columns} data={data?.content ?? []} />
   <Pagination pageResponse={data} onPageChange={(page) => setParams((p) => ({ ...p, page }))} />
-</>;
+</>
 ```
 
 > size 변경 시 `GridBtn`이 `setCurrentPage(0)`을 호출합니다. 목록 재조회는 `useQuery`의 `page`/`size` 의존 또는 `fetchList` 등 **기존 패턴**을 유지하세요.
@@ -633,7 +633,7 @@ import { TableBtn } from '@vanta/common';
 | --------- | -------------------------------------------------------------------------- |
 | `Button`  | 버튼 (`variant`: `primary` · `secondary` · `outline` · `danger` · `ghost`) |
 | `Modal`   | 레이어 팝업                                                                |
-| `Drawer`  | 우측 슬라이드 패널 (`useDrawerStore`로 오픈, X로만 닫힘)                    |
+| `Drawer`  | 우측 슬라이드 패널 (`useDrawerStore`로 오픈, X로만 닫힘)                   |
 | `Badge`   | 상태 뱃지                                                                  |
 | `Card`    | 카드 컨테이너                                                              |
 | `Tooltip` | 툴팁                                                                       |
@@ -693,13 +693,13 @@ const [open, setOpen] = useState(false);
 - `openDrawer` 옵션: `title?` · `footer?` · `width?`(기본 480px).
 
 ```tsx
-import { Button, useDrawerStore } from '@vanta/common';
+import { Button, useDrawerStore } from '@vanta/common'
 
-import DrawerProjectDetail from '@/components/samples/popup/DrawerProjectDetail';
+import DrawerProjectDetail from '@/components/samples/popup/DrawerProjectDetail'
 
 function Foo() {
-  const openDrawer = useDrawerStore((s) => s.openDrawer);
-  const closeDrawer = useDrawerStore((s) => s.closeDrawer);
+  const openDrawer = useDrawerStore((s) => s.openDrawer)
+  const closeDrawer = useDrawerStore((s) => s.closeDrawer)
 
   const openProjectDrawer = () =>
     openDrawer(
@@ -707,7 +707,8 @@ function Foo() {
       <DrawerProjectDetail projectId={123} />,
       {
         title: '프로젝트 상세', // 헤더(제목 + X)
-        footer: ( // 하단 고정 푸터
+        // 하단 고정 푸터
+        footer: (
           <>
             <Button onClick={closeDrawer}>App 바로가기</Button>
             <Button onClick={closeDrawer}>워크플로우 바로가기</Button>
@@ -715,27 +716,27 @@ function Foo() {
         ),
         width: 480,
       },
-    );
+    )
 
   return (
     <Button variant="outline" onClick={openProjectDrawer}>
       열기
     </Button>
-  );
+  )
 }
 ```
 
 ```tsx
 // content 컴포넌트(DrawerXxx)는 "본문"만 렌더한다 (title/footer는 위에서 셸이 처리).
-type Props = { projectId: number };
+type Props = { projectId: number }
 export default function DrawerProjectDetail({ projectId }: Props) {
   // projectId로 조회/렌더 ...
-  return <div>{/* 탭, 정보표 등 본문 */}</div>;
+  return <div>{/* 탭, 정보표 등 본문 */}</div>
 }
 
 // 닫기는 어디서든:
-const closeDrawer = useDrawerStore((s) => s.closeDrawer);
-closeDrawer();
+const closeDrawer = useDrawerStore((s) => s.closeDrawer)
+closeDrawer()
 ```
 
 ---
@@ -745,26 +746,26 @@ closeDrawer();
 공통코드는 앱 부팅 시 서버에서 한 번 캐싱된다. 화면에서는 별도 API 호출 없이 `useCodeStore`로 즉시 조회한다.
 
 ```tsx
-import { EMPTY_CODE_LIST, useCodeStore } from '@vanta/common';
+import { EMPTY_CODE_LIST, useCodeStore } from '@vanta/common'
 
 // 코드 목록 조회 (셀렉트 옵션 등)
-const statusList = useCodeStore((s) => s.getCodeList('STATUS_CD'));
+const statusList = useCodeStore((s) => s.getCodeList('STATUS_CD'))
 
 // 코드명 단건 조회 (그리드 표시명 등)
-const statusName = useCodeStore((s) => s.getCodeName('STATUS_CD', row.statusCd));
+const statusName = useCodeStore((s) => s.getCodeName('STATUS_CD', row.statusCd))
 
 // 조건 필터링
-const activeRoles = useCodeStore((s) => s.getFilteredCodes('ROLE_CD', (item) => item.isActive));
+const activeRoles = useCodeStore((s) => s.getFilteredCodes('ROLE_CD', (item) => item.isActive))
 ```
 
 > **`EMPTY_CODE_LIST` 사용 필수**: 셀렉터 기본값으로 인라인 `?? []`를 쓰면 매 렌더마다 새 배열 참조가 생겨 무한 리렌더를 유발한다.
 
 ```tsx
 // ❌ 무한 리렌더 위험
-const list = useCodeStore((s) => s.getCodeList('ROLE_CD')) ?? [];
+const list = useCodeStore((s) => s.getCodeList('ROLE_CD')) ?? []
 
 // ✅ 안전
-const list = useCodeStore((s) => s.getCodeList('ROLE_CD')) ?? EMPTY_CODE_LIST;
+const list = useCodeStore((s) => s.getCodeList('ROLE_CD')) ?? EMPTY_CODE_LIST
 ```
 
 ---
@@ -774,17 +775,17 @@ const list = useCodeStore((s) => s.getCodeList('ROLE_CD')) ?? EMPTY_CODE_LIST;
 서버에서 관리하는 i18n 라벨은 로그인 후 자동으로 i18next에 주입된다. 컴포넌트에서는 `t()` 함수를 그대로 사용한다.
 
 ```tsx
-const { t } = useTranslation();
+const { t } = useTranslation()
 
-t('common.confirm'); // '확인'
-t('common.cancel'); // '취소'
+t('common.confirm') // '확인'
+t('common.cancel') // '취소'
 
 // 보간 — {{변수명}}으로 값을 주입한다
 // ko.json: "greeting": "안녕하세요, {{name}}님"
-t('common.greeting', { name: '홍길동' }); // '안녕하세요, 홍길동님'
+t('common.greeting', { name: '홍길동' }) // '안녕하세요, 홍길동님'
 
 // ko.json: "itemCount": "총 {{count}}건"
-t('common.itemCount', { count: 42 }); // '총 42건'
+t('common.itemCount', { count: 42 }) // '총 42건'
 ```
 
 > `useTranslation`은 react-i18next의 auto-import로 명시적 import 없이 사용 가능하다.
@@ -806,15 +807,15 @@ t('common.itemCount', { count: 42 }); // '총 42건'
 > **`showMessage`의 `tone`**: 팝업 배경 색상을 결정한다. `'info'`(기본, 파랑) · `'success'`(초록) · `'error'`(빨강) · `'warning'`(노랑). `showAlert` / `showConfirm`에는 tone이 없다.
 
 ```tsx
-import { messageUtil } from '@vanta/common';
+import { messageUtil } from '@vanta/common'
 
-const { t } = useTranslation();
+const { t } = useTranslation()
 
 // 알림
-messageUtil.showAlert(t('common.info'), t('common.saveSuccess'));
+messageUtil.showAlert(t('common.info'), t('common.saveSuccess'))
 
 // 확인 / 취소
-messageUtil.showConfirm(t('common.delete'), t('common.deleteConfirm'), handleDelete);
+messageUtil.showConfirm(t('common.delete'), t('common.deleteConfirm'), handleDelete)
 
 // 보간 — i18n 키에 {{변수명}}을 넣으면 t()에서 값을 주입할 수 있다
 // ko.json: "deleteItem": "{{name}}을(를) 삭제하시겠습니까?"
@@ -822,23 +823,23 @@ messageUtil.showConfirm(
   t('common.delete'),
   t('confirm.deleteItem', { name: row.userName }), // '홍길동을(를) 삭제하시겠습니까?'
   handleDelete,
-);
+)
 // ko.json: "bulkDelete": "선택한 {{count}}건을 삭제하시겠습니까?"
 messageUtil.showConfirm(
   t('common.delete'),
   t('confirm.bulkDelete', { count: checkedRows.length }), // '선택한 3건을 삭제하시겠습니까?'
   handleBulkDelete,
-);
+)
 
 // 색상 강조 인라인 팝업
-messageUtil.showMessage(t('common.saveSuccess'), { tone: 'success' });
+messageUtil.showMessage(t('common.saveSuccess'), { tone: 'success' })
 
 // 자동 닫힘
-messageUtil.showAlertAutoClose(t('common.info'), t('common.saveSuccess'));
+messageUtil.showAlertAutoClose(t('common.info'), t('common.saveSuccess'))
 
 // 폼 검증 실패
-messageUtil.showValidation(t('field.email'), 'pattern'); // '이메일 형식이 올바르지 않습니다.'
-messageUtil.showValidation(t('field.name'), 'required'); // '이름은 필수입니다.'
+messageUtil.showValidation(t('field.email'), 'pattern') // '이메일 형식이 올바르지 않습니다.'
+messageUtil.showValidation(t('field.name'), 'required') // '이름은 필수입니다.'
 ```
 
 ---
@@ -851,8 +852,8 @@ messageUtil.showValidation(t('field.name'), 'required'); // '이름은 필수입
 `label`은 i18n 키(권장) 또는 리터럴. 필요하면 `messages`로 필드별 문구를 오버라이드한다.
 
 ```tsx
-import { defineFormRules, showFormErrors, validateForm } from '@vanta/common';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { defineFormRules, showFormErrors, validateForm } from '@vanta/common'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const userFormRules = defineFormRules({
   name: {
@@ -873,39 +874,39 @@ const userFormRules = defineFormRules({
   },
   age: { type: 'number', min: 0, max: 150, label: '나이' },
   agree: { type: 'boolean', mustBeTrue: true, label: '약관 동의' },
-});
+})
 
-const schema = validateForm(userFormRules);
+const schema = validateForm(userFormRules)
 
-const { control, handleSubmit } = useForm({ resolver: zodResolver(schema) });
+const { control, handleSubmit } = useForm({ resolver: zodResolver(schema) })
 
 // UI label도 같은 키를 t()로 넘기면 화면·검증 문구가 일치
-<FormInput
+;<FormInput
   control={control}
   name="name"
   label={t(userFormRules.name.label!)}
   required={userFormRules.name.required}
-/>;
+/>
 
-void handleSubmit(onSave, (errors) => showFormErrors(errors, userFormRules))();
+void handleSubmit(onSave, (errors) => showFormErrors(errors, userFormRules))()
 ```
 
-| `type`      | 지원 옵션                                                                                          |
-| ----------- | --------------------------------------------------------------------------------------------------- |
+| `type`      | 지원 옵션                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------- |
 | `'string'`  | `label`, `messages`, `required`, `email`, `phoneKR`, `optionalPhoneKR`, `minLength`, `maxLength`, `trim` |
-| `'boolean'` | `label`, `messages`, `mustBeTrue`                                                                   |
-| `'number'`  | `label`, `messages`, `required`, `min`, `max`                                                       |
-| `'enum'`    | `label`, `messages`, `values` (필수), `required`                                                    |
+| `'boolean'` | `label`, `messages`, `mustBeTrue`                                                                        |
+| `'number'`  | `label`, `messages`, `required`, `min`, `max`                                                            |
+| `'enum'`    | `label`, `messages`, `values` (필수), `required`                                                         |
 
-| `messages` 키       | 기본 i18n 키 (`common.validation.msg.*`) |
-| ------------------- | ---------------------------------------- |
-| `required`          | `required`                               |
-| `maxLength`         | `maxLength`                              |
-| `minLength`         | `minLength`                              |
-| `email`             | `email`                                  |
-| `phone`             | `phone`                                  |
-| `numberInvalid`     | `numberInvalid`                          |
-| `mustAgree`         | `mustAgree`                              |
+| `messages` 키   | 기본 i18n 키 (`common.validation.msg.*`) |
+| --------------- | ---------------------------------------- |
+| `required`      | `required`                               |
+| `maxLength`     | `maxLength`                              |
+| `minLength`     | `minLength`                              |
+| `email`         | `email`                                  |
+| `phone`         | `phone`                                  |
+| `numberInvalid` | `numberInvalid`                          |
+| `mustAgree`     | `mustAgree`                              |
 
 > 샘플: `/samples/form/sampleFormValidation` — `label` i18n + `messages.required` 오버라이드 예시.
 
@@ -919,11 +920,11 @@ role 계층: `USER` < `WORKSPACE_ADMIN` < `SUPER_ADMIN`
 `useAuthorized()`는 인자 없이 호출하고, 반환된 객체의 메서드로 다양한 조건을 검사한다.
 
 ```tsx
-import { useAuthorized, Authorized } from '@vanta/common';
+import { useAuthorized, Authorized } from '@vanta/common'
 
 // 훅 — 조건부 disabled
 function ActionButtons() {
-  const { hasMinRole, hasProgramCode } = useAuthorized();
+  const { hasMinRole, hasProgramCode } = useAuthorized()
 
   return (
     <>
@@ -931,12 +932,12 @@ function ActionButtons() {
       <Button disabled={!hasMinRole('SUPER_ADMIN')}>삭제</Button>
       <Button disabled={!hasProgramCode('USER_ROLE_API_D')}>회원 삭제</Button>
     </>
-  );
+  )
 }
 
 // Button permission prop — useAuthorized 결과를 allowed에 전달
 function ActionButtonsWithPermission() {
-  const { hasProgramCode, hasMinRole } = useAuthorized();
+  const { hasProgramCode, hasMinRole } = useAuthorized()
 
   return (
     <>
@@ -949,7 +950,7 @@ function ActionButtonsWithPermission() {
         수정
       </Button>
     </>
-  );
+  )
 }
 
 // Authorized 컴포넌트 — 조건 불만족 시 fallback(또는 null) 렌더링
@@ -958,7 +959,7 @@ function AdminSection() {
     <Authorized programCode="USER_ROLE_API_C" fallback={<p>권한 없음</p>}>
       <SystemSettingsForm />
     </Authorized>
-  );
+  )
 }
 ```
 
@@ -990,18 +991,18 @@ function AdminSection() {
 대부분의 탭 동작은 메뉴 클릭 시 자동 처리된다. 직접 탭을 열거나 닫아야 하는 경우에만 사용한다.
 
 ```tsx
-import { useTabStore } from '@vanta/common';
+import { useTabStore } from '@vanta/common'
 
 // 탭 직접 열기
-const openInNewTab = useTabStore((s) => s.openInNewTab);
-openInNewTab({ path: '/system/code', label: '코드 관리' });
+const openInNewTab = useTabStore((s) => s.openInNewTab)
+openInNewTab({ path: '/system/code', label: '코드 관리' })
 
 // 탭 닫기
-const removeTab = useTabStore((s) => s.removeTab);
-removeTab(tabId);
+const removeTab = useTabStore((s) => s.removeTab)
+removeTab(tabId)
 
 // 현재 열린 탭 목록
-const tabs = useTabStore((s) => s.tabs);
+const tabs = useTabStore((s) => s.tabs)
 ```
 
 ## 7.1 이동 시 파라미터 전달 (`openInNewTab`)
@@ -1019,30 +1020,30 @@ const tabs = useTabStore((s) => s.tabs);
 
 ```tsx
 // 목록 그리드 — 행 클릭 시 상세를 새 탭으로
-import { useTabStore } from '@vanta/common';
+import { useTabStore } from '@vanta/common'
 
-const openInNewTab = useTabStore((s) => s.openInNewTab);
+const openInNewTab = useTabStore((s) => s.openInNewTab)
 
 const handleRowOpen = (row: { id: number }) => {
   openInNewTab({
     path: `/project/projectDetail?id=${row.id}`,
     label: '프로젝트 상세',
-  });
-};
+  })
+}
 ```
 
 ```tsx
 // 상세 화면 — URL 쿼리에서 id 수신
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom'
 
-const [searchParams] = useSearchParams();
-const projectId = searchParams.get('id'); // string | null
+const [searchParams] = useSearchParams()
+const projectId = searchParams.get('id') // string | null
 ```
 
 ### 예시 2 — `history.state` (복합 payload)
 
 ```tsx
-const openInNewTab = useTabStore((s) => s.openInNewTab);
+const openInNewTab = useTabStore((s) => s.openInNewTab)
 
 openInNewTab({
   path: '/project/projectDetail',
@@ -1052,22 +1053,22 @@ openInNewTab({
     cachedDisplayName: row.cachedDisplayName,
     from: 'projectList',
   },
-});
+})
 ```
 
 ```tsx
 // 상세 화면 — location.state 수신 (타입은 화면별로 좁혀 사용)
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'
 
 type DetailState = {
-  id?: number;
-  cachedDisplayName?: string;
-  from?: string;
-};
+  id?: number
+  cachedDisplayName?: string
+  from?: string
+}
 
-const location = useLocation();
-const payload = location.state as DetailState | null;
-const projectId = payload?.id;
+const location = useLocation()
+const payload = location.state as DetailState | null
+const projectId = payload?.id
 ```
 
 - **단순 키 하나**는 쿼리가 낫습니다. **여러 필드·중첩 객체**는 `state`를 쓰세요.
@@ -1083,7 +1084,7 @@ const projectId = payload?.id;
 dayjs 기반 날짜 유틸. 모든 메서드는 `static`이며 `dateUtil.method(...)` 형태로 호출한다.
 
 ```tsx
-import { dateUtil } from '@vanta/common';
+import { dateUtil } from '@vanta/common'
 ```
 
 | 메서드                                     | 반환       | 설명                                                             |
@@ -1106,12 +1107,12 @@ import { dateUtil } from '@vanta/common';
 | `isLeapYear(year)`                         | `boolean`  | 윤년 여부                                                        |
 
 ```tsx
-dateUtil.getTodayYmd(); // '2026-04-28'
-dateUtil.setDate(new Date(), 'YYYY-MM-DD HH:mm'); // '2026-04-28 09:30'
-dateUtil.addDays('2026-04-01', 7, 'YYYY-MM-DD'); // '2026-04-08'
-dateUtil.getDaysDifference('2026-04-01', '2026-04-24'); // 23
-dateUtil.isValid('20261301', 'YYYYMMDD'); // false
-dateUtil.getDayOfWeek('2026-04-28'); // '화요일' (로케일에 따라)
+dateUtil.getTodayYmd() // '2026-04-28'
+dateUtil.setDate(new Date(), 'YYYY-MM-DD HH:mm') // '2026-04-28 09:30'
+dateUtil.addDays('2026-04-01', 7, 'YYYY-MM-DD') // '2026-04-08'
+dateUtil.getDaysDifference('2026-04-01', '2026-04-24') // 23
+dateUtil.isValid('20261301', 'YYYYMMDD') // false
+dateUtil.getDayOfWeek('2026-04-28') // '화요일' (로케일에 따라)
 ```
 
 ## numberUtil
@@ -1119,7 +1120,7 @@ dateUtil.getDayOfWeek('2026-04-28'); // '화요일' (로케일에 따라)
 `Intl` 기반 숫자 포맷 유틸. 모든 메서드는 `static`.
 
 ```tsx
-import { numberUtil } from '@vanta/common';
+import { numberUtil } from '@vanta/common'
 ```
 
 | 메서드                             | 반환     | 설명                                    |
@@ -1129,15 +1130,15 @@ import { numberUtil } from '@vanta/common';
 | `formatPercent(value, decimals?)`  | `string` | 비율 표기 (`0.156` → `'15.6%'`)         |
 
 ```tsx
-numberUtil.formatNumber(1234567); // '1,234,567'
-numberUtil.formatCurrency(1234567); // '₩1,234,567'
-numberUtil.formatPercent(0.156, 1); // '15.6%'
+numberUtil.formatNumber(1234567) // '1,234,567'
+numberUtil.formatCurrency(1234567) // '₩1,234,567'
+numberUtil.formatPercent(0.156, 1) // '15.6%'
 ```
 
 ## stringUtil
 
 ```tsx
-import { stringUtil } from '@vanta/common';
+import { stringUtil } from '@vanta/common'
 ```
 
 | 메서드                                                    | 반환      | 설명                                                                              |
@@ -1157,19 +1158,19 @@ import { stringUtil } from '@vanta/common';
 | `isOnlyWhitespace(text)`                                  | `boolean` | 공백만 있거나 빈 문자열                                                           |
 
 ```tsx
-stringUtil.truncate('긴 문자열입니다', 5); // '긴 문자열…'
-stringUtil.capitalize('hello world'); // 'Hello world'
-stringUtil.toStr(null, '-'); // '-'
-stringUtil.fixDate('2026-04-28'); // '20260428'
-stringUtil.parseBoolean('Y'); // true
-stringUtil.getByteLength('한글'); // 6 (UTF-8 3바이트 × 2)
-stringUtil.removeSpecChar('a!@b#$c'); // 'abc'
+stringUtil.truncate('긴 문자열입니다', 5) // '긴 문자열…'
+stringUtil.capitalize('hello world') // 'Hello world'
+stringUtil.toStr(null, '-') // '-'
+stringUtil.fixDate('2026-04-28') // '20260428'
+stringUtil.parseBoolean('Y') // true
+stringUtil.getByteLength('한글') // 6 (UTF-8 3바이트 × 2)
+stringUtil.removeSpecChar('a!@b#$c') // 'abc'
 ```
 
 ## maskUtil
 
 ```tsx
-import { maskUtil } from '@vanta/common';
+import { maskUtil } from '@vanta/common'
 ```
 
 | 메서드                        | 반환     | 설명                                                |
@@ -1180,10 +1181,10 @@ import { maskUtil } from '@vanta/common';
 | `maskEmailLocalLast3(email?)` | `string` | 이메일 로컬파트 끝 3자리만 `*` 처리                 |
 
 ```tsx
-maskUtil.maskPhone('010-1234-5678'); // '010-****-5678'
-maskUtil.maskEmail('user@test.com'); // 'u***@test.com'
-maskUtil.maskWord('홍길동'); // '홍**'
-maskUtil.maskEmailLocalLast3('john.doe@ex.com'); // 'john.***@ex.com'
+maskUtil.maskPhone('010-1234-5678') // '010-****-5678'
+maskUtil.maskEmail('user@test.com') // 'u***@test.com'
+maskUtil.maskWord('홍길동') // '홍**'
+maskUtil.maskEmailLocalLast3('john.doe@ex.com') // 'john.***@ex.com'
 ```
 
 > 주민번호·카드번호 마스킹은 현재 공통 유틸로 제공되지 않는다. 필요하면 공통 파트에 요청해 추가한다.
@@ -1193,7 +1194,7 @@ maskUtil.maskEmailLocalLast3('john.doe@ex.com'); // 'john.***@ex.com'
 문자열 패턴 검증 유틸. 모든 메서드 `boolean` 반환이며 빈 문자열·`null`·`undefined` 입력은 모두 `false`. 필수 여부 판단은 호출 측이 별도로 한다.
 
 ```tsx
-import { validateUtil } from '@vanta/common';
+import { validateUtil } from '@vanta/common'
 ```
 
 | 메서드                     | 설명                                             |
@@ -1216,13 +1217,13 @@ import { validateUtil } from '@vanta/common';
 | `matches(v, regex)`        | 사용자 정의 정규식                               |
 
 ```tsx
-validateUtil.isEmail('user@example.com'); // true
-validateUtil.isPhoneKR('010-1234-5678'); // true
-validateUtil.isBizNo('220-81-62517'); // true (체크섬 일치)
-validateUtil.isHangulAlpha('한글ABC'); // true
-validateUtil.isHangulAlphaNumeric('한글A12'); // true
-validateUtil.hasLength(pwd, 8, 20); // 8~20자 범위
-validateUtil.matches('AB-12', /^[A-Z]{2}-\d{2}$/);
+validateUtil.isEmail('user@example.com') // true
+validateUtil.isPhoneKR('010-1234-5678') // true
+validateUtil.isBizNo('220-81-62517') // true (체크섬 일치)
+validateUtil.isHangulAlpha('한글ABC') // true
+validateUtil.isHangulAlphaNumeric('한글A12') // true
+validateUtil.hasLength(pwd, 8, 20) // 8~20자 범위
+validateUtil.matches('AB-12', /^[A-Z]{2}-\d{2}$/)
 ```
 
 > 폼 검증을 zod 스키마로 묶고 싶다면 `formUtils.validateForm` (5. 폼 검증) 을 우선 사용한다. `validateUtil`은 grid 셀 `validation.fn`, 인라인 조건 분기 등 단발성 검증에 적합하다.
@@ -1230,7 +1231,7 @@ validateUtil.matches('AB-12', /^[A-Z]{2}-\d{2}$/);
 ## 클립보드 / 파일 / 엑셀
 
 ```tsx
-import { copyToClipboard, exportToExcel, importFromExcel, downloadBlob } from '@vanta/common';
+import { copyToClipboard, exportToExcel, importFromExcel, downloadBlob } from '@vanta/common'
 ```
 
 | 함수                           | 설명                                                         |
@@ -1242,14 +1243,14 @@ import { copyToClipboard, exportToExcel, importFromExcel, downloadBlob } from '@
 
 ```tsx
 // 클립보드 복사
-await copyToClipboard('복사할 텍스트');
+await copyToClipboard('복사할 텍스트')
 
 // 엑셀 내보내기
-exportToExcel(rows, { fileName: '사용자목록', sheetName: 'Sheet1' });
+exportToExcel(rows, { fileName: '사용자목록', sheetName: 'Sheet1' })
 
 // 엑셀 가져오기 (파일 input change 핸들러 등)
-const data = await importFromExcel(file); // { [key: string]: unknown }[]
+const data = await importFromExcel(file) // { [key: string]: unknown }[]
 
 // Blob 파일 다운로드 (API 응답 등)
-downloadBlob(blob, '첨부파일.pdf');
+downloadBlob(blob, '첨부파일.pdf')
 ```

@@ -1,11 +1,6 @@
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
-import type {
-  CreateUserPayload,
-  User,
-  UserListResponse,
-  UserSearchParams,
-} from '@/types/user'
+import type { CreateUserPayload, User, UserListResponse, UserSearchParams } from '@/types/user'
 
 // NOTE: 백엔드 연동 전까지 화면 확인용 목데이터를 사용합니다.
 // 실제 연동 시 아래 목데이터/지연 로직을 제거하고 apiClient 호출만 남기면 됩니다.
@@ -30,17 +25,13 @@ const MOCK_USERS: User[] = Array.from({ length: 23 }, (_, i) => {
   }
 })
 
-export async function fetchUsers(
-  params: UserSearchParams,
-): Promise<UserListResponse> {
+export async function fetchUsers(params: UserSearchParams): Promise<UserListResponse> {
   if (import.meta.env.DEV) {
     const filtered = MOCK_USERS.filter((user) => {
       const matchesKeyword = params.keyword
-        ? user.userName.includes(params.keyword) ||
-          user.userId.includes(params.keyword)
+        ? user.userName.includes(params.keyword) || user.userId.includes(params.keyword)
         : true
-      const matchesDate =
-        user.updatedAt >= params.updatedFrom && user.updatedAt <= params.updatedTo
+      const matchesDate = user.updatedAt >= params.updatedFrom && user.updatedAt <= params.updatedTo
       return matchesKeyword && matchesDate
     })
     const start = (params.page - 1) * params.pageSize

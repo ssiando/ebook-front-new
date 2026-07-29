@@ -2,12 +2,12 @@
 
 ### 최근 반영 요약 (2026-06-02 · v0.2)
 
-| 구분            | 내용                                                                                                                                                                              |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 구분            | 내용                                                                                                                                                                                                                                                                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **신규**        | `exportToExcel` · `exportToPdf` · `editor: 'combobox'` · `dateOptions.calendarMode` · `IconCell`/`iconOptions` · `wordWrap` · `htmlContent`/`HtmlCell` · `resize`/`destroy`/`setProp` · `styleFunction` · `subfooterData.aggregateDirection` (`above`/`below`) · **`isCheckboxDisabled`** (행 헤더 체크 비활성, `isReadOnly`와 독립) |
-| **수정** | `editor: 'checkbox'` — `cellRenderer` 없이 체크 UI 자동 · meta **ColumnField** 동적 콜백 · PDF 한글 `fontPath` · **multiSelect** chip + × (read 즉시 커밋 / edit 지연 커밋) |
-| **내보내기**    | CSV/Excel/PDF — `formatCellExportValue`로 formatter·select label·number·`htmlContent` plain text(`<br>`→개행) 등 **화면 포맷 일부 반영**. 완전 WYSIWYG는 별도 유틸 권장. |
-| **v0.1 (이전)** | `visible`, `dateInputFormat`, footer `operations`, Handle 확장, `resetGrid`, copy/paste, select/date 편집 UI 등 — 본문 각 절 참고                                                 |
+| **수정**        | `editor: 'checkbox'` — `cellRenderer` 없이 체크 UI 자동 · meta **ColumnField** 동적 콜백 · PDF 한글 `fontPath` · **multiSelect** chip + × (read 즉시 커밋 / edit 지연 커밋)                                                                                                                                                          |
+| **내보내기**    | CSV/Excel/PDF — `formatCellExportValue`로 formatter·select label·number·`htmlContent` plain text(`<br>`→개행) 등 **화면 포맷 일부 반영**. 완전 WYSIWYG는 별도 유틸 권장.                                                                                                                                                             |
+| **v0.1 (이전)** | `visible`, `dateInputFormat`, footer `operations`, Handle 확장, `resetGrid`, copy/paste, select/date 편집 UI 등 — 본문 각 절 참고                                                                                                                                                                                                    |
 
 ---
 
@@ -83,24 +83,24 @@ function UserGrid() {
 
 ### Props — 슬림한 진입점
 
-| Prop          | 필수 | 설명                                                                                                                         |
-| ------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `columns`     | ✅   | TanStack `ColumnDef[]` (또는 `createColumns()` 결과)                                                                         |
-| `data`        | ✅   | 행 데이터 배열 `T[]`                                                                                                         |
-| `options`     |      | UI 옵션 + 제약 함수 (`DataGridOptions<T>`)                                                                                   |
+| Prop          | 필수 | 설명                                                                                            |
+| ------------- | ---- | ----------------------------------------------------------------------------------------------- |
+| `columns`     | ✅   | TanStack `ColumnDef[]` (또는 `createColumns()` 결과)                                            |
+| `data`        | ✅   | 행 데이터 배열 `T[]`                                                                            |
+| `options`     |      | UI 옵션 + 제약 함수 (`DataGridOptions<T>`)                                                      |
 | `treeOptions` |      | 트리 (`keyField`, `parentField`, `lazyLoadEmptyChildren?` — [12. 트리 그리드](#12-트리-그리드)) |
-| `onReady`     |      | `(api: DataGridHandle<T>) => void` — **모든 이벤트는 여기서 `api.bind(...)`로 등록**                                         |
-| `ref`         |      | `DataGridHandle<T>` — 외부에서 명령형 API 호출 가능                                                                          |
+| `onReady`     |      | `(api: DataGridHandle<T>) => void` — **모든 이벤트는 여기서 `api.bind(...)`로 등록**            |
+| `ref`         |      | `DataGridHandle<T>` — 외부에서 명령형 API 호출 가능                                             |
 
 ### 핵심 개념
 
-| 개념                  | 설명                                                                                                                        |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `TrackedRow<T>`       | 모든 행은 내부적으로 `_gridRowId`(UUID), `_rowStatus`(normal/I/U/D), `_original`(원본 스냅샷)을 가짐. 외부에서는 `T`만 다룸 |
-| `createColumns`       | TanStack `ColumnDef` 변환                                                                                                   |
+| 개념                  | 설명                                                                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `TrackedRow<T>`       | 모든 행은 내부적으로 `_gridRowId`(UUID), `_rowStatus`(normal/I/U/D), `_original`(원본 스냅샷)을 가짐. 외부에서는 `T`만 다룸             |
+| `createColumns`       | TanStack `ColumnDef` 변환                                                                                                               |
 | `DataGridHandle<T>`   | `bind` / `unbind` / `addRow` / `getModifiedRows` / `validateRows` / `validateModifiedRows` 등 명령형 API. `onReady(api)`나 `ref`로 접근 |
-| `bind(type, handler)` | 이벤트 구독. 단일 이름 또는 배열로 한 번에 여러 이벤트 등록 가능                                                            |
-| `preventDefault()`    | `before`\* 이벤트 핸들러에서 호출하면 후속 동작 차단                                                                        |
+| `bind(type, handler)` | 이벤트 구독. 단일 이름 또는 배열로 한 번에 여러 이벤트 등록 가능                                                                        |
+| `preventDefault()`    | `before`\* 이벤트 핸들러에서 호출하면 후속 동작 차단                                                                                    |
 
 ### 데이터 흐름
 
@@ -133,7 +133,7 @@ import {
   DateTimeCell,
   type CellEditorProps,
   type SearchCellPopupArgs,
-} from '@vanta/common';
+} from '@vanta/common'
 
 const columns = createColumns<MyRow>([
   // 기본 (읽기 전용)
@@ -287,45 +287,45 @@ const columns = createColumns<MyRow>([
 
   // 셀 툴팁
   { header: '비고', name: 'memo', cellTooltip: true },
-]);
+])
 ```
 
 ### `SimpleColumnDef` 전체 속성
 
-| 속성 | 타입 | 설명 |
-| --- | --- | --- |
-| `header` | `string` | 헤더 텍스트 |
-| `name` | `keyof T` | 데이터 필드명 (= `accessorKey`) |
-| `width` | `number \| string` | 컬럼 너비 — px 숫자 또는 `'20%'` |
-| `minWidth` | `number \| string` | 최소 너비 (px 또는 `%`) |
-| `visible` | `boolean` | `false`면 초기 숨김 |
-| `dateOptions` | `DateCellOptions` | `dateInputFormat`, `calendarMode` |
-| `headerCheckbox` | `boolean` | `editor: 'checkbox'` 헤더 일괄 토글 |
-| `wordWrap` | `boolean \| ColumnField` | 줄바꿈 — 가상 스크롤 off |
-| `htmlContent` | `boolean \| ColumnField` | safe HTML 셀 표시 — `HtmlCell` 자동 · export/tooltip/필터 plain text |
-| `styleFunction` | `(value, row, …) => CSSProperties` | 셀 동적 스타일 |
-| `iconOptions` | `IconCellOptions` | `IconCell` 옵션 |
-| `backgroundColor` | `CellBackgroundColor` | 컬럼 배경색 프리셋 |
-| `editable` | `boolean \| 'onlyNew' \| ColumnField` | 편집 가능 여부 |
-| `length` | `number` | 입력 최대 길이 |
-| `sortable` | `boolean` | 정렬 활성화 |
-| `sortType` | `'datetime'` | 혼합 날짜 정렬 |
-| `filter` | `'text' \| 'select' \| 'checkbox'` | 필터 타입 |
-| `filterCheckboxLabels` | `{ trueLabel?, falseLabel? }` | checkbox 필터 레이블 |
-| `editor` | `'text' \| 'number' \| … \| 'search'` | 에디터 타입 |
-| `selectOptions` | `SelectOption[] \| ColumnField` | select/multiSelect/combobox 옵션 |
-| `searchOptions` | `SearchCellOptions` | search 팝업 옵션 |
-| `buttonOptions` | `ButtonCellOptions` | ButtonCell 옵션 |
-| `checkboxOptions` | `{ trueValue?, falseValue? }` | checkbox 값 |
-| `align` | `'left' \| 'center' \| 'right'` | 정렬 |
-| `validation` | `{ required?, fn? }` | commit·paste 검증 |
-| `cellRenderer` | `ComponentType<CellRendererProps>` | 커스텀 렌더러 |
-| `cellEditor` | `ComponentType<CellEditorProps>` | 커스텀 에디터 |
-| `formatter` | `CellFormatter` | 표시 포맷 |
-| `enableAutoMerge` | `boolean` | 세로 병합 — subfooter 구간 경계에서 끊김 (§14.6) |
-| `tooltip` | `HeaderTooltipOption` | 헤더 툴팁 |
-| `cellTooltip` | `boolean \| CellTooltipOption` | 셀 툴팁 |
-| `dateTimeEnableMs` | `boolean` | DateTimeCell 밀리초 |
+| 속성                   | 타입                                  | 설명                                                                 |
+| ---------------------- | ------------------------------------- | -------------------------------------------------------------------- |
+| `header`               | `string`                              | 헤더 텍스트                                                          |
+| `name`                 | `keyof T`                             | 데이터 필드명 (= `accessorKey`)                                      |
+| `width`                | `number \| string`                    | 컬럼 너비 — px 숫자 또는 `'20%'`                                     |
+| `minWidth`             | `number \| string`                    | 최소 너비 (px 또는 `%`)                                              |
+| `visible`              | `boolean`                             | `false`면 초기 숨김                                                  |
+| `dateOptions`          | `DateCellOptions`                     | `dateInputFormat`, `calendarMode`                                    |
+| `headerCheckbox`       | `boolean`                             | `editor: 'checkbox'` 헤더 일괄 토글                                  |
+| `wordWrap`             | `boolean \| ColumnField`              | 줄바꿈 — 가상 스크롤 off                                             |
+| `htmlContent`          | `boolean \| ColumnField`              | safe HTML 셀 표시 — `HtmlCell` 자동 · export/tooltip/필터 plain text |
+| `styleFunction`        | `(value, row, …) => CSSProperties`    | 셀 동적 스타일                                                       |
+| `iconOptions`          | `IconCellOptions`                     | `IconCell` 옵션                                                      |
+| `backgroundColor`      | `CellBackgroundColor`                 | 컬럼 배경색 프리셋                                                   |
+| `editable`             | `boolean \| 'onlyNew' \| ColumnField` | 편집 가능 여부                                                       |
+| `length`               | `number`                              | 입력 최대 길이                                                       |
+| `sortable`             | `boolean`                             | 정렬 활성화                                                          |
+| `sortType`             | `'datetime'`                          | 혼합 날짜 정렬                                                       |
+| `filter`               | `'text' \| 'select' \| 'checkbox'`    | 필터 타입                                                            |
+| `filterCheckboxLabels` | `{ trueLabel?, falseLabel? }`         | checkbox 필터 레이블                                                 |
+| `editor`               | `'text' \| 'number' \| … \| 'search'` | 에디터 타입                                                          |
+| `selectOptions`        | `SelectOption[] \| ColumnField`       | select/multiSelect/combobox 옵션                                     |
+| `searchOptions`        | `SearchCellOptions`                   | search 팝업 옵션                                                     |
+| `buttonOptions`        | `ButtonCellOptions`                   | ButtonCell 옵션                                                      |
+| `checkboxOptions`      | `{ trueValue?, falseValue? }`         | checkbox 값                                                          |
+| `align`                | `'left' \| 'center' \| 'right'`       | 정렬                                                                 |
+| `validation`           | `{ required?, fn? }`                  | commit·paste 검증                                                    |
+| `cellRenderer`         | `ComponentType<CellRendererProps>`    | 커스텀 렌더러                                                        |
+| `cellEditor`           | `ComponentType<CellEditorProps>`      | 커스텀 에디터                                                        |
+| `formatter`            | `CellFormatter`                       | 표시 포맷                                                            |
+| `enableAutoMerge`      | `boolean`                             | 세로 병합 — subfooter 구간 경계에서 끊김 (§14.6)                     |
+| `tooltip`              | `HeaderTooltipOption`                 | 헤더 툴팁                                                            |
+| `cellTooltip`          | `boolean \| CellTooltipOption`        | 셀 툴팁                                                              |
+| `dateTimeEnableMs`     | `boolean`                             | DateTimeCell 밀리초                                                  |
 
 ### `htmlContent` — HTML 셀 표시
 
@@ -341,13 +341,13 @@ AUI `TemplateRenderer` + `wordWrap` 조합과 유사하게, 셀 값에 **safe HT
 }
 ```
 
-| 구분 | 동작 |
-| --- | --- |
-| **읽기 모드** | `html-content.ts` — DOMPurify `USE_PROFILES: { html: true }` 후 `HtmlCell`(`dangerouslySetInnerHTML`) |
-| **허용 HTML** | `<br>`, `<b>`/`<strong>`, `<i>`/`<em>`, `<u>`, `<span>`, `<p>`, 목록, `<a href>` 등 safe subset |
-| **차단** | `<script>`, `<iframe>`, `onclick` 등 이벤트·위험 태그 — sanitize 제거 |
-| **export · tooltip · 필터** | `stripHtmlToPlainText` — 태그 제거, `<br>` → 개행 |
-| **편집** | `editor: 'text'` — 화면 미리보기 없이 HTML 원문 편집 |
+| 구분                        | 동작                                                                                                  |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **읽기 모드**               | `html-content.ts` — DOMPurify `USE_PROFILES: { html: true }` 후 `HtmlCell`(`dangerouslySetInnerHTML`) |
+| **허용 HTML**               | `<br>`, `<b>`/`<strong>`, `<i>`/`<em>`, `<u>`, `<span>`, `<p>`, 목록, `<a href>` 등 safe subset       |
+| **차단**                    | `<script>`, `<iframe>`, `onclick` 등 이벤트·위험 태그 — sanitize 제거                                 |
+| **export · tooltip · 필터** | `stripHtmlToPlainText` — 태그 제거, `<br>` → 개행                                                     |
+| **편집**                    | `editor: 'text'` — 화면 미리보기 없이 HTML 원문 편집                                                  |
 
 > `cellRenderer`를 직접 지정하면 `HtmlCell` **자동 연결이 되지 않습니다**.  
 > 샘플: **§1 · 1.1** `비고` **4행(최UI)** `<br>`·`<b>`·`<script>`(제거) · **§7 · 7.1** export plain text 확인.
@@ -355,8 +355,8 @@ AUI `TemplateRenderer` + `wordWrap` 조합과 유사하게, 셀 값에 **safe HT
 ### 방법 B: TanStack `ColumnDef` 직접
 
 ```tsx
-import type { ColumnDef } from '@tanstack/react-table';
-import type { TrackedRow } from '@vanta/common';
+import type { ColumnDef } from '@tanstack/react-table'
+import type { TrackedRow } from '@vanta/common'
 
 const columns: ColumnDef<TrackedRow<MyRow>, unknown>[] = [
   {
@@ -373,7 +373,7 @@ const columns: ColumnDef<TrackedRow<MyRow>, unknown>[] = [
       </div>
     ),
   },
-];
+]
 ```
 
 `meta` 필드는 `DataGridColumnMeta<T>` 타입으로 자동 확장됩니다. 에디터, 렌더러, 필터, 유효성 등을 모두 `meta`에서 제어합니다.
@@ -422,9 +422,9 @@ const columns: ColumnDef<TrackedRow<MyRow>, unknown>[] = [
 
 `editor: 'multiSelect'` + `selectOptions`만 지정하면 read/edit chip UI가 자동으로 붙습니다. `cellRenderer`를 직접 넣으면 chip 자동 연결이 해제됩니다.
 
-| 모드     | chip `×`                | 커밋                                                                     |
-| -------- | ----------------------- | ------------------------------------------------------------------------ |
-| **Read** | 즉시 제거 | **`commitEdit` 즉시** (checkbox와 동일) |
+| 모드     | chip `×`                | 커밋                                                                   |
+| -------- | ----------------------- | ---------------------------------------------------------------------- |
+| **Read** | 즉시 제거               | **`commitEdit` 즉시** (checkbox와 동일)                                |
 | **Edit** | `selectedValues`만 변경 | Enter / blur / outside → **`commitEdit`** (`×` 클릭만으로는 편집 유지) |
 
 - 저장값: `string[]` · 복사 TSV: `"A,B"` · paste: value/label 쉼표 구분 → 유효값만 배열
@@ -487,7 +487,7 @@ import {
   ImageCell,
   LinkCell,
   ProgressCell,
-} from '@vanta/common';
+} from '@vanta/common'
 ```
 
 | 렌더러         | 용도                | 비고                                                                            |
@@ -507,21 +507,21 @@ import {
 ### 커스텀 렌더러
 
 ```tsx
-import type { CellRendererProps, TrackedRow } from '@vanta/common';
+import type { CellRendererProps, TrackedRow } from '@vanta/common'
 
 function ScoreBadge({ value }: CellRendererProps<TrackedRow<MyRow>>) {
-  const score = Number(value);
-  const color = score >= 90 ? 'text-green-600' : 'text-red-600';
-  return <span className={`font-bold ${color}`}>{score}점</span>;
+  const score = Number(value)
+  const color = score >= 90 ? 'text-green-600' : 'text-red-600'
+  return <span className={`font-bold ${color}`}>{score}점</span>
 }
 
-const columns = createColumns<MyRow>([{ header: '점수', name: 'score', cellRenderer: ScoreBadge }]);
+const columns = createColumns<MyRow>([{ header: '점수', name: 'score', cellRenderer: ScoreBadge }])
 ```
 
 ### 커스텀 에디터
 
 ```tsx
-import type { CellEditorProps } from '@vanta/common';
+import type { CellEditorProps } from '@vanta/common'
 
 function ColorPicker({ value, onCommit, onCancel }: CellEditorProps) {
   return (
@@ -532,10 +532,10 @@ function ColorPicker({ value, onCommit, onCancel }: CellEditorProps) {
       onKeyDown={(e) => e.key === 'Escape' && onCancel()}
       autoFocus
     />
-  );
+  )
 }
 
-const columns = createColumns<MyRow>([{ header: '색상', name: 'color', cellEditor: ColorPicker }]);
+const columns = createColumns<MyRow>([{ header: '색상', name: 'color', cellEditor: ColorPicker }])
 ```
 
 > **편집 중 Tab 이동은 내장 에디터에서 자동 동작합니다.**
@@ -552,11 +552,11 @@ const columns = createColumns<MyRow>([{ header: '색상', name: 'color', cellEdi
 ### 기본 사용
 
 ```tsx
-import { useRef } from 'react';
-import { GridBtn, DataGrid, type DataGridHandle } from '@vanta/common';
+import { useRef } from 'react'
+import { GridBtn, DataGrid, type DataGridHandle } from '@vanta/common'
 
 function ItemPage() {
-  const gridRef = useRef<DataGridHandle<Item>>(null);
+  const gridRef = useRef<DataGridHandle<Item>>(null)
 
   return (
     <>
@@ -581,19 +581,19 @@ function ItemPage() {
         options={{ height: 400, rowHeaders: [{ type: 'checkbox' }] }}
       />
     </>
-  );
+  )
 }
 ```
 
 ### Props — `GridBtnProps<T>`
 
-| Prop        | 타입 | 필수 | 설명 |
-| ----------- | ---- | ---- | ---- |
-| `gridRef`   | `Ref<DataGridHandle<T>>` | ✅ | DataGrid ref (RefObject · MutableRefObject · ForwardedRef) |
-| `gridTitle` | `string` | | 좌측 타이틀 |
-| `gridBtn`   | `GridBtnConfig<T> \| null` | | 버튼·페이징 설정 (생략 시 빈 툴바) |
-| `children`  | `ReactNode` | | 임의 커스텀 영역 |
-| `position`  | `'prefix' \| 'postfix'` | | `children` 렌더 위치 — 기본 `'prefix'` |
+| Prop        | 타입                       | 필수 | 설명                                                       |
+| ----------- | -------------------------- | ---- | ---------------------------------------------------------- |
+| `gridRef`   | `Ref<DataGridHandle<T>>`   | ✅   | DataGrid ref (RefObject · MutableRefObject · ForwardedRef) |
+| `gridTitle` | `string`                   |      | 좌측 타이틀                                                |
+| `gridBtn`   | `GridBtnConfig<T> \| null` |      | 버튼·페이징 설정 (생략 시 빈 툴바)                         |
+| `children`  | `ReactNode`                |      | 임의 커스텀 영역                                           |
+| `position`  | `'prefix' \| 'postfix'`    |      | `children` 렌더 위치 — 기본 `'prefix'`                     |
 
 ### `GridBtnConfig<T>` — 페이징·총건수
 
@@ -618,7 +618,7 @@ function ItemPage() {
 `**+` 버튼 default 동작\*\* — `plusFunction` 미제공 시:
 
 ```ts
-gridRef.current.addRow(defaultRow ?? {}, 'first'); // 그리드 맨 위에 'I' 상태 행 추가
+gridRef.current.addRow(defaultRow ?? {}, 'first') // 그리드 맨 위에 'I' 상태 행 추가
 ```
 
 ### `GridBtnConfig<T>` — 행 삭제 (`isMinus`) ⭐ **default는 "체크된 신규행만 삭제"**
@@ -646,13 +646,13 @@ gridRef.current.addRow(defaultRow ?? {}, 'first'); // 그리드 맨 위에 'I' �
     isMinus: true,
     minusFunction: async (checkedRows) => {
       if (!checkedRows?.length) {
-        toast('삭제할 행을 선택하세요.');
-        return;
+        toast('삭제할 행을 선택하세요.')
+        return
       }
-      const ok = await openConfirm({ message: `${checkedRows.length}건 삭제할까요?` });
-      if (!ok) return;
-      await api.deleteItems(checkedRows.map((r) => r.id));
-      gridRef.current?.removeCheckedRows(); // 백엔드 성공 후 화면 동기화
+      const ok = await openConfirm({ message: `${checkedRows.length}건 삭제할까요?` })
+      if (!ok) return
+      await api.deleteItems(checkedRows.map((r) => r.id))
+      gridRef.current?.removeCheckedRows() // 백엔드 성공 후 화면 동기화
     },
   }}
 />
@@ -736,9 +736,9 @@ import { TableBtn } from '@vanta/common';
   options={{ height: 400 }}
   onReady={(api) => {
     api.bind('filtering', (e) => {
-      console.log('필터 변경:', e.columnId, e.value);
-    });
-    api.bind('notFound', () => toast('검색 결과 없음'));
+      console.log('필터 변경:', e.columnId, e.value)
+    })
+    api.bind('notFound', () => toast('검색 결과 없음'))
   }}
 />
 ```
@@ -748,17 +748,17 @@ import { TableBtn } from '@vanta/common';
 `filtering` 이벤트를 구독하고 상태를 API 파라미터로 전달:
 
 ```tsx
-const [filters, setFilters] = useState<Record<string, string | string[]>>({});
+const [filters, setFilters] = useState<Record<string, string | string[]>>({})
 
-<DataGrid
+;<DataGrid
   data={serverData ?? []}
   columns={columns}
   onReady={(api) => {
     api.bind('filtering', (e) => {
-      setFilters((prev) => ({ ...prev, [e.columnId as string]: (e.value as string) ?? '' }));
-    });
+      setFilters((prev) => ({ ...prev, [e.columnId as string]: (e.value as string) ?? '' }))
+    })
   }}
-/>;
+/>
 ```
 
 ---
@@ -778,10 +778,10 @@ const [filters, setFilters] = useState<Record<string, string | string[]>>({});
     height: 400,
   }}
   onReady={(api) => {
-    api.bind('check', (e) => console.log(e.rowId, e.row, e.shiftKey, e.ctrlKey));
-    api.bind('uncheck', (e) => console.log(e.rowId, e.row));
-    api.bind('checkAll', (e) => console.log('전체 선택', e.checked));
-    api.bind('uncheckAll', (e) => console.log('전체 해제', e.checked));
+    api.bind('check', (e) => console.log(e.rowId, e.row, e.shiftKey, e.ctrlKey))
+    api.bind('uncheck', (e) => console.log(e.rowId, e.row))
+    api.bind('checkAll', (e) => console.log('전체 선택', e.checked))
+    api.bind('uncheckAll', (e) => console.log('전체 해제', e.checked))
   }}
 />
 ```
@@ -793,13 +793,13 @@ const [filters, setFilters] = useState<Record<string, string | string[]>>({});
 
 `editor: 'checkbox'` 컬럼에 `headerCheckbox: true`를 주면 헤더에 체크박스가 붙습니다.
 
-| 항목            | 설명                                                                                   |
-| --------------- | -------------------------------------------------------------------------------------- |
-| 동작            | **visible 행**의 해당 컬럼 값을 `trueValue`/`falseValue`로 일괄 변경 (**데이터 편집**) |
-| vs `rowHeaders` | 행 선택용 체크박스(`rowSelection`)와 **무관**                                          |
+| 항목            | 설명                                                                                                                                                |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 동작            | **visible 행**의 해당 컬럼 값을 `trueValue`/`falseValue`로 일괄 변경 (**데이터 편집**)                                                              |
+| vs `rowHeaders` | 행 선택용 체크박스(`rowSelection`)와 **무관**                                                                                                       |
 | readonly        | `isReadOnly`·`editable: false`·`onlyNew` 대상 행은 **데이터 값** 일괄 토글에서 스킵 (`rowHeaders` 체크 비활성과는 별개 — 그건 `isCheckboxDisabled`) |
-| `_rowStatus`    | 값이 실제로 바뀐 편집 가능 행만 `U` (동일값·HQ readonly는 `U` 없음)                    |
-| 토글            | 전체 체크 → 클릭 시 전체 해제 · indeterminate → 클릭 시 **전체 체크**                  |
+| `_rowStatus`    | 값이 실제로 바뀐 편집 가능 행만 `U` (동일값·HQ readonly는 `U` 없음)                                                                                 |
+| 토글            | 전체 체크 → 클릭 시 전체 해제 · indeterminate → 클릭 시 **전체 체크**                                                                               |
 
 ### 행 상태 표시
 
@@ -832,21 +832,21 @@ const [filters, setFilters] = useState<Record<string, string | string[]>>({});
 ## 7. Imperative API (ref / onReady)
 
 ```tsx
-import { useRef } from 'react';
-import { DataGrid, type DataGridHandle } from '@vanta/common';
+import { useRef } from 'react'
+import { DataGrid, type DataGridHandle } from '@vanta/common'
 
 function MyPage() {
-  const gridRef = useRef<DataGridHandle<MyRow>>(null);
+  const gridRef = useRef<DataGridHandle<MyRow>>(null)
 
   const handleSave = () => {
-    const validation = gridRef.current!.validateModifiedRows();
+    const validation = gridRef.current!.validateModifiedRows()
     if (!validation.isValid) {
-      alert(validation.errors[0]?.message);
-      return;
+      alert(validation.errors[0]?.message)
+      return
     }
-    const { createdRows, updatedRows, deletedRows } = gridRef.current!.getModifiedRows();
-    api.save({ createdRows, updatedRows, deletedRows });
-  };
+    const { createdRows, updatedRows, deletedRows } = gridRef.current!.getModifiedRows()
+    api.save({ createdRows, updatedRows, deletedRows })
+  }
 
   return (
     <>
@@ -857,12 +857,12 @@ function MyPage() {
         options={{ height: 400 }}
         onReady={(api) => {
           // ref.current === api (동일 객체)
-          api.bind('addRow', (e) => console.log(e.row));
+          api.bind('addRow', (e) => console.log(e.row))
         }}
       />
       <button onClick={handleSave}>저장</button>
     </>
-  );
+  )
 }
 ```
 
@@ -874,21 +874,21 @@ function MyPage() {
 #### 이벤트
 
 ```ts
-gridRef.current.bind('cellClick', (e) => console.log(e.rowIndex));
-gridRef.current.bind(['addRow', 'removeRow'], (e) => save());
-gridRef.current.unbind('cellClick'); // 해당 이벤트 모든 핸들러
-gridRef.current.unbind('cellClick', specificHandler); // 특정 핸들러만
-gridRef.current.emit({ type: 'custom', payload: 1 }); // 외부에서 강제 발행
+gridRef.current.bind('cellClick', (e) => console.log(e.rowIndex))
+gridRef.current.bind(['addRow', 'removeRow'], (e) => save())
+gridRef.current.unbind('cellClick') // 해당 이벤트 모든 핸들러
+gridRef.current.unbind('cellClick', specificHandler) // 특정 핸들러만
+gridRef.current.emit({ type: 'custom', payload: 1 }) // 외부에서 강제 발행
 ```
 
 #### 행 CRUD
 
 ```ts
-gridRef.current.addRow({ name: '신규' }, 'first'); // 'first' | 'last'
-gridRef.current.removeRows([rowId]); // rowId 배열 기준 삭제 (단수형 없음)
-gridRef.current.removeRows([rowId1, rowId2]); // 다건 삭제
-const removed = gridRef.current.removeCheckedRows(); // ✅ 표준: 체크박스 체크된 행 삭제
-const removed2 = gridRef.current.removeSelectedRows(); // ⚠️ 비표준: selectionConstraint 선택 행 삭제
+gridRef.current.addRow({ name: '신규' }, 'first') // 'first' | 'last'
+gridRef.current.removeRows([rowId]) // rowId 배열 기준 삭제 (단수형 없음)
+gridRef.current.removeRows([rowId1, rowId2]) // 다건 삭제
+const removed = gridRef.current.removeCheckedRows() // ✅ 표준: 체크박스 체크된 행 삭제
+const removed2 = gridRef.current.removeSelectedRows() // ⚠️ 비표준: selectionConstraint 선택 행 삭제
 ```
 
 > **표준은 `getCheckedRows*` / `removeCheckedRows`** — 다건 삭제·체크 기반 일괄 처리는 모두 **체크된 행** 기준으로 수행합니다.
@@ -897,47 +897,47 @@ const removed2 = gridRef.current.removeSelectedRows(); // ⚠️ 비표준: sele
 #### 데이터 조회
 
 ```ts
-gridRef.current.getData(); // GridDataRow<T>[] — 비즈니스 필드 + rowId(그리드 세션 키)
-gridRef.current.getSortedData(); // 정렬·필터 반영된 화면 순서(각 행에 rowId 포함)
-gridRef.current.getModifiedRows(); // { createdRows, updatedRows, deletedRows } — 행마다 rowId 포함
+gridRef.current.getData() // GridDataRow<T>[] — 비즈니스 필드 + rowId(그리드 세션 키)
+gridRef.current.getSortedData() // 정렬·필터 반영된 화면 순서(각 행에 rowId 포함)
+gridRef.current.getModifiedRows() // { createdRows, updatedRows, deletedRows } — 행마다 rowId 포함
 // rowId 예: gridRef.current.getSortedData()[0]?.rowId → setCellValue(rowId, ...)
-gridRef.current.validateRows(); // 전체 행 검증 — GridValidationResult
-gridRef.current.validateModifiedRows(); // I+U 행만 검증
-gridRef.current.getCheckedRowKeys(); // string[] 체크된 행 rowId
-gridRef.current.getCheckedRows(); // T[] 체크된 행 데이터
-gridRef.current.getSelectedRowKeys(); // string[] 선택(selectionConstraint) 행 rowId
-gridRef.current.getSelectedRows(); // T[] 선택 행 데이터
-gridRef.current.getRowStatus(rowId); // 'normal' | 'I' | 'U' | 'D'
-gridRef.current.getFocusedCell(); // { rowId, columnId } | null
-gridRef.current.getFocusedRow(); // T | null
-gridRef.current.getEditingCell(); // { rowId, columnId } | null
-gridRef.current.getSelectedCellRange(); // 드래그 범위 | null
-gridRef.current.clearData();
-gridRef.current.restoreRowState(rowId); // 변경 행을 원본으로 되돌림
+gridRef.current.validateRows() // 전체 행 검증 — GridValidationResult
+gridRef.current.validateModifiedRows() // I+U 행만 검증
+gridRef.current.getCheckedRowKeys() // string[] 체크된 행 rowId
+gridRef.current.getCheckedRows() // T[] 체크된 행 데이터
+gridRef.current.getSelectedRowKeys() // string[] 선택(selectionConstraint) 행 rowId
+gridRef.current.getSelectedRows() // T[] 선택 행 데이터
+gridRef.current.getRowStatus(rowId) // 'normal' | 'I' | 'U' | 'D'
+gridRef.current.getFocusedCell() // { rowId, columnId } | null
+gridRef.current.getFocusedRow() // T | null
+gridRef.current.getEditingCell() // { rowId, columnId } | null
+gridRef.current.getSelectedCellRange() // 드래그 범위 | null
+gridRef.current.clearData()
+gridRef.current.restoreRowState(rowId) // 변경 행을 원본으로 되돌림
 ```
 
 #### 데이터 내보내기 (CSV · Excel · PDF)
 
 ```ts
-gridRef.current.exportToCsv({ filename: 'export.csv', alwaysQuotes: false });
+gridRef.current.exportToCsv({ filename: 'export.csv', alwaysQuotes: false })
 await gridRef.current.exportToExcel({
   filename: 'export.xlsx',
   sheetName: 'Sheet1',
   showRowNumColumn: true,
   includeFooter: true,
   exportWithStyle: false,
-});
+})
 await gridRef.current.exportToPdf({
   filename: 'export.pdf',
   fontPath: pdfFontUrl, // 한글 — 소비 앱 TTF. 미지정 시 Helvetica(한글 깨짐)
-});
+})
 ```
 
-| API | 데이터 소스 | 포맷 적용 | 비고 |
-| --- | ----------- | --------- | ---- |
-| `exportToCsv` | `internalData` (트리: DFS 평탄화) | `formatCellExportValue` | formatter·select label·number·`htmlContent` strip 등 · BOM `\uFEFF` |
-| `exportToExcel` | 동일 | 동일 (number는 숫자 타입 유지) | `exceljs` peer — 앱 `dependencies` 필요 |
-| `exportToPdf` | 동일 (`_rowStatus === 'D'` 제외) | 동일 | `jspdf` peer · `fontPath`(한글) · `theme: 'striped'` 기본 |
+| API             | 데이터 소스                       | 포맷 적용                      | 비고                                                                |
+| --------------- | --------------------------------- | ------------------------------ | ------------------------------------------------------------------- |
+| `exportToCsv`   | `internalData` (트리: DFS 평탄화) | `formatCellExportValue`        | formatter·select label·number·`htmlContent` strip 등 · BOM `\uFEFF` |
+| `exportToExcel` | 동일                              | 동일 (number는 숫자 타입 유지) | `exceljs` peer — 앱 `dependencies` 필요                             |
+| `exportToPdf`   | 동일 (`_rowStatus === 'D'` 제외)  | 동일                           | `jspdf` peer · `fontPath`(한글) · `theme: 'striped'` 기본           |
 
 > `htmlContent` 컬럼은 export·tooltip·필터에서 **plain text**(`<br>`→개행)로 변환됩니다.  
 > 화면과 100% 동일한 내보내기가 필요하면 `getSortedData()` 등으로 가공한 배열을 **별도 유틸**(`src/utils/excel.ts` 등)로 export하세요.
@@ -946,48 +946,48 @@ await gridRef.current.exportToPdf({
 
 ```ts
 // 단일 셀 — rowId = _gridRowId (체크박스 키와 동일 계열)
-gridRef.current.getCellValue(rowId, 'name');
-gridRef.current.setCellValue(rowId, 'name', '변경'); // updateRows 래핑 — validation 없음
+gridRef.current.getCellValue(rowId, 'name')
+gridRef.current.setCellValue(rowId, 'name', '변경') // updateRows 래핑 — validation 없음
 
 // 포커스 셀 기준 (§1.6 샘플)
-const fc = gridRef.current.getFocusedCell();
-if (fc) gridRef.current.getCellValue(fc.rowId, fc.columnId);
+const fc = gridRef.current.getFocusedCell()
+if (fc) gridRef.current.getCellValue(fc.rowId, fc.columnId)
 
 // 수정 여부 — 'I' 행은 전 필드 true, 'U'만 _original 대비
-gridRef.current.isEditedCell(rowId, 'amount');
+gridRef.current.isEditedCell(rowId, 'amount')
 
 // internalData 기준 인덱스 (필터·화면 순서 아님, subfooter 제외 detail)
-gridRef.current.getItemByRowIndex(0);
-gridRef.current.getRowCount();
+gridRef.current.getItemByRowIndex(0)
+gridRef.current.getRowCount()
 
 // 수정 추적만 원복 (데이터는 _original 기준)
-gridRef.current.resetUpdatedItems('ALL'); // 'C' | 'U' | 'D' | 'ALL'
+gridRef.current.resetUpdatedItems('ALL') // 'C' | 'U' | 'D' | 'ALL'
 ```
 
 #### 체크박스·선택·필터·정렬
 
 ```ts
-gridRef.current.setCheckedRowsByIds(['id1', 'id2']);
-gridRef.current.addCheckedRowsByIds(['id3']);
-gridRef.current.isCheckedRowById('id1');
+gridRef.current.setCheckedRowsByIds(['id1', 'id2'])
+gridRef.current.addCheckedRowsByIds(['id3'])
+gridRef.current.isCheckedRowById('id1')
 
-gridRef.current.clearFilter('dept'); // 단일 컬럼
-gridRef.current.clearFilterAll();
-gridRef.current.clearSortingAll();
-gridRef.current.clearSelection(); // 포커스·범위·행 하이라이트 — 체크박스 유지
+gridRef.current.clearFilter('dept') // 단일 컬럼
+gridRef.current.clearFilterAll()
+gridRef.current.clearSortingAll()
+gridRef.current.clearSelection() // 포커스·범위·행 하이라이트 — 체크박스 유지
 
-gridRef.current.setSelectionByIndex(2, 1); // rowIndex, colIndex(생략 시 첫 visible 컬럼)
-gridRef.current.setSelectionBlock({ startRow: 0, endRow: 2, startCol: 0, endCol: 1 });
+gridRef.current.setSelectionByIndex(2, 1) // rowIndex, colIndex(생략 시 첫 visible 컬럼)
+gridRef.current.setSelectionBlock({ startRow: 0, endRow: 2, startCol: 0, endCol: 1 })
 ```
 
 #### 푸터·트리
 
 ```ts
-gridRef.current.getFooterValueByDataField('price', 0); // footerData 행 index
-gridRef.current.getSubFooterValueByDataField('qty', 0); // subfooterData 배열 index
+gridRef.current.getFooterValueByDataField('price', 0) // footerData 행 index
+gridRef.current.getSubFooterValueByDataField('qty', 0) // subfooterData 배열 index
 
-gridRef.current.expandAll();
-gridRef.current.collapseAll();
+gridRef.current.expandAll()
+gridRef.current.collapseAll()
 ```
 
 > `getData()`는 **전체 internalData**(필터 무시). 화면 순서는 `getSortedData()`. 샘플 **§1.5** 참고.
@@ -998,14 +998,14 @@ gridRef.current.collapseAll();
 
 ```ts
 // 샘플 초기화 패턴 (권장)
-setData([...INITIAL_ROWS]);
-gridRef.current?.resetGrid();
+setData([...INITIAL_ROWS])
+gridRef.current?.resetGrid()
 
 // 수정 추적(I/U/D)까지 원복할 때만
-gridRef.current?.resetGrid({ modifiedRows: true });
+gridRef.current?.resetGrid({ modifiedRows: true })
 
 // 컬럼 DnD 순서까지 초기화 (enableColumnDragDrop)
-gridRef.current?.resetGrid({ columnOrder: true });
+gridRef.current?.resetGrid({ columnOrder: true })
 ```
 
 | 옵션               | 기본값  | 동작                                                                                                                   |
@@ -1026,10 +1026,10 @@ gridRef.current?.resetGrid({ columnOrder: true });
 #### UI · 런타임 (`resize` / `setProp` / `destroy`)
 
 ```ts
-gridRef.current.resize(480, 360); // px 또는 '80%'
-gridRef.current.resize(undefined, 400); // height만
-gridRef.current.setProp({ sortable: false, showRowStatus: false });
-gridRef.current.destroy(); // onDestroy 콜백 — 이후 Handle no-op. 재표시는 언마운트/재마운트
+gridRef.current.resize(480, 360) // px 또는 '80%'
+gridRef.current.resize(undefined, 400) // height만
+gridRef.current.setProp({ sortable: false, showRowStatus: false })
+gridRef.current.destroy() // onDestroy 콜백 — 이후 Handle no-op. 재표시는 언마운트/재마운트
 ```
 
 샘플: **Sample1 §1.8**.
@@ -1037,33 +1037,33 @@ gridRef.current.destroy(); // onDestroy 콜백 — 이후 Handle no-op. 재표�
 #### 배치 업데이트
 
 ```ts
-gridRef.current.updateRows([{ rowId: 'rowId1', data: { name: '수정됨' } }]);
+gridRef.current.updateRows([{ rowId: 'rowId1', data: { name: '수정됨' } }])
 ```
 
 #### 동적 컬럼
 
 ```ts
-gridRef.current.addColumn({ header: '비고', name: 'memo', editor: 'text', width: 150 });
-gridRef.current.removeColumn('memo');
+gridRef.current.addColumn({ header: '비고', name: 'memo', editor: 'text', width: 150 })
+gridRef.current.removeColumn('memo')
 ```
 
 #### Undo / Redo (옵션 활성화 시)
 
 ```ts
-gridRef.current.undo?.();
-gridRef.current.redo?.();
+gridRef.current.undo?.()
+gridRef.current.redo?.()
 ```
 
 #### 트리 조작 (treeOptions 시)
 
 ```ts
-gridRef.current.insertChild?.('parentCode', { code: 'CHILD', name: '자식' }, 'last');
-gridRef.current.insertSibling?.('siblingCode', { code: 'SIB', name: '형제' }, 'after');
-gridRef.current.removeTreeNode?.('targetCode');
-gridRef.current.updateTreeNode?.('targetCode', { name: '수정됨' });
-gridRef.current.findTreeNode?.('targetCode');
-gridRef.current.indent?.('targetCode');
-gridRef.current.outdent?.('targetCode');
+gridRef.current.insertChild?.('parentCode', { code: 'CHILD', name: '자식' }, 'last')
+gridRef.current.insertSibling?.('siblingCode', { code: 'SIB', name: '형제' }, 'after')
+gridRef.current.removeTreeNode?.('targetCode')
+gridRef.current.updateTreeNode?.('targetCode', { name: '수정됨' })
+gridRef.current.findTreeNode?.('targetCode')
+gridRef.current.indent?.('targetCode')
+gridRef.current.outdent?.('targetCode')
 ```
 
 ---
@@ -1079,15 +1079,15 @@ gridRef.current.outdent?.('targetCode');
   options={{ editingEvent: 'click' }}
   onReady={(api) => {
     // 단일 이벤트
-    api.bind('cellClick', (e) => console.log(e.rowIndex, e.row));
+    api.bind('cellClick', (e) => console.log(e.rowIndex, e.row))
 
     // 배열로 한 번에
     api.bind(['addRow', 'removeRow', 'afterChange'], (e) => {
-      console.log('변경:', e.type);
-    });
+      console.log('변경:', e.type)
+    })
 
     // 모든 이벤트 (디버깅용)
-    api.bind([...ALL_GRID_EVENTS], (e) => console.log('[grid]', e.type, e));
+    api.bind([...ALL_GRID_EVENTS], (e) => console.log('[grid]', e.type, e))
   }}
 />
 ```
@@ -1120,12 +1120,12 @@ onReady={(api) => {
 
 ```tsx
 api.bind('beforeCellClick', async (e) => {
-  const dirty = detailRef.current?.getModifiedRows();
+  const dirty = detailRef.current?.getModifiedRows()
   if (dirty?.updatedRows.length) {
-    const ok = await showConfirm('저장 안 된 변경이 있습니다. 이동할까요?');
-    if (!ok) e.preventDefault?.();
+    const ok = await showConfirm('저장 안 된 변경이 있습니다. 이동할까요?')
+    if (!ok) e.preventDefault?.()
   }
-});
+})
 ```
 
 ### Cancelable 이벤트 목록
@@ -1142,26 +1142,26 @@ api.bind('beforeCellClick', async (e) => {
 
 ### 전체 이벤트 카탈로그
 
-| 카테고리      | 이벤트                                                                                                                                                                                | 주요 페이로드                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| 라이프사이클  | `ready`                                                                                                                                                                               | —                                                                                     |
-| 편집          | `editingStart` `editingFinish` `editingCancel` `beforeChange` `afterChange`                                                                                                           | `rowIndex` `columnId` `value` `prevValue`                                             |
-| 행 CRUD       | `beforeInsertRow` `addRow` `addRowFinish` `beforeRemoveRow` `removeRow`                                                                                                               | `row` 또는 `rows`                                                                     |
-| 배치 업데이트 | `updateRows`                                                                                                                                                                          | `rows`                                                                                |
-| 컬럼 CRUD     | `addColumn` `removeColumn` `beforeRemoveColumn` `addTreeColumn` `columnStateChange`                                                                                                   | `columnId`                                                                            |
-| 포인터        | `beforeCellClick` `cellClick` `cellDoubleClick` `cellLongTap` `headerClick` `contextMenu` `footerClick` `footerDoubleClick` `rowNumCellClick` `rowNumHeaderClick` `rowStateCellClick` | `rowIndex` `columnId` `row`                                                           |
-| 키보드        | `keyDown`                                                                                                                                                                             | `key` `keyCode` `ctrlKey` `shiftKey` `orgEvent` · `preventDefault()`로 내부 내비 스킵 |
-| 체크박스      | `check` `uncheck` `checkAll` `uncheckAll`                                                                                                                                             | `rowId` `row` `shiftKey` `ctrlKey` · 전체선택 시 `checked`                            |
-| 정렬·필터     | `sorting` `filtering` `notFound`                                                                                                                                                      | `columnId` `direction` `value`                                                        |
-| 클립보드      | `copy` `copyEnd` `paste` `pasteEnd`                                                                                                                                                   | —                                                                                     |
-| 스크롤        | `hScrollChange` `vScrollChange`                                                                                                                                                       | `scrollLeft` `scrollTop`                                                              |
-| DnD           | `dragBegin` `dropCancel` `dropEndBefore` `dropEnd`                                                                                                                                    | `rowIndex` `fromIndex` `toIndex` `row`                                                |
-| 컬럼          | `columnResize` `columnOrderChange`                                                                                                                                                    | `columnId` `width` `columnIds`                                                        |
-| 트리          | `indent` `outdent` `treeLazyRequest`                                                                                                                                                  | `key` `newParentKey` `parentKey` `node`                                               |
-| 페이지        | `pageChange` `pageRowCountChange`                                                                                                                                                     | `pageIndex` `pageSize`                                                                |
-| 그룹          | `grouping`                                                                                                                                                                            | `columns`                                                                             |
+| 카테고리      | 이벤트                                                                                                                                                                                | 주요 페이로드                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| 라이프사이클  | `ready`                                                                                                                                                                               | —                                                                                       |
+| 편집          | `editingStart` `editingFinish` `editingCancel` `beforeChange` `afterChange`                                                                                                           | `rowIndex` `columnId` `value` `prevValue`                                               |
+| 행 CRUD       | `beforeInsertRow` `addRow` `addRowFinish` `beforeRemoveRow` `removeRow`                                                                                                               | `row` 또는 `rows`                                                                       |
+| 배치 업데이트 | `updateRows`                                                                                                                                                                          | `rows`                                                                                  |
+| 컬럼 CRUD     | `addColumn` `removeColumn` `beforeRemoveColumn` `addTreeColumn` `columnStateChange`                                                                                                   | `columnId`                                                                              |
+| 포인터        | `beforeCellClick` `cellClick` `cellDoubleClick` `cellLongTap` `headerClick` `contextMenu` `footerClick` `footerDoubleClick` `rowNumCellClick` `rowNumHeaderClick` `rowStateCellClick` | `rowIndex` `columnId` `row`                                                             |
+| 키보드        | `keyDown`                                                                                                                                                                             | `key` `keyCode` `ctrlKey` `shiftKey` `orgEvent` · `preventDefault()`로 내부 내비 스킵   |
+| 체크박스      | `check` `uncheck` `checkAll` `uncheckAll`                                                                                                                                             | `rowId` `row` `shiftKey` `ctrlKey` · 전체선택 시 `checked`                              |
+| 정렬·필터     | `sorting` `filtering` `notFound`                                                                                                                                                      | `columnId` `direction` `value`                                                          |
+| 클립보드      | `copy` `copyEnd` `paste` `pasteEnd`                                                                                                                                                   | —                                                                                       |
+| 스크롤        | `hScrollChange` `vScrollChange`                                                                                                                                                       | `scrollLeft` `scrollTop`                                                                |
+| DnD           | `dragBegin` `dropCancel` `dropEndBefore` `dropEnd`                                                                                                                                    | `rowIndex` `fromIndex` `toIndex` `row`                                                  |
+| 컬럼          | `columnResize` `columnOrderChange`                                                                                                                                                    | `columnId` `width` `columnIds`                                                          |
+| 트리          | `indent` `outdent` `treeLazyRequest`                                                                                                                                                  | `key` `newParentKey` `parentKey` `node`                                                 |
+| 페이지        | `pageChange` `pageRowCountChange`                                                                                                                                                     | `pageIndex` `pageSize`                                                                  |
+| 그룹          | `grouping`                                                                                                                                                                            | `columns`                                                                               |
 | 선택          | `selectionChange` `selectedRowKeyChange` `focusChange`                                                                                                                                | `selectedCells` `row` `selectedRowKeyField` `selectedRowKeyValue` `rowIndex` `columnId` |
-| Undo          | `undoRedoChange`                                                                                                                                                                      | `canUndo` `canRedo`                                                                   |
+| Undo          | `undoRedoChange`                                                                                                                                                                      | `canUndo` `canRedo`                                                                     |
 
 > 모든 이벤트 페이로드는 `type` + 이벤트별 필드 + (cancelable이면) `preventDefault()` / `defaultPrevented`를 갖는 평탄 객체입니다.
 
@@ -1179,11 +1179,11 @@ api.bind('beforeCellClick', async (e) => {
 />
 ```
 
-| `true` 반환 시 | 동작 |
-| --- | --- |
-| 셀 편집 | 해당 행 전체 편집 불가 (`editor` 있어도) |
-| `_rowStatus` | 상태 점 클릭(restore) 불가 |
-| 셀 스타일 | 일반 편집불가와 동일 (`vc-dg__cell--readonly-bg`) |
+| `true` 반환 시   | 동작                                                    |
+| ---------------- | ------------------------------------------------------- |
+| 셀 편집          | 해당 행 전체 편집 불가 (`editor` 있어도)                |
+| `_rowStatus`     | 상태 점 클릭(restore) 불가                              |
+| 셀 스타일        | 일반 편집불가와 동일 (`vc-dg__cell--readonly-bg`)       |
 | 행 헤더 체크박스 | **영향 없음** — 체크 가능 (`isCheckboxDisabled`와 독립) |
 
 - `false` / `null` / `undefined` / 미지정 → 컬럼 단위 규칙(`editor`·`editable`) 그대로
@@ -1196,17 +1196,17 @@ api.bind('beforeCellClick', async (e) => {
 <DataGrid
   options={{
     rowHeaders: [{ type: 'checkbox' }],
-    isReadOnly: (row) => row.locked,           // 편집만 막음
-    isCheckboxDisabled: (row) => row.locked,   // 체크까지 막을 때만
+    isReadOnly: (row) => row.locked, // 편집만 막음
+    isCheckboxDisabled: (row) => row.locked, // 체크까지 막을 때만
   }}
 />
 ```
 
-| `true` 반환 시 | 동작 |
-| --- | --- |
-| 행 체크박스 | `disabled` (`getCanSelect` false) |
-| 헤더 전체 선택 | 해당 행은 체크 대상에서 **제외** |
-| `isReadOnly` | **무관** — readonly여도 체크 가능, 이 props로만 비활성 |
+| `true` 반환 시 | 동작                                                   |
+| -------------- | ------------------------------------------------------ |
+| 행 체크박스    | `disabled` (`getCanSelect` false)                      |
+| 헤더 전체 선택 | 해당 행은 체크 대상에서 **제외**                       |
+| `isReadOnly`   | **무관** — readonly여도 체크 가능, 이 props로만 비활성 |
 
 - 미지정 → 모든 데이터 행 체크 가능 (subfooter 등 내부 행 제외)
 - **`editor: 'checkbox'` 데이터 컬럼**·`headerCheckbox`와는 별개 (그건 셀 값 편집)
@@ -1217,10 +1217,10 @@ api.bind('beforeCellClick', async (e) => {
 <DataGrid
   options={{
     focusChangeConstraint: async (dirty, target) => {
-      const ok = await showConfirm('변경사항이 있습니다. 이동할까요?');
-      if (!ok) return 'stay'; // 현재 행 유지
+      const ok = await showConfirm('변경사항이 있습니다. 이동할까요?')
+      if (!ok) return 'stay' // 현재 행 유지
       // return 'rollback';           // 변경 취소 후 이동
-      return 'move'; // 그대로 이동
+      return 'move' // 그대로 이동
     },
   }}
 />
@@ -1245,7 +1245,7 @@ api.bind('beforeCellClick', async (e) => {
       isRowSelectable: (row) => !row.locked,
       maxSelections: 5,
       onSelectionBlocked: (reason) => {
-        if (reason === 'max') toast.error('최대 5개까지');
+        if (reason === 'max') toast.error('최대 5개까지')
       },
     },
   }}
@@ -1270,10 +1270,10 @@ api.bind('beforeCellClick', async (e) => {
 좌측 마스터 그리드 + 우측 디테일 패널 화면에서, **행 하이라이트를 부모 state로 제어**할 때 사용합니다.  
 (`WorkspaceManagement`, `Role`, `UserRole`, `RoleUser`, `User` 등)
 
-| 옵션 | 설명 |
-| --- | --- |
+| 옵션                  | 설명                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------- |
 | `selectedRowKeyField` | 비즈니스 키 필드 (예: `'id'`). 트리 그리드에서 생략 시 `treeOptions.keyField` fallback |
-| `selectedRowKeyValue` | 제어형 선택 값. `null`/`undefined`면 행 하이라이트 없음 |
+| `selectedRowKeyValue` | 제어형 선택 값. `null`/`undefined`면 행 하이라이트 없음                                |
 
 **동작 요약**
 
@@ -1284,21 +1284,21 @@ api.bind('beforeCellClick', async (e) => {
 
 ```tsx
 // 페이지
-const [selectedId, setSelectedId] = useState<number | null>(null);
+const [selectedId, setSelectedId] = useState<number | null>(null)
 
 useEffect(() => {
   contentRef.current?.setBeforeSelectGuard((row, proceed) => {
-    if (row.id === selectedId) return;
+    if (row.id === selectedId) return
     if (detailRef.current?.hasDirtyChanges()) {
-      messageUtil.showConfirm('', t('common.msg.unsavedChangesConfirm'), proceed);
+      messageUtil.showConfirm('', t('common.msg.unsavedChangesConfirm'), proceed)
     } else {
-      proceed();
+      proceed()
     }
-  });
-}, [t, selectedId]);
+  })
+}, [t, selectedId])
 
 // Content
-<DataGrid
+;<DataGrid
   data={rows}
   options={{
     selectedRowKeyField: 'id',
@@ -1306,11 +1306,11 @@ useEffect(() => {
   }}
   onReady={(api) => {
     api.bind('selectedRowKeyChange', (e) => {
-      const row = e.row as MyRow;
-      const guard = beforeSelectGuardRef.current;
-      if (guard) guard(row, () => onSelect(row));
-      else onSelect(row);
-    });
+      const row = e.row as MyRow
+      const guard = beforeSelectGuardRef.current
+      if (guard) guard(row, () => onSelect(row))
+      else onSelect(row)
+    })
   }}
 />
 ```
@@ -1344,13 +1344,13 @@ useEffect(() => {
   data={data}
   options={{ enableRowDragDrop: true, height: 400 }}
   onReady={(api) => {
-    api.bind('dragBegin', (e) => console.log('start:', e.rowIndex, e.row));
+    api.bind('dragBegin', (e) => console.log('start:', e.rowIndex, e.row))
     api.bind('dropEndBefore', (e) => {
-      if (badMove(e.fromIndex, e.toIndex)) e.preventDefault?.();
-    });
+      if (badMove(e.fromIndex, e.toIndex)) e.preventDefault?.()
+    })
     api.bind('dropEnd', (e) => {
-      console.log(`${e.fromIndex} → ${e.toIndex}`);
-    });
+      console.log(`${e.fromIndex} → ${e.toIndex}`)
+    })
   }}
 />
 ```
@@ -1362,8 +1362,8 @@ useEffect(() => {
   options={{ enableColumnDragDrop: true }}
   onReady={(api) => {
     api.bind('columnOrderChange', (e) => {
-      console.log('컬럼 순서:', e.columnIds);
-    });
+      console.log('컬럼 순서:', e.columnIds)
+    })
   }}
 />
 ```
@@ -1402,12 +1402,12 @@ const [canRedo, setCanRedo] = useState(false);
 
 ### `treeOptions` 요약
 
-| 속성                    | 필수 | 설명                                                   |
-| ----------------------- | ---- | ------------------------------------------------------ |
-| `keyField`              | ✅   | 노드 고유 키 (예: `code`, `id`)                        |
-| `parentField`           | ✅   | 부모의 `keyField` 값. 루트는 `null`                    |
-| `lazyLoadEmptyChildren` |      | `true` → `treeLazyRequest` · `lazyTreePending`         |
-| `onTreeChange`          |      | insert/remove/move/update/lazyAttach 메타              |
+| 속성                    | 필수 | 설명                                           |
+| ----------------------- | ---- | ---------------------------------------------- |
+| `keyField`              | ✅   | 노드 고유 키 (예: `code`, `id`)                |
+| `parentField`           | ✅   | 부모의 `keyField` 값. 루트는 `null`            |
+| `lazyLoadEmptyChildren` |      | `true` → `treeLazyRequest` · `lazyTreePending` |
+| `onTreeChange`          |      | insert/remove/move/update/lazyAttach 메타      |
 
 > `**getData()` / `getModifiedRows()**`: 평면 배열 + `parentField` 반환.
 
@@ -1416,34 +1416,34 @@ const [canRedo, setCanRedo] = useState(false);
 ### 기본 예시
 
 ```tsx
-type DeptRow = { code: string; parentCode: string | null; name: string };
+type DeptRow = { code: string; parentCode: string | null; name: string }
 
 const rows: DeptRow[] = [
   { code: 'HQ', parentCode: null, name: '본사' },
   { code: 'DEV', parentCode: 'HQ', name: '개발본부' },
-];
+]
 
-<DataGrid
+;<DataGrid
   data={rows}
   columns={columns}
   treeOptions={{ keyField: 'code', parentField: 'parentCode' }}
   options={{ height: 400 }}
-/>;
+/>
 ```
 
 ### 예시 — 지연 로드 (lazy)
 
 ```tsx
 type DeptLazyRow = {
-  id: string;
-  parentId: string | null;
-  name: string;
-  lazyTreePending?: boolean;
-};
+  id: string
+  parentId: string | null
+  name: string
+  lazyTreePending?: boolean
+}
 
 const rowsLazy: DeptLazyRow[] = [
   { id: 'lazy-root', parentId: null, name: '루트 (펼치면 자식 로드)', lazyTreePending: true },
-];
+]
 // treeOptions: { keyField: 'id', parentField: 'parentId', lazyLoadEmptyChildren: true }
 // treeLazyRequest 수신 후: setRows((prev) => prev.map(...).concat([{ id: 'c1', parentId: 'lazy-root', name: '자식1' }, ...]))
 ```
@@ -1503,16 +1503,16 @@ const rowsLazy: DeptLazyRow[] = [
 ### 서버 사이드 (권장)
 
 ```tsx
-import { DataGrid, GridBtn, Pagination } from '@vanta/common';
+import { DataGrid, GridBtn, Pagination } from '@vanta/common'
 
 function MyPage() {
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const gridRef = useRef<DataGridHandle>(null);
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const gridRef = useRef<DataGridHandle>(null)
 
   const { data: pageData } = useQuery(['users', pageIndex, pageSize], () =>
     fetchUsers({ page: pageIndex, size: pageSize }),
-  );
+  )
 
   return (
     <>
@@ -1540,7 +1540,7 @@ function MyPage() {
       />
       <Pagination pageResponse={pageData} onPageChange={setPageIndex} />
     </>
-  );
+  )
 }
 ```
 
@@ -1555,8 +1555,8 @@ function MyPage() {
     pagination: { pageIndex: 0, pageSize: 10, totalCount: allData.length },
   }}
   onReady={(api) => {
-    api.bind('pageChange', (e) => console.log('페이지:', e.pageIndex));
-    api.bind('pageRowCountChange', (e) => console.log('페이지 크기:', e.pageSize));
+    api.bind('pageChange', (e) => console.log('페이지:', e.pageIndex))
+    api.bind('pageRowCountChange', (e) => console.log('페이지 크기:', e.pageSize))
   }}
 />
 ```
@@ -1568,10 +1568,10 @@ function MyPage() {
 전체 데이터를 미리 갖고 있을 때 스크롤 하단 근접 시 청크 단위로 표시 행을 늘려갑니다.
 
 ```tsx
-import { ScrollPagination } from '@vanta/common';
+import { ScrollPagination } from '@vanta/common'
 
 function MyPage() {
-  const [allData, setAllData] = useState<MyRow[]>([]);
+  const [allData, setAllData] = useState<MyRow[]>([])
 
   return (
     <ScrollPagination<MyRow>
@@ -1588,7 +1588,7 @@ function MyPage() {
         />
       )}
     />
-  );
+  )
 }
 ```
 
@@ -1616,7 +1616,7 @@ function MyPage() {
 | 구분      | prop            | 집계·삽입 기준                                                                            |
 | --------- | --------------- | ----------------------------------------------------------------------------------------- |
 | 하단 푸터 | `footerData`    | **전체 detail** (`internalData`, `D`·inline subfooter 제외). 필터로 숨긴 행도 집계에 포함 |
-| 중간 소계 | `subfooterData` | **현재 표시**(필터·정렬·페이지) detail 순서. `rowIndex`·`aggregateDirection` 구간별 집계 |
+| 중간 소계 | `subfooterData` | **현재 표시**(필터·정렬·페이지) detail 순서. `rowIndex`·`aggregateDirection` 구간별 집계  |
 
 타입: `FooterRowData`, `SubfooterDataItem`, `SubfooterMerge`, `SubfooterAggregateDirection` (`@vanta/common`).
 
@@ -1626,7 +1626,7 @@ function MyPage() {
 **여러 푸터 줄**은 배열로 전달합니다.
 
 ```tsx
-import type { FooterRowData } from '@vanta/common';
+import type { FooterRowData } from '@vanta/common'
 
 const footerData: FooterRowData[] = [
   {
@@ -1641,9 +1641,9 @@ const footerData: FooterRowData[] = [
     operations: { price: 'SUM', qty: 'SUM' },
     merges: [{ from: 'dept', colSpan: 2, value: '합계' }],
   },
-];
+]
 
-<DataGrid
+;<DataGrid
   data={data}
   columns={columns}
   options={{
@@ -1651,13 +1651,13 @@ const footerData: FooterRowData[] = [
     height: 400,
     columnPinning: { left: ['id', 'name'] },
   }}
-/>;
+/>
 ```
 
-| `operations` 값 | 설명 |
-| --- | --- |
-| `'SUM' \| 'AVG' \| 'MIN' \| 'MAX' \| 'COUNT'` | 문자열 shorthand |
-| `{ op: 'AVG', decimals: 2 }` | 소수 자릿수 지정 (기본 3, `COUNT`는 정수) |
+| `operations` 값                               | 설명                                      |
+| --------------------------------------------- | ----------------------------------------- |
+| `'SUM' \| 'AVG' \| 'MIN' \| 'MAX' \| 'COUNT'` | 문자열 shorthand                          |
+| `{ op: 'AVG', decimals: 2 }`                  | 소수 자릿수 지정 (기본 3, `COUNT`는 정수) |
 
 - `operations` **키 = dataField** — **숫자로 변환 가능한 컬럼**만 집계됩니다.
 - `operations`에 없는 필드는 같은 행 객체에 **고정값**으로 넣을 수 있습니다 (`{ name: '합계', operations: { price: 'SUM' } }`).
@@ -1698,22 +1698,22 @@ onReady={(api) => {
 
 ### 14.5 본문 중간 소계 (`subfooterData`)
 
-| 방식 | 정렬 | 설명 |
-| --- | --- | --- |
-| `options.subfooterData` (권장) | **ON** | `data`는 detail만. 필터·정렬 바뀌면 `rowIndex`·`operations` 재계산 |
-| inline `_rowKind: 'subfooter'` | **OFF** | `data`에 섞기 — 레거시, `@deprecated` |
+| 방식                           | 정렬    | 설명                                                               |
+| ------------------------------ | ------- | ------------------------------------------------------------------ |
+| `options.subfooterData` (권장) | **ON**  | `data`는 detail만. 필터·정렬 바뀌면 `rowIndex`·`operations` 재계산 |
+| inline `_rowKind: 'subfooter'` | **OFF** | `data`에 섞기 — 레거시, `@deprecated`                              |
 
 #### `rowIndex` · `aggregateDirection`
 
-| 필드 | 기본값 | 설명 |
-| --- | --- | --- |
-| `rowIndex` | (필수) | 현재 **표시 중인 detail 행** 기준 0-based 인덱스 |
+| 필드                 | 기본값    | 설명                                                   |
+| -------------------- | --------- | ------------------------------------------------------ |
+| `rowIndex`           | (필수)    | 현재 **표시 중인 detail 행** 기준 0-based 인덱스       |
 | `aggregateDirection` | `'above'` | 소계 행 위치와 집계 구간 방향 (`'above'` \| `'below'`) |
 
-| `aggregateDirection` | 소계 행 위치 | `operations` 집계 구간 |
-| --- | --- | --- |
-| **`above`** (기본) | `rowIndex` 행 **다음** (그룹 **아래**) | 그룹 시작 ~ `rowIndex` (**위쪽** detail 행) |
-| **`below`** | `rowIndex` 행 **앞** (그룹 **위**) | `rowIndex` ~ 다음 subfooter 전 (**아래쪽** detail 행) |
+| `aggregateDirection` | 소계 행 위치                           | `operations` 집계 구간                                |
+| -------------------- | -------------------------------------- | ----------------------------------------------------- |
+| **`above`** (기본)   | `rowIndex` 행 **다음** (그룹 **아래**) | 그룹 시작 ~ `rowIndex` (**위쪽** detail 행)           |
+| **`below`**          | `rowIndex` 행 **앞** (그룹 **위**)     | `rowIndex` ~ 다음 subfooter 전 (**아래쪽** detail 행) |
 
 - 여러 subfooter는 `rowIndex` 오름차순으로 처리합니다.
 - `above`에서 두 번째 이후 항목은 **이전 subfooter 다음 행**부터 집계합니다.
@@ -1774,7 +1774,7 @@ const subfooterDataBelow: SubfooterDataItem[] = [
     operations: { price: 'AVG', qty: 'SUM' },
     merges: [{ from: 'dept', colSpan: 2, value: '디자인 평균' }],
   },
-];
+]
 ```
 
 표시 순서 (below):
@@ -1789,7 +1789,7 @@ const subfooterDataBelow: SubfooterDataItem[] = [
 #### 값 조회
 
 ```ts
-gridRef.current.getSubFooterValueByDataField('price', 0); // subfooterData 배열 index (0-based)
+gridRef.current.getSubFooterValueByDataField('price', 0) // subfooterData 배열 index (0-based)
 ```
 
 샘플: **§1.1** `footerData` 3행 · **§1.2** 고정값 footer · **§1.4** `subfooterData` (`above` / `below` / **merge+subfooter** 우측) · **§1.6** Handle.
@@ -1878,7 +1878,7 @@ const columns = createColumns<MyRow>([
       delay: 200,
     },
   },
-]);
+])
 ```
 
 `CellTooltipInfo` 페이로드: `{ rowIndex, columnId, value, headerText, rowData }`.
@@ -1905,17 +1905,17 @@ const columns = createColumns<MyRow>([
       delay: 300,
     },
   },
-]);
+])
 ```
 
 `HeaderTooltipInfo` 페이로드: `{ columnId, headerText }`.
 
 ### 타입 요약
 
-| prop | 타입 | 대상 |
-| --- | --- | --- |
-| `cellTooltip` | `boolean \| { tooltipFunction?, delay? }` | 셀 |
-| `tooltip` | `ReactNode \| { tooltipFunction, delay? }` | 헤더 |
+| prop          | 타입                                       | 대상 |
+| ------------- | ------------------------------------------ | ---- |
+| `cellTooltip` | `boolean \| { tooltipFunction?, delay? }`  | 셀   |
+| `tooltip`     | `ReactNode \| { tooltipFunction, delay? }` | 헤더 |
 
 ---
 
@@ -1924,26 +1924,26 @@ const columns = createColumns<MyRow>([
 ### 레시피 1 — 기본 CRUD 그리드
 
 ```tsx
-import { useRef, useState } from 'react';
-import { DataGrid, createColumns, type DataGridHandle } from '@vanta/common';
+import { useRef, useState } from 'react'
+import { DataGrid, createColumns, type DataGridHandle } from '@vanta/common'
 
-type Item = { id: number; name: string; qty: number };
+type Item = { id: number; name: string; qty: number }
 
 const columns = createColumns<Item>([
   { header: 'ID', name: 'id', width: 60 },
   { header: '품목', name: 'name', width: 200, editor: 'text', sortable: true, filter: 'select' },
   { header: '수량', name: 'qty', width: 80, editor: 'number', sortable: true },
-]);
+])
 
 export function ItemGrid() {
-  const ref = useRef<DataGridHandle<Item>>(null);
-  const [data, setData] = useState<Item[]>(fetchItems());
+  const ref = useRef<DataGridHandle<Item>>(null)
+  const [data, setData] = useState<Item[]>(fetchItems())
 
   const handleSave = async () => {
-    const { createdRows, updatedRows, deletedRows } = ref.current!.getModifiedRows();
-    await api.saveItems({ createdRows, updatedRows, deletedRows });
-    setData(await fetchItems());
-  };
+    const { createdRows, updatedRows, deletedRows } = ref.current!.getModifiedRows()
+    await api.saveItems({ createdRows, updatedRows, deletedRows })
+    setData(await fetchItems())
+  }
 
   return (
     <>
@@ -1965,34 +1965,34 @@ export function ItemGrid() {
         }}
       />
     </>
-  );
+  )
 }
 ```
 
 ### 레시피 2 — 서버 정렬 & 필터
 
 ```tsx
-const [sortCol, setSortCol] = useState('');
-const [sortDir, setSortDir] = useState<'asc' | 'desc' | false>(false);
-const [filters, setFilters] = useState<Record<string, string | string[]>>({});
+const [sortCol, setSortCol] = useState('')
+const [sortDir, setSortDir] = useState<'asc' | 'desc' | false>(false)
+const [filters, setFilters] = useState<Record<string, string | string[]>>({})
 
 const { data } = useQuery(['items', sortCol, sortDir, filters], () =>
   api.getItems({ sort: sortCol, dir: sortDir, ...filters }),
-);
+)
 
-<DataGrid
+;<DataGrid
   data={data ?? []}
   columns={columns}
   onReady={(api) => {
     api.bind('sorting', (e) => {
-      setSortCol(e.columnId as string);
-      setSortDir(e.direction as 'asc' | 'desc' | false);
-    });
+      setSortCol(e.columnId as string)
+      setSortDir(e.direction as 'asc' | 'desc' | false)
+    })
     api.bind('filtering', (e) => {
-      setFilters((prev) => ({ ...prev, [e.columnId as string]: (e.value as string) ?? '' }));
-    });
+      setFilters((prev) => ({ ...prev, [e.columnId as string]: (e.value as string) ?? '' }))
+    })
   }}
-/>;
+/>
 ```
 
 ### 레시피 3 — 읽기 전용 + 특정 컬럼만 편집
@@ -2002,7 +2002,7 @@ const columns = createColumns<MyRow>([
   { header: '코드', name: 'code', width: 80 }, // editor 없음 → 읽기 전용
   { header: '이름', name: 'name', width: 120, editor: 'text' }, // 편집 가능
   { header: '생성일', name: 'createdAt', width: 120 }, // 읽기 전용
-]);
+])
 ```
 
 ### 레시피 4 — 동적 컬럼
@@ -2019,17 +2019,17 @@ const ref = useRef<DataGridHandle<MyRow>>(null);
 ### 레시피 5 — 행 클릭 시 상세 패널
 
 ```tsx
-const [selected, setSelected] = useState<MyRow | null>(null);
+const [selected, setSelected] = useState<MyRow | null>(null)
 
-<DataGrid
+;<DataGrid
   options={{ selectionConstraint: { mode: 'singleRow' } }}
   onReady={(api) => {
-    api.bind('cellClick', (e) => setSelected(e.row as MyRow));
+    api.bind('cellClick', (e) => setSelected(e.row as MyRow))
   }}
-/>;
+/>
 
 {
-  selected && <DetailPanel data={selected} />;
+  selected && <DetailPanel data={selected} />
 }
 ```
 
@@ -2040,14 +2040,14 @@ const [selected, setSelected] = useState<MyRow | null>(null);
   onReady={(api) => {
     api.bind('beforeChange', (e) => {
       if (e.columnId === 'email' && !isValidEmail(String(e.value))) {
-        toast.error('올바른 이메일 형식이 아닙니다.');
-        e.preventDefault?.();
+        toast.error('올바른 이메일 형식이 아닙니다.')
+        e.preventDefault?.()
       }
       if (e.columnId === 'qty' && Number(e.value) < 0) {
-        toast.error('수량은 0 이상이어야 합니다.');
-        e.preventDefault?.();
+        toast.error('수량은 0 이상이어야 합니다.')
+        e.preventDefault?.()
       }
-    });
+    })
   }}
 />
 ```
@@ -2059,10 +2059,10 @@ const [selected, setSelected] = useState<MyRow | null>(null);
   options={{ enableRangeSelection: true, enableCellCopyPaste: true }}
   onReady={(api) => {
     api.bind('selectionChange', (e) => {
-      const cells = e.selectedCells as Array<{ rowIndex: number; columnId: string }>;
-      console.log('선택된 셀:', cells);
-    });
-    api.bind(['copy', 'paste', 'copyEnd', 'pasteEnd'], (e) => console.log(e.type));
+      const cells = e.selectedCells as Array<{ rowIndex: number; columnId: string }>
+      console.log('선택된 셀:', cells)
+    })
+    api.bind(['copy', 'paste', 'copyEnd', 'pasteEnd'], (e) => console.log(e.type))
   }}
 />
 ```
@@ -2079,22 +2079,22 @@ const [selected, setSelected] = useState<MyRow | null>(null);
 ### 레시피 8 — 마스터·디테일 (비동기 차단)
 
 ```tsx
-const masterRef = useRef<DataGridHandle<Order>>(null);
-const detailRef = useRef<DataGridHandle<OrderItem>>(null);
+const masterRef = useRef<DataGridHandle<Order>>(null)
+const detailRef = useRef<DataGridHandle<OrderItem>>(null)
 
-<DataGrid
+;<DataGrid
   ref={masterRef}
   options={{ rowHeaders: [{ type: 'rowNum' }], editingEvent: 'click', height: 300 }}
   onReady={(api) => {
     api.bind('beforeCellClick', async (e) => {
-      const dirty = detailRef.current?.getModifiedRows();
-      if (!dirty?.updatedRows.length) return;
-      const ok = await showConfirm('저장 안 된 변경이 있습니다. 이동할까요?');
-      if (!ok) e.preventDefault?.(); // 마스터 이동 차단
-    });
-    api.bind('cellClick', (e) => loadDetailFor((e.row as Order).id));
+      const dirty = detailRef.current?.getModifiedRows()
+      if (!dirty?.updatedRows.length) return
+      const ok = await showConfirm('저장 안 된 변경이 있습니다. 이동할까요?')
+      if (!ok) e.preventDefault?.() // 마스터 이동 차단
+    })
+    api.bind('cellClick', (e) => loadDetailFor((e.row as Order).id))
   }}
-/>;
+/>
 ```
 
 ---
@@ -2118,7 +2118,7 @@ const columns = createColumns([...]);
 
 ```tsx
 // Bad: 매 렌더마다 새 객체
-<DataGrid options={{ height: 400, rowHeaders: [{ type: 'rowNum' }] }} />;
+;<DataGrid options={{ height: 400, rowHeaders: [{ type: 'rowNum' }] }} />
 
 // Good: useMemo
 const options = useMemo(
@@ -2127,8 +2127,8 @@ const options = useMemo(
     rowHeaders: [{ type: 'rowNum' }],
   }),
   [],
-);
-<DataGrid options={options} />;
+)
+;<DataGrid options={options} />
 ```
 
 ### onReady는 이벤트 등록 1회만
@@ -2136,16 +2136,16 @@ const options = useMemo(
 `onReady`는 최초 마운트 시 1회만 호출. 핸들러 내부에서 외부 state 캡처 시 ref 패턴 사용:
 
 ```tsx
-const dataRef = useRef(data);
-dataRef.current = data;
+const dataRef = useRef(data)
+dataRef.current = data
 
-<DataGrid
+;<DataGrid
   onReady={(api) => {
     api.bind('cellClick', (e) => {
-      console.log(dataRef.current.length); // 항상 최신
-    });
+      console.log(dataRef.current.length) // 항상 최신
+    })
   }}
-/>;
+/>
 ```
 
 ### 가상화 활용
@@ -2180,18 +2180,18 @@ dataRef.current = data;
 
 경로: `vanta-admin-front/src/components/samples/dataGrid/` · URL: `/samples/dataGrid/sampleDataGrid{N}`
 
-| 샘플                      | 주요 기능                                                                                                                                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 샘플                      | 주요 기능                                                                                                                                                                                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SampleDataGrid1Content`  | **§1.1** 편집·footer·`wordWrap`·`htmlContent`(`비고` 4행 HTML) · `styleFunction`·`visible` · **§1.2** 핀 · **§1.4** `subfooterData` (`aggregateDirection` above/below) · **§1.5** `getData` · **§1.6** Handle · **§1.7** validation·paste · **§1.8** `resize`/`setProp`/`destroy` |
-| `SampleDataGrid2Content`  | **§2.1** editor 전종(`combobox`·`multiSelect` chip·`calendarMode`·checkbox) · **§2.2** `IconCell`/`BadgeCell` 등 렌더러                                                                                       |
-| `SampleDataGrid3Content`  | 변경 추적 + Undo / Redo                                                                                                                                                                                       |
-| `SampleDataGrid4Content`  | **트리** lazy · indent/outdent · DnD                                                                                                                                                                          |
-| `SampleDataGrid5Content`  | 마스터·디테일 + `focusChangeConstraint`                                                                                                                                                                       |
-| `SampleDataGrid6Content`  | 서버 사이드 정렬/필터                                                                                                                                                                                         |
-| `SampleDataGrid7Content`  | **§7.1** CSV / Excel / PDF 내보내기 (`GridBtn` + `fontPath`) · `htmlContent` export plain text · formatter/date 포맷                                                                                                                                                  |
-| `SampleDataGrid8Content`  | 커스텀 에디터/렌더러 · **§8.5** copy/paste · **§8.14** cellClick/dblclick                                                                                                                                     |
-| `SampleDataGrid9Content`  | 배치 작업 + Undo/Redo                                                                                                                                                                                         |
-| `SampleDataGrid11Content` | 대규모 그리드 (1000건+) 가상화                                                                                                                                                                                |
+| `SampleDataGrid2Content`  | **§2.1** editor 전종(`combobox`·`multiSelect` chip·`calendarMode`·checkbox) · **§2.2** `IconCell`/`BadgeCell` 등 렌더러                                                                                                                                                           |
+| `SampleDataGrid3Content`  | 변경 추적 + Undo / Redo                                                                                                                                                                                                                                                           |
+| `SampleDataGrid4Content`  | **트리** lazy · indent/outdent · DnD                                                                                                                                                                                                                                              |
+| `SampleDataGrid5Content`  | 마스터·디테일 + `focusChangeConstraint`                                                                                                                                                                                                                                           |
+| `SampleDataGrid6Content`  | 서버 사이드 정렬/필터                                                                                                                                                                                                                                                             |
+| `SampleDataGrid7Content`  | **§7.1** CSV / Excel / PDF 내보내기 (`GridBtn` + `fontPath`) · `htmlContent` export plain text · formatter/date 포맷                                                                                                                                                              |
+| `SampleDataGrid8Content`  | 커스텀 에디터/렌더러 · **§8.5** copy/paste · **§8.14** cellClick/dblclick                                                                                                                                                                                                         |
+| `SampleDataGrid9Content`  | 배치 작업 + Undo/Redo                                                                                                                                                                                                                                                             |
+| `SampleDataGrid11Content` | 대규모 그리드 (1000건+) 가상화                                                                                                                                                                                                                                                    |
 
 ---
 
@@ -2242,61 +2242,61 @@ onReady={(api) => {
 
 ### 20.1 메서드 매핑표
 
-| No | AUI Grid 메서드 | DataGrid 구현 | 비고 |
-| --- | --- | --- | --- |
-| 1 | `addRow` | `addRow(row, 'first' \| 'last')` | 위치는 `'first'`/`'last'` 문자열 |
-| 2   | `addTreeRow` / `addTreeRowByIndex`                | `insertChild(parentKey, row, position)` / `insertSibling(...)`   | 트리 모드 전용. React state만 직접 고칠 때는 `treeHelpers`로 동일 연산 가능 |
-| 3   | `removeRow` / `removeRowByRowId`                  | `removeRows([rowId])`                                            | 단수형 없음 — 항상 rowId 배열                                               |
-| 4   | `removeCheckedRows`                               | `removeCheckedRows()`                                            | 동일. 행 단위 일괄 삭제의 **표준** 메서드                                   |
-| 5   | `updateRow` / `updateRows` / `updateRowsById`     | `updateRows([{ rowId, data }])` + `updateRows` 이벤트            | 단건도 배열로 호출 (단수형 없음)                                            |
-| 6   | `updateRowBlockToValue` / `updateAllToValue`      | (직접 메서드 없음)                                               | `data` props 갱신으로 대응                                                  |
-| 7   | `refreshRows`                                     | (자동)                                                           | TanStack이 데이터 변경을 자동 감지·리렌더                                   |
-| 8   | `addColumn`                                       | `addColumn(def)` + `addColumn` 이벤트                            | 동일                                                                        |
-| 9   | `removeColumn`                                    | `removeColumn(id)` + `removeColumn` 이벤트                       | 동일                                                                        |
-| 10  | `setColumnOrder` / `changeColumnLayout`           | `enableColumnDragDrop` + `columnOrderChange` 이벤트              | 사용자 DnD 또는 `columns` props 갱신                                        |
-| 11  | `setColumnProp` / `setColumnPropByDataField`      | (직접 메서드 없음)                                               | `columns` props 갱신                                                        |
-| 12  | `setColumnSizeList`                               | (직접 메서드 없음)                                               | 컬럼 정의의 `width` 또는 사용자 리사이즈                                    |
-| 13  | `hideColumnByDataField` / `showColumnByDataField` | `visible: false` + columns remount / 동적 `columns`              | Handle 전용 hide/show 없음 — `visible`·부모 state 교체                      |
-| 14  | `getGridData`                                     | `getData()`                                                      | 동일                                                                        |
-| 15  | `getOrgGridData`                                  | (별도 메서드 없음)                                               | 외부 `data` 변수가 원본 자체이므로 그것을 사용                              |
-| 16  | `getCellValue`                                    | `getCellValue(rowId, dataField)`                                 | `setCellValue`는 validation 없이 `updateRows` 래핑                          |
-| 17  | `getRowCount`                                     | `getRowCount()`                                                  | internalData detail 행 수(subfooter 제외). 화면 순서는 `getSortedData()`    |
-| 18  | `getCurrentPageData`                              | `getSortedData()`                                                | 클라이언트 페이지네이션 시 화면 절단된 데이터 반환                          |
-| 19  | `getEditedRowItems`                               | `getModifiedRows().updatedRows`                                  | —                                                                           |
-| 20  | `getAddedRowItems`                                | `getModifiedRows().createdRows`                                  | —                                                                           |
-| 21  | `getRemovedItems`                                 | `getModifiedRows().deletedRows`                                  | —                                                                           |
-| 22  | `isAddedById` / `isEditedById` / `isRemovedById`  | `getRowStatus(rowId)` · `isEditedCell(rowId, dataField)`         | 필드 단위 수정 여부는 `isEditedCell` (`'U'`+`_original` 비교)               |
-| 23  | `getInitValueItem` / `restoreEditedRows`          | `restoreRowState(rowId)`                                         | 행 단위 원복                                                                |
-| 24 | `resetUpdatedItems` | `resetUpdatedItems('C' \| 'U' \| 'D' \| 'ALL')` | `resetGrid({ modifiedRows: true })`와 연동 가능 |
-| 25  | `getCheckedRowItems` / `getCheckedRowItemsAll`    | `getCheckedRows()` / `getCheckedRowKeys()`                       | 행 데이터·rowId 두 메서드로 분리                                            |
-| 26  | `setCheckedRowsByIds` / `setAllCheckedRows`       | `setCheckedRowsByIds` / `addCheckedRowsByIds`                    | 전체선택 UI는 헤더 체크박스 · `headerCheckbox`는 **데이터** 일괄 토글       |
-| 27  | `getSelectedRows` / `getSelectedItems`            | `getSelectedRows()` / `getSelectedRowKeys()`                     | `selectionConstraint` / `selectedRowIds` (체크박스와 분리)                  |
-| 28  | `setSelectionByIndex` / `clearSelection`          | `setSelectionByIndex` / `setSelectionBlock` / `clearSelection`   | 체크박스는 `clearSelection` 대상 아님                                       |
-| 29  | `setCellValue`                                    | `setCellValue(rowId, dataField, value)` 또는 `updateRows`        | Handle `setCellValue` = `updateRows` 래핑                                   |
-| 30  | `openInputer` / `forceEditingComplete`            | (직접 메서드 없음)                                               | 셀 클릭 / Enter / Tab으로 트리거                                            |
-| 31  | `expandAll` / `collapseAll`                       | `expandAll()` / `collapseAll()`                                  | `table.toggleAllRowsExpanded`. 트리 없으면 no-op                            |
-| 32  | `expandItemByRowId`                               | `treeExpanded` 옵션 + `onTreeExpandedChange` 콜백                | 제어 모드로 처리                                                            |
-| 33  | `indentTreeDepth` / `outdentTreeDepth`            | `indent(key)` / `outdent(key)`                                   | 트리 모드 전용                                                              |
-| 34  | `getTreeFlatData`                                 | `treeHelpers.flatten(data)` 또는 `getData()`                     | 평면+`_depth` 변환 유틸 · 그리드 데이터는 이미 평면+`parentField` |
-| 35  | `setSorting` / `clearSortingAll`                  | `clearSortingAll()` (+ 헤더 클릭)                                | `sorting` 제어 state                                                        |
-| 36 | `setFilter` / `clearFilter` / `searchAll` | `clearFilter(colId)` / `clearFilterAll()` | `filter: 'text' \| 'select' \| 'checkbox'` · `filtering` 이벤트 |
-| 37  | `movePageTo` / `setPageRowCount`                  | `Pagination.onPageChange` / `GridBtn.setPageSize`                | page size는 GridBtn, 이동은 Pagination                                      |
-| 38  | `undo` / `redo`                                   | `undo()` / `redo()`                                              | `enableUndoRedo: true` 시                                                   |
-| 39  | `undoable` / `redoable`                           | `undoRedoChange` 이벤트의 `e.canUndo` / `e.canRedo`              | 이벤트로 통합                                                               |
-| 40  | `clearUndoRedoStack`                              | (직접 메서드 없음)                                               | 컴포넌트 재마운트로 초기화                                                  |
-| 41  | `exportToCsv`                                     | `exportToCsv(options?)`                                          | 동일 · `formatCellExportValue` (formatter·htmlContent strip 등)             |
-| 42  | `exportToXlsx` / `exportToPdf`                    | `exportToExcel(options?)` · `exportToPdf(options?)`              | `exceljs`/`jspdf` peer · PDF `fontPath` · 화면 포맷 일부 반영               |
-| 43  | `exportToJson` etc.                               | (미지원)                                                         | 앱에서 `getData()` + JSON.stringify                                         |
-| 44  | `clearGridData`                                   | `clearData()`                                                    | 동일                                                                        |
-| 45  | `setGridData` / `appendData` / `prependData`      | (직접 메서드 없음)                                               | `data` props 갱신                                                           |
-| 46  | `create` / `destroy`                              | `destroy()` + React 언마운트                                     | Handle `destroy()` · `onDestroy` 콜백                                       |
-| 47  | `refresh` / `update` / `resize`                   | `resize(w?, h?)`                                                 | React 리렌더 자동 · 컨테이너 크기는 `resize` 또는 `height` 옵션             |
-| 48  | `setProp` / `getProp`                             | `setProp(partialOptions)`                                        | `options` props 갱신과 병행 가능                                            |
-| 49  | `bind` / `unbind`                                 | `bind(name, h)` / `unbind(name, h?)`                             | 동일. `bind`는 배열로 여러 이벤트 한 번에 등록 가능                         |
-| 50  | `getFooterValueByDataField`                       | `getFooterValueByDataField(dataField, footerRowIndex?)`          | `footerData` + `operations` 계산 결과                                       |
-| 51  | `getSubFooterValueByDataField`                    | `getSubFooterValueByDataField(dataField, subfooterIndex)`        | `options.subfooterData` 배열 인덱스                                         |
-| 52  | (UI 일괄 초기화)                                  | `resetGrid(options?)`                                            | 필터·정렬·선택·체크·편집 등. `data` 복구는 부모 `setData`                   |
-| 53  | `isEditedCell`                                    | `isEditedCell(rowId, dataField)`                                 | `'I'` 전 필드 true · `'U'`만 `_original` 필드 비교                          |
+| No  | AUI Grid 메서드                                   | DataGrid 구현                                                  | 비고                                                                        |
+| --- | ------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 1   | `addRow`                                          | `addRow(row, 'first' \| 'last')`                               | 위치는 `'first'`/`'last'` 문자열                                            |
+| 2   | `addTreeRow` / `addTreeRowByIndex`                | `insertChild(parentKey, row, position)` / `insertSibling(...)` | 트리 모드 전용. React state만 직접 고칠 때는 `treeHelpers`로 동일 연산 가능 |
+| 3   | `removeRow` / `removeRowByRowId`                  | `removeRows([rowId])`                                          | 단수형 없음 — 항상 rowId 배열                                               |
+| 4   | `removeCheckedRows`                               | `removeCheckedRows()`                                          | 동일. 행 단위 일괄 삭제의 **표준** 메서드                                   |
+| 5   | `updateRow` / `updateRows` / `updateRowsById`     | `updateRows([{ rowId, data }])` + `updateRows` 이벤트          | 단건도 배열로 호출 (단수형 없음)                                            |
+| 6   | `updateRowBlockToValue` / `updateAllToValue`      | (직접 메서드 없음)                                             | `data` props 갱신으로 대응                                                  |
+| 7   | `refreshRows`                                     | (자동)                                                         | TanStack이 데이터 변경을 자동 감지·리렌더                                   |
+| 8   | `addColumn`                                       | `addColumn(def)` + `addColumn` 이벤트                          | 동일                                                                        |
+| 9   | `removeColumn`                                    | `removeColumn(id)` + `removeColumn` 이벤트                     | 동일                                                                        |
+| 10  | `setColumnOrder` / `changeColumnLayout`           | `enableColumnDragDrop` + `columnOrderChange` 이벤트            | 사용자 DnD 또는 `columns` props 갱신                                        |
+| 11  | `setColumnProp` / `setColumnPropByDataField`      | (직접 메서드 없음)                                             | `columns` props 갱신                                                        |
+| 12  | `setColumnSizeList`                               | (직접 메서드 없음)                                             | 컬럼 정의의 `width` 또는 사용자 리사이즈                                    |
+| 13  | `hideColumnByDataField` / `showColumnByDataField` | `visible: false` + columns remount / 동적 `columns`            | Handle 전용 hide/show 없음 — `visible`·부모 state 교체                      |
+| 14  | `getGridData`                                     | `getData()`                                                    | 동일                                                                        |
+| 15  | `getOrgGridData`                                  | (별도 메서드 없음)                                             | 외부 `data` 변수가 원본 자체이므로 그것을 사용                              |
+| 16  | `getCellValue`                                    | `getCellValue(rowId, dataField)`                               | `setCellValue`는 validation 없이 `updateRows` 래핑                          |
+| 17  | `getRowCount`                                     | `getRowCount()`                                                | internalData detail 행 수(subfooter 제외). 화면 순서는 `getSortedData()`    |
+| 18  | `getCurrentPageData`                              | `getSortedData()`                                              | 클라이언트 페이지네이션 시 화면 절단된 데이터 반환                          |
+| 19  | `getEditedRowItems`                               | `getModifiedRows().updatedRows`                                | —                                                                           |
+| 20  | `getAddedRowItems`                                | `getModifiedRows().createdRows`                                | —                                                                           |
+| 21  | `getRemovedItems`                                 | `getModifiedRows().deletedRows`                                | —                                                                           |
+| 22  | `isAddedById` / `isEditedById` / `isRemovedById`  | `getRowStatus(rowId)` · `isEditedCell(rowId, dataField)`       | 필드 단위 수정 여부는 `isEditedCell` (`'U'`+`_original` 비교)               |
+| 23  | `getInitValueItem` / `restoreEditedRows`          | `restoreRowState(rowId)`                                       | 행 단위 원복                                                                |
+| 24  | `resetUpdatedItems`                               | `resetUpdatedItems('C' \| 'U' \| 'D' \| 'ALL')`                | `resetGrid({ modifiedRows: true })`와 연동 가능                             |
+| 25  | `getCheckedRowItems` / `getCheckedRowItemsAll`    | `getCheckedRows()` / `getCheckedRowKeys()`                     | 행 데이터·rowId 두 메서드로 분리                                            |
+| 26  | `setCheckedRowsByIds` / `setAllCheckedRows`       | `setCheckedRowsByIds` / `addCheckedRowsByIds`                  | 전체선택 UI는 헤더 체크박스 · `headerCheckbox`는 **데이터** 일괄 토글       |
+| 27  | `getSelectedRows` / `getSelectedItems`            | `getSelectedRows()` / `getSelectedRowKeys()`                   | `selectionConstraint` / `selectedRowIds` (체크박스와 분리)                  |
+| 28  | `setSelectionByIndex` / `clearSelection`          | `setSelectionByIndex` / `setSelectionBlock` / `clearSelection` | 체크박스는 `clearSelection` 대상 아님                                       |
+| 29  | `setCellValue`                                    | `setCellValue(rowId, dataField, value)` 또는 `updateRows`      | Handle `setCellValue` = `updateRows` 래핑                                   |
+| 30  | `openInputer` / `forceEditingComplete`            | (직접 메서드 없음)                                             | 셀 클릭 / Enter / Tab으로 트리거                                            |
+| 31  | `expandAll` / `collapseAll`                       | `expandAll()` / `collapseAll()`                                | `table.toggleAllRowsExpanded`. 트리 없으면 no-op                            |
+| 32  | `expandItemByRowId`                               | `treeExpanded` 옵션 + `onTreeExpandedChange` 콜백              | 제어 모드로 처리                                                            |
+| 33  | `indentTreeDepth` / `outdentTreeDepth`            | `indent(key)` / `outdent(key)`                                 | 트리 모드 전용                                                              |
+| 34  | `getTreeFlatData`                                 | `treeHelpers.flatten(data)` 또는 `getData()`                   | 평면+`_depth` 변환 유틸 · 그리드 데이터는 이미 평면+`parentField`           |
+| 35  | `setSorting` / `clearSortingAll`                  | `clearSortingAll()` (+ 헤더 클릭)                              | `sorting` 제어 state                                                        |
+| 36  | `setFilter` / `clearFilter` / `searchAll`         | `clearFilter(colId)` / `clearFilterAll()`                      | `filter: 'text' \| 'select' \| 'checkbox'` · `filtering` 이벤트             |
+| 37  | `movePageTo` / `setPageRowCount`                  | `Pagination.onPageChange` / `GridBtn.setPageSize`              | page size는 GridBtn, 이동은 Pagination                                      |
+| 38  | `undo` / `redo`                                   | `undo()` / `redo()`                                            | `enableUndoRedo: true` 시                                                   |
+| 39  | `undoable` / `redoable`                           | `undoRedoChange` 이벤트의 `e.canUndo` / `e.canRedo`            | 이벤트로 통합                                                               |
+| 40  | `clearUndoRedoStack`                              | (직접 메서드 없음)                                             | 컴포넌트 재마운트로 초기화                                                  |
+| 41  | `exportToCsv`                                     | `exportToCsv(options?)`                                        | 동일 · `formatCellExportValue` (formatter·htmlContent strip 등)             |
+| 42  | `exportToXlsx` / `exportToPdf`                    | `exportToExcel(options?)` · `exportToPdf(options?)`            | `exceljs`/`jspdf` peer · PDF `fontPath` · 화면 포맷 일부 반영               |
+| 43  | `exportToJson` etc.                               | (미지원)                                                       | 앱에서 `getData()` + JSON.stringify                                         |
+| 44  | `clearGridData`                                   | `clearData()`                                                  | 동일                                                                        |
+| 45  | `setGridData` / `appendData` / `prependData`      | (직접 메서드 없음)                                             | `data` props 갱신                                                           |
+| 46  | `create` / `destroy`                              | `destroy()` + React 언마운트                                   | Handle `destroy()` · `onDestroy` 콜백                                       |
+| 47  | `refresh` / `update` / `resize`                   | `resize(w?, h?)`                                               | React 리렌더 자동 · 컨테이너 크기는 `resize` 또는 `height` 옵션             |
+| 48  | `setProp` / `getProp`                             | `setProp(partialOptions)`                                      | `options` props 갱신과 병행 가능                                            |
+| 49  | `bind` / `unbind`                                 | `bind(name, h)` / `unbind(name, h?)`                           | 동일. `bind`는 배열로 여러 이벤트 한 번에 등록 가능                         |
+| 50  | `getFooterValueByDataField`                       | `getFooterValueByDataField(dataField, footerRowIndex?)`        | `footerData` + `operations` 계산 결과                                       |
+| 51  | `getSubFooterValueByDataField`                    | `getSubFooterValueByDataField(dataField, subfooterIndex)`      | `options.subfooterData` 배열 인덱스                                         |
+| 52  | (UI 일괄 초기화)                                  | `resetGrid(options?)`                                          | 필터·정렬·선택·체크·편집 등. `data` 복구는 부모 `setData`                   |
+| 53  | `isEditedCell`                                    | `isEditedCell(rowId, dataField)`                               | `'I'` 전 필드 true · `'U'`만 `_original` 필드 비교                          |
 
 ### 20.2 이벤트 매핑표
 
@@ -2346,9 +2346,9 @@ onReady={(api) => {
 | 42  | `rowCheckClick`                 | `check` / `uncheck` 이벤트                        | 분리 발행                                                                                  |
 | 43  | `rowNumCellClick`               | `rowNumCellClick` 이벤트                          | 동일                                                                                       |
 | 44  | `rowNumHeaderClick`             | `rowNumHeaderClick` 이벤트                        | 동일                                                                                       |
-| 45  | `rowStateCellClick`             | `rowStateCellClick` 이벤트                        | 행상태 컬럼 클릭 (`showRowStatus` 기본 `true`, 숨기려면 `false`)                          |
-| 46  | `selectionChange`               | `selectionChange` 이벤트                          | 셀 범위 선택(`enableRangeSelection`) 포함 · key 모드 시 `source: 'selectedRowKey'`        |
-| 46b | `selectedRowKeyChange`          | `selectedRowKeyChange` 이벤트                     | key 제어 마스터-디테일 — `row` `selectedRowKeyField` `selectedRowKeyValue`                  |
+| 45  | `rowStateCellClick`             | `rowStateCellClick` 이벤트                        | 행상태 컬럼 클릭 (`showRowStatus` 기본 `true`, 숨기려면 `false`)                           |
+| 46  | `selectionChange`               | `selectionChange` 이벤트                          | 셀 범위 선택(`enableRangeSelection`) 포함 · key 모드 시 `source: 'selectedRowKey'`         |
+| 46b | `selectedRowKeyChange`          | `selectedRowKeyChange` 이벤트                     | key 제어 마스터-디테일 — `row` `selectedRowKeyField` `selectedRowKeyValue`                 |
 | 47  | `selectionConstraint`           | `options.selectionConstraint` 옵션 객체           | 이벤트가 아닌 옵션 — `mode` / `selectableColumns` / `isRowSelectable` / `maxSelections` 등 |
 | 48  | `sorting`                       | `sorting` 이벤트                                  | 동일                                                                                       |
 | 49  | `treeLazyRequest`               | `treeLazyRequest` 이벤트                          | `lazyLoadEmptyChildren: true` 시                                                           |

@@ -1,10 +1,10 @@
-import type { z } from 'zod'
-import { defineFormRules, validateForm } from '@/utils/formUtils'
+import { z } from 'zod'
+import { SYSTEMS } from '@/types/role'
 
-export const roleSearchRules = defineFormRules({
-  keyword: { type: 'string', label: '역할명' },
+// system이 enum select라 defineFormRules 표준 규칙(문자열/숫자/불리언) 밖의 경우 — 패턴 B 사용.
+export const roleSearchSchema = z.object({
+  system: z.enum(['ALL', ...SYSTEMS]),
+  keyword: z.string(),
 })
-
-export const roleSearchSchema = validateForm(roleSearchRules)
 
 export type RoleSearchFormValues = z.infer<typeof roleSearchSchema>

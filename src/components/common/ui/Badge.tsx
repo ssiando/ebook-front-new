@@ -13,10 +13,7 @@ const TONE_CLASSES: Record<NonNullable<BadgeProps['tone']>, string> = {
 export function Badge({ tone = 'gray', children }: BadgeProps) {
   return (
     <span
-      className={clsx(
-        'inline-flex rounded px-2 py-0.5 text-xs font-medium',
-        TONE_CLASSES[tone],
-      )}
+      className={clsx('inline-flex rounded px-2 py-0.5 text-xs font-medium', TONE_CLASSES[tone])}
     >
       {children}
     </span>

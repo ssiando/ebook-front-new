@@ -7,7 +7,10 @@ import { MainLayout } from '@/components/layout/MainLayout'
 const pageModules = import.meta.glob('/src/pages/**/*.tsx')
 
 function toPath(filePath: string): string {
-  const fileName = filePath.split('/').pop()!.replace(/\.tsx$/, '')
+  const fileName = filePath
+    .split('/')
+    .pop()!
+    .replace(/\.tsx$/, '')
   if (fileName === 'Home') return '/'
   return `/${fileName.charAt(0).toLowerCase()}${fileName.slice(1)}`
 }

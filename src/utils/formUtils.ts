@@ -11,7 +11,8 @@ import { useToastStore } from '@/store/useToastStore'
 // enum select처럼 이 규칙 모양을 벗어나는 필드가 있으면 z.object를 직접 쓰는 패턴 B를 사용하세요
 // (예: UserCreateModal의 role 필드).
 
-type FieldMessageKey = 'required' | 'email' | 'maxLength' | 'minLength' | 'min' | 'max' | 'mustBeTrue'
+type FieldMessageKey =
+  'required' | 'email' | 'maxLength' | 'minLength' | 'min' | 'max' | 'mustBeTrue'
 
 export interface FormFieldConfig {
   type: 'string' | 'number' | 'boolean'
@@ -56,8 +57,10 @@ function message(config: FormFieldConfig, key: FieldMessageKey, arg?: number): s
 function buildFieldSchema(config: FormFieldConfig): z.ZodTypeAny {
   if (config.type === 'number') {
     let schema = z.coerce.number()
-    if (config.min !== undefined) schema = schema.min(config.min, message(config, 'min', config.min))
-    if (config.max !== undefined) schema = schema.max(config.max, message(config, 'max', config.max))
+    if (config.min !== undefined)
+      schema = schema.min(config.min, message(config, 'min', config.min))
+    if (config.max !== undefined)
+      schema = schema.max(config.max, message(config, 'max', config.max))
     return schema
   }
 

@@ -62,42 +62,42 @@ basename slug 를 보관하는 zustand store. `setSlug` 가 URL 을 먼저 맞�
 App 의 `BrowserRouter` 를 remount 시킨다.
 
 ```ts
-import { create } from 'zustand';
+import { create } from 'zustand'
 
 /** slug 로 취급하지 않는 예약 첫 세그먼트 — 비인증/특수 페이지는 basename 밖에 둔다. */
-const RESERVED_SEGMENTS = new Set(['login', 'error', 'maintenance', 'popup', 'publish']);
+const RESERVED_SEGMENTS = new Set(['login', 'error', 'maintenance', 'popup', 'publish'])
 
 /** 현재 브라우저 URL 의 첫 세그먼트가 워크스페이스 slug 이면 반환, 아니면 null. */
 export function workspaceSlugFromLocation(): string | null {
-  if (typeof window === 'undefined') return null;
-  const seg = window.location.pathname.split('/').filter(Boolean)[0];
-  if (!seg || RESERVED_SEGMENTS.has(seg)) return null;
-  return seg;
+  if (typeof window === 'undefined') return null
+  const seg = window.location.pathname.split('/').filter(Boolean)[0]
+  if (!seg || RESERVED_SEGMENTS.has(seg)) return null
+  return seg
 }
 
 interface WorkspaceBasenameState {
   /** 현재 basename 으로 쓰이는 워크스페이스 slug. null 이면 basename 없음(루트). */
-  slug: string | null;
+  slug: string | null
   /**
    * @param slug 새 워크스페이스 slug (null = basename 제거)
    * @param opts.toHome true 면 sub-path 를 버리고 워크스페이스 홈(`/<slug>`)으로 이동.
    *        워크스페이스 전환 시 사용 — 새 워크스페이스에 없는 경로로 진입해 403 나는 것을 방지.
    */
-  setSlug: (slug: string | null, opts?: { toHome?: boolean }) => void;
+  setSlug: (slug: string | null, opts?: { toHome?: boolean }) => void
 }
 
 export const useWorkspaceBasenameStore = create<WorkspaceBasenameState>()((set) => ({
   slug: workspaceSlugFromLocation(),
 
   setSlug: (slug, opts) => {
-    const segments = window.location.pathname.split('/').filter(Boolean);
-    const hadSlug = workspaceSlugFromLocation() != null;
-    const sub = opts?.toHome ? [] : hadSlug ? segments.slice(1) : segments;
-    const target = '/' + (slug ? [slug, ...sub] : sub).join('/');
-    window.history.replaceState(null, '', target === '/' ? '/' : target);
-    set({ slug });
+    const segments = window.location.pathname.split('/').filter(Boolean)
+    const hadSlug = workspaceSlugFromLocation() != null
+    const sub = opts?.toHome ? [] : hadSlug ? segments.slice(1) : segments
+    const target = '/' + (slug ? [slug, ...sub] : sub).join('/')
+    window.history.replaceState(null, '', target === '/' ? '/' : target)
+    set({ slug })
   },
-}));
+}))
 ```
 
 ### 3.2 `src/store/workspace-directory-store.ts` (신규)
@@ -106,16 +106,16 @@ export const useWorkspaceBasenameStore = create<WorkspaceBasenameState>()((set) 
 React Query 가 아닌 store 로 둔다. `/me/workspaces`(admin `MeWorkspaceResponse`, slug 포함)로 채운다.
 
 ```ts
-import { create } from 'zustand';
-import type { MeWorkspaceResponse } from '@/api/me-api';
+import { create } from 'zustand'
+import type { MeWorkspaceResponse } from '@/api/me-api'
 
 interface WorkspaceDirectoryState {
-  workspaces: MeWorkspaceResponse[];
+  workspaces: MeWorkspaceResponse[]
 }
 interface WorkspaceDirectoryActions {
-  setWorkspaces: (list: MeWorkspaceResponse[]) => void;
-  findIdBySlug: (slug: string) => number | null;
-  findSlugById: (workspaceId: number) => string | null;
+  setWorkspaces: (list: MeWorkspaceResponse[]) => void
+  findIdBySlug: (slug: string) => number | null
+  findSlugById: (workspaceId: number) => string | null
 }
 
 export const useWorkspaceDirectoryStore = create<
@@ -126,7 +126,7 @@ export const useWorkspaceDirectoryStore = create<
   findIdBySlug: (slug) => get().workspaces.find((w) => w.slug === slug)?.workspaceId ?? null,
   findSlugById: (workspaceId) =>
     get().workspaces.find((w) => w.workspaceId === workspaceId)?.slug ?? null,
-}));
+}))
 ```
 
 ### 3.3 `src/App.tsx` (수정)
@@ -134,10 +134,10 @@ export const useWorkspaceDirectoryStore = create<
 `BrowserRouter` 에 basename 주입. slug 가 바뀌면 `key` 가 바뀌어 새 basename 으로 remount.
 
 ```tsx
-import { useWorkspaceBasenameStore } from '@/lib/workspace-basename';
+import { useWorkspaceBasenameStore } from '@/lib/workspace-basename'
 
 function App() {
-  const slug = useWorkspaceBasenameStore((s) => s.slug);
+  const slug = useWorkspaceBasenameStore((s) => s.slug)
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -153,7 +153,7 @@ function App() {
         <Toaster position="top-center" />
       </QueryClientProvider>
     </ErrorBoundary>
-  );
+  )
 }
 ```
 
@@ -163,24 +163,24 @@ axios 인터셉터가 URL 첫 세그먼트를 slug 로 보고 `workspaceId` 로 
 
 ```ts
 function resolveWorkspaceIdFromUrl(): number | null {
-  const seg = window.location.pathname.split('/').filter(Boolean)[0];
-  if (!seg) return null;
-  return useWorkspaceDirectoryStore.getState().findIdBySlug(seg);
+  const seg = window.location.pathname.split('/').filter(Boolean)[0]
+  if (!seg) return null
+  return useWorkspaceDirectoryStore.getState().findIdBySlug(seg)
 }
 
 http.interceptors.request.use((config) => {
-  const urlWsId = resolveWorkspaceIdFromUrl();
-  const { workspaceId: ctxWsId, systemId } = useActiveContextStore.getState();
-  const workspaceId = urlWsId ?? ctxWsId; // URL slug 우선, 없으면 active-context 폴백
-  config.headers = config.headers ?? {};
+  const urlWsId = resolveWorkspaceIdFromUrl()
+  const { workspaceId: ctxWsId, systemId } = useActiveContextStore.getState()
+  const workspaceId = urlWsId ?? ctxWsId // URL slug 우선, 없으면 active-context 폴백
+  config.headers = config.headers ?? {}
   if (workspaceId != null && workspaceId > 0 && config.headers['X-Workspace-Id'] == null) {
-    config.headers['X-Workspace-Id'] = String(workspaceId);
+    config.headers['X-Workspace-Id'] = String(workspaceId)
   }
   if (systemId != null && config.headers['X-System-Id'] == null) {
-    config.headers['X-System-Id'] = String(systemId);
+    config.headers['X-System-Id'] = String(systemId)
   }
-  return config;
-});
+  return config
+})
 ```
 
 부트(`bootstrapAuth().finally`) 에서 `/me/workspaces` 를 받아 디렉토리 store 를 채우고 표시명 보강:
@@ -188,19 +188,19 @@ http.interceptors.request.use((config) => {
 ```ts
 void fetchMyWorkspaces()
   .then((list) => {
-    useWorkspaceDirectoryStore.getState().setWorkspaces(list);
-    const activeWsId = useActiveContextStore.getState().workspaceId;
-    const activeSysId = useActiveContextStore.getState().systemId;
-    if (activeWsId == null || activeWsId <= 0) return;
-    const ws = list.find((w) => w.workspaceId === activeWsId);
-    if (!ws) return;
-    const sys = activeSysId != null ? ws.systems.find((s) => s.systemId === activeSysId) : undefined;
+    useWorkspaceDirectoryStore.getState().setWorkspaces(list)
+    const activeWsId = useActiveContextStore.getState().workspaceId
+    const activeSysId = useActiveContextStore.getState().systemId
+    if (activeWsId == null || activeWsId <= 0) return
+    const ws = list.find((w) => w.workspaceId === activeWsId)
+    if (!ws) return
+    const sys = activeSysId != null ? ws.systems.find((s) => s.systemId === activeSysId) : undefined
     useActiveContextStore.getState().setBoth(activeWsId, activeSysId, {
       workspaceName: ws.name,
       systemName: sys?.name ?? null,
-    });
+    })
   })
-  .catch(() => undefined);
+  .catch(() => undefined)
 ```
 
 ### 3.5 `src/components/layout/WorkspaceBasenameSync.tsx` (신규)
@@ -208,38 +208,38 @@ void fetchMyWorkspaces()
 MainLayout 라우트만 감싼다(예약 경로 제외). URL slug ↔ 활성 워크스페이스 동기화.
 
 ```tsx
-import { useActiveContextStore } from '@vanta/common';
-import { useWorkspaceBasenameStore } from '@/lib/workspace-basename';
-import { useWorkspaceDirectoryStore } from '@/store/workspace-directory-store';
+import { useActiveContextStore } from '@vanta/common'
+import { useWorkspaceBasenameStore } from '@/lib/workspace-basename'
+import { useWorkspaceDirectoryStore } from '@/store/workspace-directory-store'
 
 export default function WorkspaceBasenameSync({ children }: { children: React.ReactNode }) {
-  const basenameSlug = useWorkspaceBasenameStore((s) => s.slug);
-  const setSlug = useWorkspaceBasenameStore((s) => s.setSlug);
-  const workspaces = useWorkspaceDirectoryStore((s) => s.workspaces);
-  const activeWsId = useActiveContextStore((s) => s.workspaceId);
+  const basenameSlug = useWorkspaceBasenameStore((s) => s.slug)
+  const setSlug = useWorkspaceBasenameStore((s) => s.setSlug)
+  const workspaces = useWorkspaceDirectoryStore((s) => s.workspaces)
+  const activeWsId = useActiveContextStore((s) => s.workspaceId)
 
   useEffect(() => {
-    if (workspaces.length === 0) return; // 디렉토리 미로드 → 보류
+    if (workspaces.length === 0) return // 디렉토리 미로드 → 보류
 
     // (2) URL 에 slug 있음 → active-context 를 그 워크스페이스로 맞춘다(직접 진입/북마크).
     if (basenameSlug) {
-      const ws = workspaces.find((w) => w.slug === basenameSlug);
+      const ws = workspaces.find((w) => w.slug === basenameSlug)
       if (ws && ws.workspaceId !== activeWsId) {
-        const adminSys = ws.systems.find((s) => s.name.trim().toLowerCase() === 'admin');
+        const adminSys = ws.systems.find((s) => s.name.trim().toLowerCase() === 'admin')
         useActiveContextStore.getState().setBoth(ws.workspaceId, adminSys?.systemId ?? null, {
           workspaceName: ws.name,
           systemName: adminSys?.name ?? null,
-        });
+        })
       }
-      return;
+      return
     }
 
     // (1) URL 에 slug 없음 + 활성 워크스페이스 있음 → basename 에 slug 부착(remount).
-    const activeSlug = workspaces.find((w) => w.workspaceId === activeWsId)?.slug;
-    if (activeSlug) setSlug(activeSlug);
-  }, [basenameSlug, workspaces, activeWsId, setSlug]);
+    const activeSlug = workspaces.find((w) => w.workspaceId === activeWsId)?.slug
+    if (activeSlug) setSlug(activeSlug)
+  }, [basenameSlug, workspaces, activeWsId, setSlug])
 
-  return <>{children}</>;
+  return <>{children}</>
 }
 ```
 
@@ -275,14 +275,14 @@ export default function WorkspaceBasenameSync({ children }: { children: React.Re
 useActiveContextStore.getState().setBoth(ws.workspaceId, adminSys.systemId, {
   workspaceName: ws.name,
   systemName: adminSys.name,
-});
-sessionStorage.setItem(WORKSPACE_SESSION_PICKED_KEY, '1');
+})
+sessionStorage.setItem(WORKSPACE_SESSION_PICKED_KEY, '1')
 sessionStorage.setItem(
   ACTIVE_CONTEXT_OVERRIDE_KEY,
   JSON.stringify({ workspaceId: ws.workspaceId, systemId: adminSys.systemId }),
-);
+)
 // basename 을 새 slug 로 바꿔 URL 노출 + 워크스페이스 홈으로 이동(BrowserRouter remount)
-useWorkspaceBasenameStore.getState().setSlug(ws.slug, { toHome: true });
+useWorkspaceBasenameStore.getState().setSlug(ws.slug, { toHome: true })
 ```
 
 > 참고: admin 은 워크스페이스를 바꿔도 admin 시스템에 머무르므로 `systems` 에서 `name === 'admin'`
@@ -292,13 +292,13 @@ useWorkspaceBasenameStore.getState().setSlug(ws.slug, { toHome: true });
 
 ## 4. 동작 흐름
 
-| 시나리오 | 흐름 |
-|---|---|
+| 시나리오                           | 흐름                                                                                                                                                                 |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 직접 진입 `/4dplex/system/program` | `workspaceSlugFromLocation()`=`4dplex` → App basename=`/4dplex` → RR pathname=`/system/program` → useRouteAuth 정상 → 디렉토리 로드 후 Sync 가 active-context 동기화 |
-| 로그인 직후 `/` | slug=null → 모달/부트로 활성 워크스페이스 결정 → `WorkspaceBasenameSync` 가 `setSlug(activeSlug)` → URL `/4dplex` 로 remount |
-| 메뉴 클릭 | common `navigate('/system/program')` → basename 유지 → URL `/4dplex/system/program`, **remount 없음** |
-| 워크스페이스 전환 | `setSlug(newSlug, {toHome})` → URL `/newSlug` → BrowserRouter remount → 메뉴 재조회 |
-| API 요청 | 인터셉터가 URL 첫 세그먼트 → 디렉토리 → id → `X-Workspace-Id` 헤더 |
+| 로그인 직후 `/`                    | slug=null → 모달/부트로 활성 워크스페이스 결정 → `WorkspaceBasenameSync` 가 `setSlug(activeSlug)` → URL `/4dplex` 로 remount                                         |
+| 메뉴 클릭                          | common `navigate('/system/program')` → basename 유지 → URL `/4dplex/system/program`, **remount 없음**                                                                |
+| 워크스페이스 전환                  | `setSlug(newSlug, {toHome})` → URL `/newSlug` → BrowserRouter remount → 메뉴 재조회                                                                                  |
+| API 요청                           | 인터셉터가 URL 첫 세그먼트 → 디렉토리 → id → `X-Workspace-Id` 헤더                                                                                                   |
 
 ---
 
@@ -336,7 +336,7 @@ useWorkspaceBasenameStore.getState().setSlug(ws.slug, { toHome: true });
   - active-context ↔ basename slug 동기화 로직. "전환 후 머무를 시스템" 결정(admin 은 `admin` 시스템)
     은 앱별로 다르므로 콜백/옵션으로 주입.
 - [ ] **basename 을 적용한 `BrowserRouter` 래퍼 제공** (예: `<WorkspaceRouter>`),
-  각 앱 `App.tsx` 가 이를 사용.
+      각 앱 `App.tsx` 가 이를 사용.
 - [ ] **인터셉터 헬퍼**: URL slug → id 변환을 common 의 `initHttpClient` 옵션이나 공용 인터셉터로 흡수.
 
 ### 6.2 결정 필요 사항
@@ -358,16 +358,16 @@ useWorkspaceBasenameStore.getState().setSlug(ws.slug, { toHome: true });
 
 ## 7. 참고 — 변경/추가된 파일 목록 (현재 admin)
 
-| 파일 | 변경 |
-|---|---|
-| `src/lib/workspace-basename.ts` | 신규 — basename store/헬퍼 |
-| `src/store/workspace-directory-store.ts` | 신규 — slug↔id 디렉토리 |
-| `src/components/layout/WorkspaceBasenameSync.tsx` | 신규 — URL↔active-context 동기화 |
-| `src/App.tsx` | 수정 — BrowserRouter basename 배선 |
-| `src/main.tsx` | 수정 — 인터셉터 URL slug 변환 + 부트 디렉토리 적재 |
-| `src/routes/index.tsx` | 수정 — MainLayout 을 WorkspaceBasenameSync 로 래핑 |
-| `src/components/layout/HeaderWorkspaceSwitcher.tsx` | 수정 — 전환 시 `setSlug` 사용 |
-| `src/components/layout/WorkspaceSwitchModal.tsx` | 수정 — 전환 시 `setSlug` 사용 |
+| 파일                                                | 변경                                               |
+| --------------------------------------------------- | -------------------------------------------------- |
+| `src/lib/workspace-basename.ts`                     | 신규 — basename store/헬퍼                         |
+| `src/store/workspace-directory-store.ts`            | 신규 — slug↔id 디렉토리                            |
+| `src/components/layout/WorkspaceBasenameSync.tsx`   | 신규 — URL↔active-context 동기화                   |
+| `src/App.tsx`                                       | 수정 — BrowserRouter basename 배선                 |
+| `src/main.tsx`                                      | 수정 — 인터셉터 URL slug 변환 + 부트 디렉토리 적재 |
+| `src/routes/index.tsx`                              | 수정 — MainLayout 을 WorkspaceBasenameSync 로 래핑 |
+| `src/components/layout/HeaderWorkspaceSwitcher.tsx` | 수정 — 전환 시 `setSlug` 사용                      |
+| `src/components/layout/WorkspaceSwitchModal.tsx`    | 수정 — 전환 시 `setSlug` 사용                      |
 
 > common 측 의존: `useActiveContextStore.workspaceName/systemName`(헤더 표시명), `UserWorkspace.slug?`
 > (현재 admin 은 directory-store 사용으로 직접 의존하지 않음). 둘 다 common 에 이미 반영됨.

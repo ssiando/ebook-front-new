@@ -58,7 +58,7 @@ src/
 
 ## 화면(리스트) 만드는 규격
 
-모든 페이지는 **`PageTitle` → `PageSearch` → 본문**(그리드·폼 등) 순서로 조합합니다. 실제 예시는 `사용자 관리`(`src/pages/UserManagement.tsx`), `메뉴 관리`(`src/pages/MenuManagement.tsx`)를 참고하세요.
+모든 페이지는 **`PageTitle` → `PageSearch` → 본문**(그리드·폼 등) 순서로 조합합니다. 실제 예시는 `사용자 관리`(`src/pages/UserManagement.tsx`), `프로그램 관리`(`src/pages/ProgramManagement.tsx`)를 참고하세요.
 
 - **`PageTitle`** (`components/common/PageTitle.tsx`): 제목 영역 (즐겨찾기 ☆ / 설명 ⓘ / 액션 버튼 포함). `breadcrumb`을 생략하면 `data/menu.json`에서 현재 라우트의 상위 메뉴를 자동으로 찾아 표시합니다.
 - **`PageSearch`** (`components/common/PageSearch.tsx`): 조회 영역. 내부에 화면 전용 검색 컴포넌트(`{도메인}Search`)를 넣습니다. 초기화 버튼을 기본 포함하며, 클릭 시 `onReset` 콜백을 호출합니다 (폼 리셋은 `onReset` 안에서 `methods.reset(...)`을 호출하는 페이지의 책임입니다 — `PageSearch`는 폼 상태를 들고 있지 않습니다).
@@ -68,32 +68,37 @@ src/
 
 ```tsx
 // src/pages/UserManagement.tsx → URL: /userManagement
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { PageSearch } from '@/components/common/PageSearch';
-import { PageTitle } from '@/components/common/PageTitle';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PageSearch } from '@/components/common/PageSearch'
+import { PageTitle } from '@/components/common/PageTitle'
 
-import { UserContent } from '@/components/user/list/UserContent';
-import { UserSearch } from '@/components/user/list/UserSearch';
-import { useUsersQuery } from '@/query/user-query';
-import { searchSchema } from '@/components/user/list/searchSchema';
+import { UserContent } from '@/components/user/list/UserContent'
+import { UserSearch } from '@/components/user/list/UserSearch'
+import { useUsersQuery } from '@/query/user-query'
+import { searchSchema } from '@/components/user/list/searchSchema'
 
 export default function UserManagement() {
-  const methods = useForm({ resolver: zodResolver(searchSchema), defaultValues: {/* ... */} });
-  const [params, setParams] = useState(/* ... */);
-  const { data, isFetching } = useUsersQuery(params);
+  const methods = useForm({ resolver: zodResolver(searchSchema), defaultValues: {/* ... */} })
+  const [params, setParams] = useState(/* ... */)
+  const { data, isFetching } = useUsersQuery(params)
 
-  const handleSearch = methods.handleSubmit((values) => setParams((prev) => ({ ...prev, ...values, page: 1 })));
+  const handleSearch = methods.handleSubmit((values) =>
+    setParams((prev) => ({ ...prev, ...values, page: 1 })),
+  )
   const handleReset = () => {
-    const defaults = {/* 초기값 */};
-    methods.reset(defaults); // 폼 리셋은 페이지가 직접 호출
-    setParams((prev) => ({ ...prev, ...defaults, page: 1 }));
-  };
+    const defaults = {/* 초기값 */}
+    methods.reset(defaults) // 폼 리셋은 페이지가 직접 호출
+    setParams((prev) => ({ ...prev, ...defaults, page: 1 }))
+  }
 
   return (
     <>
       {/* 1. 타이틀 영역 — breadcrumb, 즐겨찾기 등은 공통 컴포넌트에서 주입 */}
-      <PageTitle title="사용자 목록" actionButtonsProps={{ onSearch: handleSearch, onRegister: () => setCreateOpen(true) }} />
+      <PageTitle
+        title="사용자 목록"
+        actionButtonsProps={{ onSearch: handleSearch, onRegister: () => setCreateOpen(true) }}
+      />
 
       {/* 2. 조회 영역 — control을 직접 전달, 리셋은 onReset이 담당 */}
       <PageSearch onReset={handleReset}>
@@ -103,13 +108,13 @@ export default function UserManagement() {
       {/* 3. 본문 — 그리드·페이지네이션은 화면 전용 컴포넌트로 분리 */}
       <UserContent data={data} isLoading={isFetching} /* ... */ />
     </>
-  );
+  )
 }
 ```
 
 레이어 연결: `types/*.ts` → `api/*-api.ts` (axios) → `query/*-query.ts` (React Query, optional) → `components/{도메인}/{화면}/*.tsx` (`{도메인}Search`, `{도메인}Content`, Ag-Grid, 폼) → `pages/*.tsx` (`PageTitle`+`PageSearch`+본문 조립).
 
-> **TypeScript 팁**: `FormInput`/`FormSelect`의 `control` prop은 `Control<any, any, any>`로 선언되어 있습니다. react-hook-form의 `Control<T>`는 내부 `validate` 함수 프로퍼티가 반공변이라, 구체 타입(`Control<{keyword: string}>` 등)을 그냥 `any`로 좁힌 타입에 넘기면 타입 에러가 납니다. 페이지/모달에서 `const control = methods.control as Control<any, any, any>`로 한 번만 캐스팅해서 하위에 내려주세요 (기존 페이지들 참고).
+> **TypeScript 팁**: `FormInput`/`FormSelect`는 `<TFieldValues extends FieldValues>` 제네릭 컴포넌트라 `control`/`name`이 항상 특정 폼의 필드 타입에 맞게 추론됩니다. `any` 캐스팅이 필요 없습니다 — `<FormInput name="keyword" control={methods.control} .../>`처럼 그냥 넘기면 `name`이 해당 폼 값 타입의 키로 자동 체크됩니다. `{도메인}Search` 컴포넌트도 `control: Control<{도메인}SearchFormValues>`처럼 해당 폼의 구체 타입으로 선언하세요 (제네릭으로 열어두지 말 것 — 화면 전용 컴포넌트는 특정 폼 값 타입 하나만 다루면 충분합니다).
 
 ## 폼 검증 가이드 (RHF + Zod)
 
@@ -130,16 +135,16 @@ export default function UserManagement() {
 대부분의 검색 폼·등록 폼에서 사용합니다. 필드 규칙을 객체로 정의하면 `validateForm`이 Zod 스키마를 만들어 주고, 같은 규칙 객체의 `label`/`required`/`maxLength`를 `FormInput`/`FormSelect`에도 그대로 넘겨 **검증 조건과 UI 표시가 항상 일치**하게 합니다.
 
 ```ts
-import { defineFormRules, validateForm } from '@/utils/formUtils';
-import type { z } from 'zod';
+import { defineFormRules, validateForm } from '@/utils/formUtils'
+import type { z } from 'zod'
 
 export const createRoleRules = defineFormRules({
   roleName: { type: 'string', required: true, maxLength: 30, label: '역할명' },
   description: { type: 'string', maxLength: 100, label: '설명' },
-});
+})
 
-export const createRoleSchema = validateForm(createRoleRules);
-export type CreateRoleFormValues = z.infer<typeof createRoleSchema>;
+export const createRoleSchema = validateForm(createRoleRules)
+export type CreateRoleFormValues = z.infer<typeof createRoleSchema>
 ```
 
 ```tsx
@@ -148,9 +153,11 @@ export type CreateRoleFormValues = z.infer<typeof createRoleSchema>;
 
 ```ts
 const handleSubmit = methods.handleSubmit(
-  async (values) => { await createRole.mutateAsync(values); },
+  async (values) => {
+    await createRole.mutateAsync(values)
+  },
   (errors) => showFormErrors(errors, createRoleRules), // 검증 실패 시 토스트로 요약 표시
-);
+)
 ```
 
 - 지원 타입: `string`(required/email/maxLength/minLength) · `number`(min/max) · `boolean`(mustBeTrue)
@@ -166,7 +173,7 @@ enum select, 동적 필드, 커스텀 상호 검증 등 패턴 A의 규칙 모�
 const createUserSchema = z.object({
   userId: z.string().min(1, '사용자ID를 입력해 주세요'),
   role: z.enum(['ADMIN', 'MANAGER', 'MEMBER']),
-});
+})
 ```
 
 패턴 B에서도 `showFormErrors(errors, rules)`에 넘길 라벨만 담은 최소 `FormRules` 객체를 만들어 토스트 문구에 라벨을 붙일 수 있습니다 (`UserCreateModal.tsx`의 `errorLabels` 참고).
@@ -195,6 +202,16 @@ const createUserSchema = z.object({
 ```bash
 npm install
 npm run dev
+```
+
+## 코드 스타일
+
+Prettier로 포맷을 통일합니다 (세미콜론 없음, 싱글 쿼트, trailing comma). VSCode에서 `.vscode/settings.json`이 저장 시 자동 포맷을 켜두므로 별도 설정 없이 저장만 하면 됩니다. 커맨드라인에서는:
+
+```bash
+npm run format        # 전체 포맷
+npm run format:check  # CI 등에서 포맷 여부만 확인
+npm run lint          # oxlint
 ```
 
 ## 참고

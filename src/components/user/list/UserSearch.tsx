@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import type { Control } from 'react-hook-form'
 import { FormInput } from '@/components/common/form/FormInput'
+import type { UserSearchFormValues } from './searchSchema'
 
 interface UserSearchProps {
-  control: Control<any, any, any>
+  control: Control<UserSearchFormValues>
 }
 
 export function UserSearch({ control }: UserSearchProps) {

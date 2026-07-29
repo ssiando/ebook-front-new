@@ -1,0 +1,27 @@
+[
+  { "id": "api-program-create", "label": "프로그램 생성", "code": "PROGRAM_API_C", "type": "API" },
+  {
+    "id": "api-dashboard-read",
+    "label": "프로젝트 대시보드 조회",
+    "code": "DASHBOARD_API_R",
+    "type": "API"
+  },
+  { "id": "api-program-update", "label": "프로그램 수정", "code": "PROGRAM_API_U", "type": "API" },
+  {
+    "id": "api-dashboard-first-area",
+    "label": "프로젝트 대시보드 1영역 조회",
+    "code": "DASHBOARD_API_FIRST_AREA",
+    "type": "API"
+  },
+  { "id": "api-program-delete", "label": "프로그램 삭제", "code": "PROGRAM_API_D", "type": "API" },
+  { "id": "page-home", "label": "홈", "code": "HOME", "type": "PAGE" },
+  { "id": "page-user", "label": "사용자", "code": "USERS", "type": "PAGE" },
+  { "id": "page-common", "label": "공통관리", "code": "COMMMNG", "type": "PAGE" },
+  { "id": "page-master", "label": "기준정보 관리", "code": "VFXSTDMNG", "type": "PAGE" },
+  { "id": "page-workspace", "label": "워크스페이스", "code": "WORKSPACES", "type": "PAGE" },
+  { "id": "page-sample", "label": "샘플", "code": "SAMPLES", "type": "PAGE" },
+  { "id": "page-plan", "label": "플랜/구독", "code": "ADMIN_BILLING", "type": "PAGE" },
+  { "id": "page-project-mgmt", "label": "프로젝트 관리", "code": "PROJECT", "type": "PAGE" },
+  { "id": "page-process-mgmt", "label": "공정관리", "code": "VFXPROCMNG", "type": "PAGE" },
+  { "id": "page-vfx-budget", "label": "VFX 예산관리", "code": "VFXBDGMNG", "type": "PAGE" }
+]

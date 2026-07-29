@@ -510,7 +510,7 @@ function boldCell(format: (value: unknown) => string) {
 **`pinnedPosts` — 고정 모달에 전달할 파생 상태**
 
 ```ts
-const pinnedPosts = useMemo(() => posts.filter((p) => p.isPinned), [posts]);
+const pinnedPosts = useMemo(() => posts.filter((p) => p.isPinned), [posts])
 ```
 
 #### Step 7. `{Domain}PinOrderModal.tsx`
@@ -519,14 +519,14 @@ const pinnedPosts = useMemo(() => posts.filter((p) => p.isPinned), [posts]);
 
 ```ts
 const handleSave = () => {
-  const payload = items.map((post, idx) => ({ id: post.id, pinOrder: idx + 1 }));
+  const payload = items.map((post, idx) => ({ id: post.id, pinOrder: idx + 1 }))
   reorderMutation.mutate(payload, {
     onSuccess: () => {
-      onSaved();
-      onClose();
+      onSaved()
+      onClose()
     },
-  });
-};
+  })
+}
 ```
 
 #### Step 8. `{Domain}PostModal.tsx` — 모달 분리 + 첨부파일 순서
@@ -562,8 +562,8 @@ export default function {Domain}PostModal({ open, postId, onClose, onSaved }) {
 
 ```ts
 // 내부 Body
-const currentUserId = useAuthStore((s) => s.user?.id);
-const editable = isCreate || (detail?.regrId != null && detail.regrId === currentUserId);
+const currentUserId = useAuthStore((s) => s.user?.id)
+const editable = isCreate || (detail?.regrId != null && detail.regrId === currentUserId)
 // editable이 false이면 폼을 disabled 처리하고 저장 버튼을 숨긴다
 ```
 
@@ -601,7 +601,7 @@ const handleSave = handleSubmit(async (values) => {
 ```ts
 if (merged.length + attachments.length >= MAX_FILES) {
   // attachments = 이미 저장된 파일, merged = 이번에 추가된 파일
-  break;
+  break
 }
 ```
 
@@ -613,12 +613,12 @@ if (merged.length + attachments.length >= MAX_FILES) {
 ```ts
 // 중략 (useForm, appliedSearch state 등)
 
-const [searchRevision, setSearchRevision] = useState(0);
+const [searchRevision, setSearchRevision] = useState(0)
 
 const handleSearch = handleSubmit((values) => {
-  setAppliedSearch({ keyword: values.keyword.trim(), includeHidden: values.includeHidden });
-  setSearchRevision((n) => n + 1); // 같은 조건이어도 재조회 강제
-});
+  setAppliedSearch({ keyword: values.keyword.trim(), includeHidden: values.includeHidden })
+  setSearchRevision((n) => n + 1) // 같은 조건이어도 재조회 강제
+})
 
 // 중략 (PageTitle, PageSearch, ListContent 렌더)
 ```
