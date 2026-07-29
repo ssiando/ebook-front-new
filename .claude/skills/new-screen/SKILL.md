@@ -20,7 +20,7 @@ user-invocable: true
 | 페이지 제목/조회 영역 | `components/common/{PageTitle,PageSearch}.tsx` | `@vanta/common` 로컬 대체 |
 | 페이지네이션 | `components/common/Pagination.tsx` | 번호형, `totalPages<=1`이면 렌더 안 함 |
 | 기본 UI | `components/common/ui/{Button,Modal,Badge}.tsx` | |
-| 폼 입력 | `components/common/form/{FormInput,FormSelect}.tsx` | `useFormContext` 기반 (register), `id`/`htmlFor` 연결됨, `required` prop 주면 라벨에 `*` 표시 |
+| 폼 입력 | `components/common/form/{FormInput,FormSelect}.tsx` | `control` prop 기반 (`useController`), `FormProvider` 안 씀, `id`/`htmlFor` 연결됨, `required` prop 주면 라벨에 `*` 표시 |
 | 폼 검증 유틸 | `utils/formUtils.ts` (`defineFormRules`/`validateForm`/`showFormErrors`) | `@vanta/common` 로컬 대체, 패턴 A 기본 |
 | 토스트 팝업 | `store/useToastStore.ts` + `components/common/ui/ToastHost.tsx` | `showFormErrors`가 사용, `AppProviders`에 이미 마운트됨 |
 | axios 인스턴스 | `lib/axios.ts` | |
@@ -45,7 +45,8 @@ user-invocable: true
    패턴 A 규칙 모양을 벗어나는 필드가 있으면 `z.object`를 직접 쓰는 패턴 B로 (예: `UserCreateModal`의 `role`).
    CLAUDE.md "폼 검증 가이드" 참고.
 5. **`components/{domain}/list/{Domain}Search.tsx`** — 검색 필드만 렌더 (래퍼/리셋버튼 없음 — `PageSearch`가 담당).
-   `FormInput`/`FormSelect`는 `useFormContext`로 동작하므로 이 컴포넌트에 `control` prop 안 넘겨도 됨.
+   `control: Control<any, any, any>` prop을 받아 각 `FormInput`/`FormSelect`에 그대로 전달할 것
+   (`FormProvider`는 쓰지 않는다).
 6. **`components/{domain}/list/{Domain}ListGrid.tsx`** — `AgGridReact`, `themeQuartz.withParams({...})` 재사용
    (다른 Grid 컴포넌트에서 그대로 복사), 컬럼: No → 도메인 필드들 → 링크형 컬럼 → 수정일.
 7. **`components/{domain}/list/{Domain}Content.tsx`** — 총 건수(`● 목록 총 N건`, 앞에 rose-500 점) +
@@ -57,7 +58,7 @@ user-invocable: true
 ```tsx
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm, type Control } from 'react-hook-form'
 import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
 import { {Domain}Search } from '@/components/{domain}/list/{Domain}Search'
@@ -76,6 +77,9 @@ export default function {Domain}() {
     resolver: zodResolver({domain}SearchSchema),
     defaultValues: { /* 기본값 */ },
   })
+  // Control<T>는 내부 validate 프로퍼티가 반공변이라 재사용 컴포넌트의 Control<any,any,any>로
+  // 자동 캐스팅되지 않는다 — 한 번만 캐스팅해서 하위로 내려준다.
+  const control = methods.control as Control<any, any, any>
 
   const { data, isFetching } = use{Domain}sQuery(params)
 
@@ -83,23 +87,27 @@ export default function {Domain}() {
     (values) => setParams((prev) => ({ ...prev, ...values })),
     (errors) => showFormErrors(errors, {domain}SearchRules), // 검증 실패 시 토스트 요약
   )
-  const handleReset = () => setParams(/* 기본값으로 복귀 */)
+  const handleReset = () => {
+    const defaults = { /* 기본값 */ }
+    methods.reset(defaults) // PageSearch는 폼을 들고 있지 않으므로 리셋은 페이지가 직접 호출
+    setParams((prev) => ({ ...prev, ...defaults }))
+  }
 
   return (
-    <FormProvider {...methods}>
+    <>
       {/* 1. 타이틀 — breadcrumb은 생략하면 menu.json에서 자동 탐색됨 */}
       <PageTitle
         title="{Domain} 목록"
         actionButtonsProps={{ onSearch: handleSearch, onRegister: () => setCreateOpen(true) }}
       />
-      {/* 2. 조회 — 리셋 버튼은 PageSearch가 기본 포함 */}
+      {/* 2. 조회 — control을 직접 전달, 리셋 버튼은 PageSearch가 기본 포함 */}
       <PageSearch onReset={handleReset}>
-        <{Domain}Search />
+        <{Domain}Search control={control} />
       </PageSearch>
       {/* 3. 본문 */}
       <{Domain}Content data={data} isLoading={isFetching} /* page, pageSize, onPageChange 등 필요시 */ />
       {/* <{Domain}CreateModal open={createOpen} onClose={() => setCreateOpen(false)} /> */}
-    </FormProvider>
+    </>
   )
 }
 ```
@@ -124,10 +132,13 @@ export default function {Domain}() {
 
 ## 자주 하는 실수
 
-- `<form onSubmit>` 태그로 감싸지 않는다 — `PageTitle`의 조회/등록 버튼은 `type="button"` +
-  `onClick`으로만 동작한다 (네이티브 submit과 안 섞음).
-- `PageSearch`, `FormInput`, `FormSelect`는 모두 `useFormContext()`를 쓰므로 페이지에서
-  `<FormProvider {...methods}>`로 감싸는 것을 잊지 않는다.
+- `PageSearch` 안의 검색 폼은 `<form onSubmit>` 태그로 감싸지 않는다 — `PageTitle`의 조회/등록 버튼은
+  `type="button"` + `onClick`으로만 동작한다 (네이티브 submit과 안 섞음).
+- `FormInput`/`FormSelect`/`{Domain}Search`는 `FormProvider` 없이 `control` prop을 직접 받는다.
+  페이지에서 `methods.control`을 (필요하면 `Control<any, any, any>`로 캐스팅해서) 내려주는 것을 잊지 않는다.
+- **등록 모달의 `<form>`에는 반드시 `noValidate`를 붙인다.** 안 붙이면 `required` 속성이 있는
+  `<input>`에서 브라우저 네이티브 검증이 Zod 검증보다 먼저 가로채 `onSubmit`/`showFormErrors`가 아예
+  실행되지 않는다 (실제로 겪었던 버그).
 - mock API가 배열을 그대로(참조 동일하게) 반환하면 등록 후 그리드가 갱신되지 않는다 — 항상 새 배열을 반환.
 - **행 하나를 수정(update)하는 mock API도 같은 문제가 있다**: 기존 객체를 `obj.field = x`로 mutate하면
   Ag-Grid가 참조 동일성으로 변경 감지를 못해 그 행만 그대로 남는다(실제로 역할 관리의 "메뉴 설정" 저장에서
@@ -140,3 +151,6 @@ export default function {Domain}() {
   `zodResolver`가 요구하는 input/output 제네릭이 어긋나 타입 에러가 난다. 반드시 제대로 타입이 잡힌
   `shape` 객체를 만들어 `z.object(shape)`를 캐스팅 없이 그대로 반환할 것 (이미 구현된 대로 두면 됨,
   건드릴 필요는 거의 없다).
+- `methods.control`(구체 타입)을 `Control<any, any, any>` prop에 그냥 넘기면 타입 에러가 난다
+  (RHF `Control<T>`의 `validate` 프로퍼티가 반공변이라 `any`로 좁혀도 자동 호환되지 않음). 페이지/모달에서
+  `const control = methods.control as Control<any, any, any>`로 한 번 캐스팅한 변수를 만들어 그걸 내려줄 것.
