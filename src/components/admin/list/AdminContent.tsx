@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import { Pagination } from '@/components/common/Pagination'
-import { UserListGrid } from './UserListGrid'
-import type { UserListResponse } from '@/types/user'
+import { AdminListGrid } from './AdminListGrid'
+import type { AdminListResponse } from '@/types/admin'
+import type { Role } from '@/types/role'
 
 const PAGE_SIZE_OPTIONS = [15, 30, 50, 100]
 
-interface UserContentProps {
-  data: UserListResponse | undefined
+interface AdminContentProps {
+  data: AdminListResponse | undefined
+  roles: Role[]
   isLoading: boolean
   page: number
   pageSize: number
@@ -14,15 +16,16 @@ interface UserContentProps {
   onPageSizeChange: (pageSize: number) => void
 }
 
-export function UserContent({
+export function AdminContent({
   data,
+  roles,
   isLoading,
   page,
   pageSize,
   onPageChange,
   onPageSizeChange,
-}: UserContentProps) {
-  const { t } = useTranslation('user')
+}: AdminContentProps) {
+  const { t } = useTranslation('admin')
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,7 +47,13 @@ export function UserContent({
         </select>
       </div>
 
-      <UserListGrid rows={data?.items ?? []} loading={isLoading} page={page} pageSize={pageSize} />
+      <AdminListGrid
+        rows={data?.items ?? []}
+        roles={roles}
+        loading={isLoading}
+        page={page}
+        pageSize={pageSize}
+      />
 
       <Pagination
         page={page}

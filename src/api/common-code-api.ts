@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
+import { ADMIN_STATUS_GROUP_CODE } from '@/types/admin'
 import type {
   CodeGroup,
   CodeGroupListResponse,
@@ -41,6 +42,16 @@ const MOCK_GROUPS: CodeGroup[] = [
     i18nKey: 'code.vfx_cm002',
     createdAt: '2026-05-22 09:00:00',
     updatedAt: '2026-05-22 09:00:00',
+  },
+  {
+    id: 'group-4',
+    groupCode: ADMIN_STATUS_GROUP_CODE,
+    groupName: '관리자 상태',
+    description: '관리자 계정 상태 코드',
+    useYn: true,
+    i18nKey: 'code.admin_status',
+    createdAt: '2026-07-01 09:00:00',
+    updatedAt: '2026-07-01 09:00:00',
   },
 ]
 
@@ -123,6 +134,59 @@ const MOCK_ITEMS: CodeItem[] = [
     createdAt: '2026-05-20 10:12:00',
     updatedAt: '2026-05-20 10:12:00',
   },
+  // 관리자 상태 코드: metadata에 배지 색상(tone)을 담아 화면에서 그대로 사용합니다.
+  {
+    id: 'item-7',
+    groupId: 'group-4',
+    code: 'ACTIVE',
+    codeName: '활성',
+    sortOrder: 1,
+    useYn: true,
+    description: '정상적으로 활동 중인 관리자',
+    metadata: 'green',
+    i18nKey: '',
+    createdAt: '2026-07-01 09:00:00',
+    updatedAt: '2026-07-01 09:00:00',
+  },
+  {
+    id: 'item-8',
+    groupId: 'group-4',
+    code: 'DORMANT',
+    codeName: '휴면',
+    sortOrder: 2,
+    useYn: true,
+    description: '장기 미접속으로 휴면 처리된 관리자',
+    metadata: 'gray',
+    i18nKey: '',
+    createdAt: '2026-07-01 09:00:00',
+    updatedAt: '2026-07-01 09:00:00',
+  },
+  {
+    id: 'item-9',
+    groupId: 'group-4',
+    code: 'INACTIVE',
+    codeName: '비활성',
+    sortOrder: 3,
+    useYn: true,
+    description: '사용이 중지된 관리자',
+    metadata: 'red',
+    i18nKey: '',
+    createdAt: '2026-07-01 09:00:00',
+    updatedAt: '2026-07-01 09:00:00',
+  },
+  {
+    id: 'item-10',
+    groupId: 'group-4',
+    code: 'NEW',
+    codeName: '신규',
+    sortOrder: 4,
+    useYn: true,
+    description: '새로 등록되어 아직 승인되지 않은 관리자',
+    metadata: 'blue',
+    i18nKey: '',
+    createdAt: '2026-07-01 09:00:00',
+    updatedAt: '2026-07-01 09:00:00',
+  },
 ]
 
 function now(): string {
@@ -174,6 +238,22 @@ export async function fetchCodeItems(groupId: string): Promise<CodeItemListRespo
 
   const { data } = await apiClient.get<CodeItemListResponse>(
     `/common-codes/groups/${groupId}/items`,
+  )
+  return data
+}
+
+/** 그룹코드로 사용 중인 코드 항목만 조회합니다 (다른 화면의 select 옵션 등에서 사용). */
+export async function fetchCodeItemsByGroupCode(groupCode: string): Promise<CodeItem[]> {
+  if (import.meta.env.DEV) {
+    const group = MOCK_GROUPS.find((g) => g.groupCode === groupCode)
+    const items = group
+      ? MOCK_ITEMS.filter((item) => item.groupId === group.id && item.useYn)
+      : []
+    return delay([...items].sort((a, b) => a.sortOrder - b.sortOrder))
+  }
+
+  const { data } = await apiClient.get<CodeItem[]>(
+    `/common-codes/groups/by-code/${groupCode}/items`,
   )
   return data
 }

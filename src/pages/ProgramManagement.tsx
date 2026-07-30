@@ -5,6 +5,7 @@ import { Plus, Minus } from 'lucide-react'
 import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
 import { Button } from '@/components/common/ui/Button'
+import { Authorized } from '@/components/auth/Authorized'
 import { ProgramSearch } from '@/components/program/list/ProgramSearch'
 import {
   programSearchSchema,
@@ -106,7 +107,7 @@ export default function ProgramManagement() {
   }
 
   return (
-    <>
+    <Authorized>
       {/* 1. 타이틀 영역 — breadcrumb은 menu.json에서 자동 탐색 */}
       <PageTitle
         title="프로그램 관리"
@@ -181,6 +182,6 @@ export default function ProgramManagement() {
           onSelectionChange={setCheckedIds}
         />
       </div>
-    </>
+    </Authorized>
   )
 }

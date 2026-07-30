@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
 import { Button } from '@/components/common/ui/Button'
+import { Authorized } from '@/components/auth/Authorized'
 import { CommonCodeSearch } from '@/components/commonCode/list/CommonCodeSearch'
 import {
   commonCodeSearchSchema,
@@ -113,7 +114,7 @@ export default function CommonCodeManagement() {
   }
 
   return (
-    <>
+    <Authorized>
       {/* 1. 타이틀 영역 — breadcrumb은 menu.json에서 자동 탐색, 그룹/항목 저장 버튼은 extra로 주입 */}
       <PageTitle
         title="공통 코드"
@@ -189,6 +190,6 @@ export default function CommonCodeManagement() {
           )}
         </div>
       </div>
-    </>
+    </Authorized>
   )
 }

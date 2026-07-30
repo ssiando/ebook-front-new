@@ -1,27 +1,128 @@
 [
-  { "id": "api-program-create", "label": "프로그램 생성", "code": "PROGRAM_API_C", "type": "API" },
+  { "id": "test-misc", "label": "테스트", "code": "TESET_III", "type": "PAGE", "parentId": null },
   {
-    "id": "api-dashboard-read",
-    "label": "프로젝트 대시보드 조회",
-    "code": "DASHBOARD_API_R",
-    "type": "API"
+    "id": "genx-menu1",
+    "label": "GENX 관리자 메뉴1(GENX 시스템 내)",
+    "code": "GENX_TEST3",
+    "type": "PAGE",
+    "parentId": null
   },
-  { "id": "api-program-update", "label": "프로그램 수정", "code": "PROGRAM_API_U", "type": "API" },
   {
-    "id": "api-dashboard-first-area",
-    "label": "프로젝트 대시보드 1영역 조회",
-    "code": "DASHBOARD_API_FIRST_AREA",
-    "type": "API"
+    "id": "project-list",
+    "label": "프로젝트",
+    "code": "PROJECT_LIST",
+    "type": "PAGE",
+    "parentId": null
   },
-  { "id": "api-program-delete", "label": "프로그램 삭제", "code": "PROGRAM_API_D", "type": "API" },
-  { "id": "page-home", "label": "홈", "code": "HOME", "type": "PAGE" },
-  { "id": "page-user", "label": "사용자", "code": "USERS", "type": "PAGE" },
-  { "id": "page-common", "label": "공통관리", "code": "COMMMNG", "type": "PAGE" },
-  { "id": "page-master", "label": "기준정보 관리", "code": "VFXSTDMNG", "type": "PAGE" },
-  { "id": "page-workspace", "label": "워크스페이스", "code": "WORKSPACES", "type": "PAGE" },
-  { "id": "page-sample", "label": "샘플", "code": "SAMPLES", "type": "PAGE" },
-  { "id": "page-plan", "label": "플랜/구독", "code": "ADMIN_BILLING", "type": "PAGE" },
-  { "id": "page-project-mgmt", "label": "프로젝트 관리", "code": "PROJECT", "type": "PAGE" },
-  { "id": "page-process-mgmt", "label": "공정관리", "code": "VFXPROCMNG", "type": "PAGE" },
-  { "id": "page-vfx-budget", "label": "VFX 예산관리", "code": "VFXBDGMNG", "type": "PAGE" }
+  {
+    "id": "project-detail",
+    "label": "프로젝트 상세",
+    "code": "PROJECT_DETAIL",
+    "type": "PAGE",
+    "parentId": null
+  },
+  {
+    "id": "project-detail-task-list",
+    "label": "프로젝트 상세 조회 (Task 리스트)",
+    "code": "PROJECT_DETAIL_API_R",
+    "type": "API",
+    "parentId": "project-detail"
+  },
+  {
+    "id": "project-detail-project",
+    "label": "프로젝트 상세 (프로젝트)",
+    "code": "PROJECT_DETAIL_PROJECT_API",
+    "type": "API",
+    "parentId": "project-detail"
+  },
+  {
+    "id": "step-list",
+    "label": "Step List 조회",
+    "code": "STEP_LIST_API",
+    "type": "API",
+    "parentId": "project-detail"
+  },
+  {
+    "id": "task-detail",
+    "label": "TASK 상세",
+    "code": "TASK_DETAIL_API",
+    "type": "API",
+    "parentId": "project-detail"
+  },
+  {
+    "id": "genx-menu2",
+    "label": "GENX 관리자 메뉴2(GENX 시스템 내)",
+    "code": "GENX_TEST4",
+    "type": "PAGE",
+    "parentId": null
+  },
+  { "id": "workflow", "label": "워크플로우", "code": "GENX_APP", "type": "PAGE", "parentId": null },
+  { "id": "work-list", "label": "작업 목록", "code": "WORK_LIST", "type": "PAGE", "parentId": null },
+  {
+    "id": "work-list-read",
+    "label": "작업 목록 조회",
+    "code": "WORK_LIST_API_R",
+    "type": "API",
+    "parentId": "work-list"
+  },
+  {
+    "id": "schedule-work",
+    "label": "예약작업 관리",
+    "code": "SCHEDULE_WORK_LIST",
+    "type": "PAGE",
+    "parentId": null
+  },
+  {
+    "id": "schedule-work-read",
+    "label": "예약작업 목록 조회",
+    "code": "SCHEDULE_WORK_API_R",
+    "type": "API",
+    "parentId": "schedule-work"
+  },
+  { "id": "bbs-list", "label": "소통 게시판", "code": "BBS_LIST", "type": "PAGE", "parentId": null },
+  {
+    "id": "bbs-list-read",
+    "label": "게시글 목록 조회",
+    "code": "BBS_API_R",
+    "type": "API",
+    "parentId": "bbs-list"
+  },
+  { "id": "app-list", "label": "APP 관리", "code": "APP_LIST", "type": "PAGE", "parentId": null },
+  {
+    "id": "app-list-read",
+    "label": "APP 목록 조회",
+    "code": "APP_LIST_API_R",
+    "type": "API",
+    "parentId": "app-list"
+  },
+  {
+    "id": "app-register",
+    "label": "APP 빌더",
+    "code": "APP_REGISTER",
+    "type": "PAGE",
+    "parentId": null
+  },
+  { "id": "node-list", "label": "노드관리", "code": "NODE_LIST", "type": "PAGE", "parentId": null },
+  {
+    "id": "node-list-read",
+    "label": "노드 목록 조회",
+    "code": "NODE_LIST_API_R",
+    "type": "API",
+    "parentId": "node-list"
+  },
+  {
+    "id": "work-node-list",
+    "label": "노드관리 (워크스페이스 관리자)",
+    "code": "WORK_NODE_LIST",
+    "type": "PAGE",
+    "parentId": null
+  },
+  {
+    "id": "work-node-list-read",
+    "label": "노드 목록 조회 (워크스페이스)",
+    "code": "WORK_NODE_LIST_API_R",
+    "type": "API",
+    "parentId": "work-node-list"
+  },
+  { "id": "app-mode", "label": "APP", "code": "APP_MODE", "type": "PAGE", "parentId": null }
 ]

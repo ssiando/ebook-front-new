@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Bell, ChevronDown, Star } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Bell, ChevronDown, LogOut, Star } from 'lucide-react'
+import { useAuthStore } from '@/store/useAuthStore'
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -7,11 +9,19 @@ function formatTime(date: Date): string {
 
 export function Header() {
   const [now, setNow] = useState(() => new Date())
+  const navigate = useNavigate()
+  const currentAdmin = useAuthStore((s) => s.currentAdmin)
+  const logout = useAuthStore((s) => s.logout)
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000 * 30)
     return () => clearInterval(timer)
   }, [])
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4">
@@ -44,8 +54,16 @@ export function Header() {
           type="button"
           className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900"
         >
-          <span>vfx</span>
+          <span>{currentAdmin?.adminName ?? '-'}</span>
           <ChevronDown size={14} className="text-gray-400" />
+        </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900"
+          aria-label="로그아웃"
+        >
+          <LogOut size={16} />
         </button>
       </div>
     </header>

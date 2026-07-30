@@ -1,0 +1,30 @@
+{
+  "title": "Admin List",
+  "search": "Search",
+  "register": "New",
+  "updatedAt": "Updated",
+  "keyword": "Name/ID",
+  "keywordPlaceholder": "Enter admin name or ID",
+  "department": "Department",
+  "totalCount": "{{count}} total",
+  "columns": {
+    "no": "No",
+    "adminId": "Admin ID",
+    "adminName": "Admin Name",
+    "department": "Department",
+    "roles": "Roles",
+    "status": "Status",
+    "registrant": "Registrant",
+    "updatedAt": "Updated At"
+  },
+  "modal": {
+    "title": "New Admin",
+    "adminId": "Admin ID",
+    "adminName": "Admin Name",
+    "email": "Email",
+    "department": "Department",
+    "roles": "Roles",
+    "submit": "Save",
+    "cancel": "Cancel"
+  }
+}

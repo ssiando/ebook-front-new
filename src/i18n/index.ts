@@ -4,8 +4,8 @@ import { initReactI18next } from 'react-i18next'
 
 import commonKo from './locales/ko/common.json'
 import commonEn from './locales/en/common.json'
-import userKo from './locales/ko/user.json'
-import userEn from './locales/en/user.json'
+import adminKo from './locales/ko/admin.json'
+import adminEn from './locales/en/admin.json'
 
 i18n
   .use(LanguageDetector)
@@ -15,8 +15,8 @@ i18n
     supportedLngs: ['ko', 'en'],
     defaultNS: 'common',
     resources: {
-      ko: { common: commonKo, user: userKo },
-      en: { common: commonEn, user: userEn },
+      ko: { common: commonKo, admin: adminKo },
+      en: { common: commonEn, admin: adminEn },
     },
     interpolation: { escapeValue: false },
   })

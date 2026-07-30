@@ -17,7 +17,7 @@ export function PageSearch({ children, onReset }: PageSearchProps) {
         type="button"
         onClick={onReset}
         aria-label="초기화"
-        className="mb-0.5 flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50"
+        className="mb-0.5 ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50"
       >
         <RotateCcw size={14} />
       </button>

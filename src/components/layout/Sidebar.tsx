@@ -4,6 +4,8 @@ import { ChevronsRight, PanelLeftClose, Search } from 'lucide-react'
 import menuData from '@/data/menu.json'
 import type { MenuItem } from '@/types/menu'
 import { useUiStore } from '@/store/useUiStore'
+import { useCurrentAdminRoles } from '@/query/auth-query'
+import { hasMenuGroupAccess } from '@/utils/menuPermission'
 import { clsx } from '@/utils/clsx'
 import { menuIcons } from './menuIcons'
 
@@ -76,7 +78,12 @@ export function Sidebar() {
   const collapsed = useUiStore((s) => s.sidebarCollapsed)
   const toggleSidebar = useUiStore((s) => s.toggleSidebar)
   const [keyword, setKeyword] = useState('')
-  const visibleMenu = useMemo(() => filterMenu(menu, keyword.trim()), [keyword])
+  const currentAdminRoles = useCurrentAdminRoles()
+  const allowedMenu = useMemo(
+    () => menu.filter((item) => hasMenuGroupAccess(item.id, currentAdminRoles)),
+    [currentAdminRoles],
+  )
+  const visibleMenu = useMemo(() => filterMenu(allowedMenu, keyword.trim()), [allowedMenu, keyword])
 
   if (collapsed) {
     return (

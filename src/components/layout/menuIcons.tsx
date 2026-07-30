@@ -15,7 +15,7 @@ import type { ComponentType } from 'react'
 export const menuIcons: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   dashboard: LayoutDashboard,
   home: Home,
-  user: User,
+  admin: User,
   common: Settings,
   master: ListTree,
   system: Settings,

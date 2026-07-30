@@ -1,0 +1,30 @@
+{
+  "title": "관리자 목록",
+  "search": "조회",
+  "register": "등록",
+  "updatedAt": "수정일",
+  "keyword": "관리자명/ID",
+  "keywordPlaceholder": "관리자명 또는 ID를 입력해 주세요",
+  "department": "소속부서",
+  "totalCount": "목록 총 {{count}}건",
+  "columns": {
+    "no": "No",
+    "adminId": "관리자ID",
+    "adminName": "관리자명",
+    "department": "소속",
+    "roles": "역할",
+    "status": "상태",
+    "registrant": "등록자",
+    "updatedAt": "수정일"
+  },
+  "modal": {
+    "title": "관리자 등록",
+    "adminId": "관리자ID",
+    "adminName": "관리자명",
+    "email": "이메일",
+    "department": "소속",
+    "roles": "역할",
+    "submit": "저장",
+    "cancel": "취소"
+  }
+}

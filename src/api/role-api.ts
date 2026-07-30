@@ -9,9 +9,16 @@ import type {
 
 // NOTE: 백엔드 연동 전까지 화면 확인용 목데이터를 사용합니다.
 // 실제 연동 시 아래 목데이터/지연 로직을 제거하고 apiClient 호출만 남기면 됩니다.
-const DEFAULT_PROGRAM_IDS = ['page-home', 'page-user']
-const ADMIN_PROGRAM_IDS = ['page-home', 'page-user', 'page-common', 'page-master', 'page-workspace']
-const SUPER_ADMIN_PROGRAM_IDS = ['page-project-mgmt', 'page-process-mgmt', 'page-vfx-budget']
+const DEFAULT_PROGRAM_IDS = ['test-misc', 'workflow']
+const ADMIN_PROGRAM_IDS = ['test-misc', 'workflow', 'work-list', 'work-list-read', 'bbs-list', 'bbs-list-read']
+const SUPER_ADMIN_PROGRAM_IDS = [
+  'project-list',
+  'project-detail',
+  'project-detail-task-list',
+  'project-detail-project',
+  'step-list',
+  'task-detail',
+]
 
 const MOCK_ROLES: Role[] = [
   {

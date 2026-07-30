@@ -1,0 +1,84 @@
+import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { PageTitle } from '@/components/common/PageTitle'
+import { PageSearch } from '@/components/common/PageSearch'
+import { Authorized } from '@/components/auth/Authorized'
+import { BatchSearch } from '@/components/batch/list/BatchSearch'
+import {
+  batchSearchRules,
+  batchSearchSchema,
+  type BatchSearchFormValues,
+} from '@/components/batch/list/batchSearchSchema'
+import { BatchContent } from '@/components/batch/list/BatchContent'
+import { useBatchesQuery, useRunBatchMutation } from '@/query/batch-query'
+import type { BatchSearchParams } from '@/types/batch'
+import { showFormErrors } from '@/utils/formUtils'
+import { useToastStore } from '@/store/useToastStore'
+
+const DEFAULT_SEARCH: BatchSearchFormValues = { keyword: '' }
+
+export default function BatchManagement() {
+  const [params, setParams] = useState<BatchSearchParams>({
+    ...DEFAULT_SEARCH,
+    page: 1,
+    pageSize: 15,
+  })
+
+  const { control, reset, handleSubmit } = useForm<BatchSearchFormValues>({
+    resolver: zodResolver(batchSearchSchema),
+    defaultValues: DEFAULT_SEARCH,
+  })
+
+  const { data, isFetching } = useBatchesQuery(params)
+  const runBatch = useRunBatchMutation()
+
+  const handleSearch = handleSubmit(
+    (values) => setParams((prev) => ({ ...prev, ...values, page: 1 })),
+    (errors) => showFormErrors(errors, batchSearchRules),
+  )
+
+  const handleReset = () => {
+    reset(DEFAULT_SEARCH)
+    setParams((prev) => ({ ...prev, ...DEFAULT_SEARCH, page: 1 }))
+  }
+
+  const handleHistoryClick = () => {
+    useToastStore.getState().push('이력 조회 기능은 준비 중입니다.')
+  }
+
+  const handleRunClick = (id: string) => {
+    runBatch.mutate(id, {
+      onSuccess: () => useToastStore.getState().push('배치를 실행했습니다.'),
+    })
+  }
+
+  return (
+    <Authorized>
+      {/* 1. 타이틀 영역 — breadcrumb은 menu.json에서 자동 탐색 */}
+      <PageTitle
+        title="배치 관리"
+        description="배치 작업 목록을 조회하고, 이력을 확인하며 수동 실행이 가능한 배치를 실행합니다."
+        actionButtonsProps={{ onSearch: handleSearch }}
+      />
+
+      {/* 2. 조회 영역 — form reset 버튼 기본 포함 */}
+      <PageSearch onReset={handleReset}>
+        <BatchSearch control={control} />
+      </PageSearch>
+
+      {/* 3. 본문 — 그리드·페이지네이션은 화면 전용 컴포넌트로 분리 */}
+      <BatchContent
+        data={data}
+        isLoading={isFetching}
+        page={params.page}
+        pageSize={params.pageSize}
+        runningId={runBatch.isPending ? runBatch.variables ?? null : null}
+        onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
+        onPageSizeChange={(pageSize) => setParams((prev) => ({ ...prev, pageSize, page: 1 }))}
+        onHistoryClick={handleHistoryClick}
+        onRunClick={handleRunClick}
+      />
+    </Authorized>
+  )
+}

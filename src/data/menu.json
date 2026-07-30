@@ -2,9 +2,12 @@
   { "id": "dashboard", "label": "대시보드", "path": "/" },
   { "id": "home", "label": "홈", "path": "/" },
   {
-    "id": "user",
-    "label": "사용자",
-    "children": [{ "id": "userManagement", "label": "사용자 관리", "path": "/userManagement" }]
+    "id": "admin",
+    "label": "관리자",
+    "children": [
+      { "id": "adminManagement", "label": "관리자 관리", "path": "/adminManagement" },
+      { "id": "adminRoleManagement", "label": "관리자별 역할 관리", "path": "/adminRoleManagement" }
+    ]
   },
   {
     "id": "system",
@@ -12,7 +15,8 @@
     "children": [
       { "id": "programManagement", "label": "프로그램 관리", "path": "/programManagement" },
       { "id": "roleManagement", "label": "역할 관리", "path": "/roleManagement" },
-      { "id": "commonCode", "label": "공통관리", "path": "/commonCodeManagement" }
+      { "id": "commonCode", "label": "공통관리", "path": "/commonCodeManagement" },
+      { "id": "batchManagement", "label": "배치 관리", "path": "/batchManagement" }
     ]
   }
 ]

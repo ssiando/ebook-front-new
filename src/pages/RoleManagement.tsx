@@ -5,13 +5,14 @@ import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
 import { Button } from '@/components/common/ui/Button'
 import { Pagination } from '@/components/common/Pagination'
+import { Authorized } from '@/components/auth/Authorized'
 import { RoleSearch } from '@/components/role/list/RoleSearch'
 import {
   roleSearchSchema,
   type RoleSearchFormValues,
 } from '@/components/role/list/roleSearchSchema'
 import { RoleListGrid } from '@/components/role/list/RoleListGrid'
-import { MenuGrantGrid } from '@/components/role/list/MenuGrantGrid'
+import { MenuGrantTree } from '@/components/role/list/MenuGrantTree'
 import {
   useDeleteRolesMutation,
   useRolesQuery,
@@ -114,7 +115,7 @@ export default function RoleManagement() {
   }
 
   return (
-    <>
+    <Authorized>
       {/* 1. 타이틀 영역 — breadcrumb은 menu.json에서 자동 탐색 */}
       <PageTitle title="역할 관리" actionButtonsProps={{ onSearch: handleSearch }} />
 
@@ -188,7 +189,7 @@ export default function RoleManagement() {
           {!selectedRole && (
             <p className="text-xs text-gray-400">역할을 선택하면 메뉴를 지정할 수 있습니다.</p>
           )}
-          <MenuGrantGrid
+          <MenuGrantTree
             rows={programs}
             loading={false}
             checkedIds={checkedMenuIds}
@@ -197,6 +198,6 @@ export default function RoleManagement() {
           />
         </div>
       </div>
-    </>
+    </Authorized>
   )
 }
