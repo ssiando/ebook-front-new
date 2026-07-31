@@ -36,9 +36,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-    // Security / OAuth2 Resource Server
-    // NOTE: 실제 인가서버(예: Keycloak) 연동 정보가 확정되면 application.yml의
-    // spring.security.oauth2.resourceserver.jwt.issuer-uri를 채우고 SecurityConfig를 작성하세요.
+    // Security / JWT
+    // 별도 인가서버(Keycloak 등) 없이 자체 발급 JWT(HS256)를 사용합니다.
+    // common/config/SecurityConfig가 oauth2-resource-server의 JwtEncoder/JwtDecoder를
+    // 공유 비밀키(app.jwt.secret) 기반으로 직접 구성합니다. 실제 IdP 연동 시 issuer-uri 방식으로 교체하세요.
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
