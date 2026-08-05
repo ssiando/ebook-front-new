@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import dayjs from 'dayjs'
 import { PageSearch } from '@/components/common/PageSearch'
 import { Authorized } from '@/components/auth/Authorized'
 import { AdminSearch } from '@/components/admin/list/AdminSearch'
@@ -10,14 +9,9 @@ import { searchSchema } from '@/components/admin/list/searchSchema'
 import { AdminContent } from '@/components/admin/list/AdminContent'
 import type { AdminSearchParams } from '@/types/admin'
 import { PageTitle } from '@/components/common/PageTitle'
-import { toDateInputValue } from '@/utils/dateUtils'
 
 function defaultSearchValues(): AdminSearchParams {
-  const today = dayjs()
-  const monthAgo = today.subtract(30, 'day')
   return {
-    updatedFrom: toDateInputValue(monthAgo),
-    updatedTo: toDateInputValue(today),
     keyword: '',
     department: 'ALL',
     status: 'ALL',
@@ -25,7 +19,7 @@ function defaultSearchValues(): AdminSearchParams {
 }
 
 export default function AdminManagement() {
-  const { t } = useTranslation()
+  const { t } = useTranslation('admin')
   const [appliedSearch, setAppliedSearch] = useState<AdminSearchParams>(defaultSearchValues())
   const [searchRevision, setSearchRevision] = useState(0)
 
@@ -41,7 +35,7 @@ export default function AdminManagement() {
 
   return (
     <Authorized>
-      <PageTitle title={t('admin.title')} />
+      <PageTitle title={t('title')} />
 
       <PageSearch control={control} onSearch={handleSearch}>
         <AdminSearch control={control} />

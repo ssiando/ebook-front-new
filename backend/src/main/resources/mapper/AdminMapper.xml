@@ -9,7 +9,6 @@
         <result property="email" column="email" />
         <result property="passwordHash" column="password_hash" />
         <result property="department" column="department" />
-        <result property="workspaceAdmin" column="is_workspace_admin" />
         <result property="groupNames" column="group_names" />
         <result property="serviceExpiresAt" column="service_expires_at" />
         <result property="lastLoginAt" column="last_login_at" />
@@ -20,7 +19,7 @@
     </resultMap>
 
     <sql id="adminColumns">
-        id, admin_id, admin_name, email, password_hash, department, is_workspace_admin, group_names,
+        id, admin_id, admin_name, email, password_hash, department, group_names,
         service_expires_at, last_login_at, status, registrant, created_at, updated_at
     </sql>
 
@@ -40,12 +39,6 @@
 
     <sql id="searchCondition">
         <where>
-            <if test="updatedFrom != null">
-                AND a.updated_at &gt;= #{updatedFrom}
-            </if>
-            <if test="updatedTo != null">
-                AND a.updated_at &lt;= #{updatedTo}
-            </if>
             <if test="keyword != null and keyword != ''">
                 AND (a.admin_name LIKE CONCAT('%', #{keyword}, '%')
                 OR a.admin_id LIKE CONCAT('%', #{keyword}, '%')
@@ -61,7 +54,7 @@
     </sql>
 
     <select id="search" resultMap="adminResultMap">
-        SELECT a.id, a.admin_id, a.admin_name, a.email, a.password_hash, a.department, a.is_workspace_admin,
+        SELECT a.id, a.admin_id, a.admin_name, a.email, a.password_hash, a.department,
         a.group_names, a.service_expires_at, a.last_login_at, a.status, a.registrant,
         a.created_at, a.updated_at
         FROM admin a
@@ -101,7 +94,6 @@
             department          = #{department},
             status              = #{status},
             registrant          = #{registrant},
-            is_workspace_admin  = #{workspaceAdmin},
             group_names         = #{groupNames},
             service_expires_at  = #{serviceExpiresAt}
         WHERE id = #{id}

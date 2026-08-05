@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Info } from 'lucide-react'
 import { z } from 'zod'
 import { Button } from '@/components/common/ui/Button'
 import { FormTagInput } from '@/components/common/form/FormTagInput'
@@ -17,7 +16,6 @@ import { ADMIN_STATUS_GROUP_CODE, type Admin } from '@/types/admin'
 const detailSchema = z.object({
   groups: z.array(z.string()),
   serviceExpiresAt: z.string(),
-  workspaceAdmin: z.boolean(),
   status: z.string().min(1, '상태를 선택해 주세요'),
 })
 
@@ -80,7 +78,7 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
 
   const { control, handleSubmit, reset, watch, setValue } = useForm<DetailFormValues>({
     resolver: zodResolver(detailSchema),
-    defaultValues: { groups: [], serviceExpiresAt: '', workspaceAdmin: false, status: '' },
+    defaultValues: { groups: [], serviceExpiresAt: '', status: '' },
   })
 
   useEffect(() => {
@@ -88,7 +86,6 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
     reset({
       groups: admin.groups,
       serviceExpiresAt: admin.serviceExpiresAt ?? '',
-      workspaceAdmin: admin.workspaceAdmin,
       status: admin.status,
     })
   }, [admin, reset])
@@ -98,7 +95,6 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
     setCheckedRoleIds(new Set(admin?.roleIds ?? []))
   }, [admin])
 
-  const workspaceAdmin = watch('workspaceAdmin')
   const status = watch('status')
 
   const onSubmit = handleSubmit(async (values) => {
@@ -110,7 +106,6 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
       department: admin.department,
       registrant: currentAdmin?.adminId ?? admin.registrant,
       status: values.status,
-      workspaceAdmin: values.workspaceAdmin,
       groups: values.groups,
       serviceExpiresAt: values.serviceExpiresAt || undefined,
     })
@@ -192,30 +187,6 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
         />
         <span className="text-xs text-gray-400">{t('detail.serviceExpiresAtHelper')}</span>
       </div>
-
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold text-gray-700">{t('detail.permission')}</h2>
-        <div className="flex flex-col gap-2">
-          <RadioCard
-            checked={workspaceAdmin}
-            onSelect={() => setValue('workspaceAdmin', true)}
-            title={t('detail.workspaceAdmin')}
-            code="WORKSPACE_ADMIN"
-            description={t('detail.workspaceAdminDesc')}
-          />
-          <RadioCard
-            checked={!workspaceAdmin}
-            onSelect={() => setValue('workspaceAdmin', false)}
-            title={t('detail.generalUser')}
-            code="USER"
-            description={t('detail.generalUserDesc')}
-          />
-        </div>
-        <p className="flex items-start gap-1.5 rounded bg-sky-50 p-2 text-xs text-sky-700">
-          <Info size={14} className="mt-0.5 shrink-0" />
-          {t('detail.policyNotice')}
-        </p>
-      </section>
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-gray-700">{t('columns.status')}</h2>

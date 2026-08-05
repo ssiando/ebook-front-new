@@ -20,8 +20,6 @@ const GROUP_POOL = ['디즈니', '마블', '픽사', '내셔널지오그래픽']
 
 const MOCK_ADMINS: Admin[] = Array.from({ length: 23 }, (_, i) => {
   const idx = 23 - i
-  // idx가 3의 배수인 계정만 워크스페이스 관리자 권한을 가진다 (그림의 "워크스페이스 관리자" 체크와 동일한 의미).
-  const isWorkspaceAdmin = idx % 3 === 0
   return {
     id: String(idx),
     adminId: `admin${String(idx).padStart(3, '0')}`,
@@ -35,7 +33,6 @@ const MOCK_ADMINS: Admin[] = Array.from({ length: 23 }, (_, i) => {
         : idx % 3 === 0
           ? [ROLE_ID_POOL[idx % ROLE_ID_POOL.length], ROLE_ID_POOL[(idx + 1) % ROLE_ID_POOL.length]]
           : [ROLE_ID_POOL[idx % ROLE_ID_POOL.length]],
-    workspaceAdmin: isWorkspaceAdmin,
     groups: idx % 4 === 0 ? [] : [GROUP_POOL[idx % GROUP_POOL.length]],
     serviceExpiresAt:
       idx % 5 === 0 ? `2026-${String((idx % 12) + 1).padStart(2, '0')}-28` : undefined,
@@ -61,19 +58,13 @@ export async function fetchAdmins(params: AdminSearchParams): Promise<Admin[]> {
           admin.adminId.includes(params.keyword) ||
           admin.email.includes(params.keyword)
         : true
-      // updatedAt은 시:분:초까지 포함할 수 있어, 날짜만 있는 검색 범위와 비교할 때는 날짜 부분만 잘라 비교한다.
-      const matchesDate =
-        !params.updatedFrom || !params.updatedTo
-          ? true
-          : admin.updatedAt.slice(0, 10) >= params.updatedFrom &&
-            admin.updatedAt.slice(0, 10) <= params.updatedTo
       const matchesDepartment =
         !params.department || params.department === 'ALL'
           ? true
           : admin.department === params.department
       const matchesStatus =
         !params.status || params.status === 'ALL' ? true : admin.status === params.status
-      return matchesKeyword && matchesDate && matchesDepartment && matchesStatus
+      return matchesKeyword && matchesDepartment && matchesStatus
     })
     return delay(filtered)
   }
@@ -89,7 +80,6 @@ export async function createAdmin(payload: CreateAdminPayload): Promise<Admin> {
     const created: Admin = {
       id: String(Date.now()),
       ...rest,
-      workspaceAdmin: false,
       groups: [],
       status: 'NEW',
       updatedAt: dayjs().format('YYYY-MM-DD'),

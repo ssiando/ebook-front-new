@@ -19,7 +19,6 @@ public class Admin extends BaseEntity {
     private String email;
     private String passwordHash;
     private String department;
-    private boolean workspaceAdmin;
     // 콤마(,)로 구분한 그룹 태그 원본 문자열. 목록 형태는 AdminRestMapper에서 변환한다.
     private String groupNames;
     private LocalDate serviceExpiresAt;
@@ -46,7 +45,6 @@ public class Admin extends BaseEntity {
             String department,
             String status,
             String registrant,
-            boolean workspaceAdmin,
             String groupNames,
             LocalDate serviceExpiresAt) {
         this.adminName = adminName;
@@ -54,7 +52,6 @@ public class Admin extends BaseEntity {
         this.department = department;
         this.status = status;
         this.registrant = registrant;
-        this.workspaceAdmin = workspaceAdmin;
         this.groupNames = groupNames;
         this.serviceExpiresAt = serviceExpiresAt;
     }

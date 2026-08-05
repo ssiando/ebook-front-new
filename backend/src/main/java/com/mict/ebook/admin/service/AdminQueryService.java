@@ -7,8 +7,6 @@ import com.mict.ebook.admin.dto.AdminSearchRequest;
 import com.mict.ebook.admin.mapper.AdminRestMapper;
 import com.mict.ebook.admin.repository.mapper.AdminMapper;
 import com.mict.ebook.common.exception.BusinessException;
-import com.mict.ebook.common.util.DateTimeUtils;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +21,7 @@ public class AdminQueryService {
     private final AdminRestMapper adminRestMapper;
 
     public List<AdminResponse> search(AdminSearchRequest request) {
-        LocalDateTime updatedFrom = DateTimeUtils.startOfDay(request.updatedFrom());
-        LocalDateTime updatedTo = DateTimeUtils.endOfDay(request.updatedTo());
-
-        List<Admin> admins = adminMapper.search(
-                updatedFrom, updatedTo, request.keyword(), request.department(), request.status());
+        List<Admin> admins = adminMapper.search(request.keyword(), request.department(), request.status());
 
         return admins.stream().map(this::toResponse).toList();
     }

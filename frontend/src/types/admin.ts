@@ -12,8 +12,6 @@ export interface Admin {
   email: string
   department: string
   roleIds: string[]
-  // 워크스페이스 전체 관리 권한 여부. 세부 메뉴 권한(roleIds)과 별개로 관리자 콘솔 접근 가능 여부를 나타낸다.
-  workspaceAdmin: boolean
   groups: string[]
   serviceExpiresAt?: string
   lastLoginAt?: string
@@ -23,8 +21,6 @@ export interface Admin {
 }
 
 export interface AdminSearchParams {
-  updatedFrom: string
-  updatedTo: string
   keyword: string
   department: AdminDepartment | 'ALL'
   status: string
@@ -47,7 +43,6 @@ export interface UpdateAdminPayload {
   department: string
   status: string
   registrant: string
-  workspaceAdmin: boolean
   groups: string[]
   serviceExpiresAt?: string
 }

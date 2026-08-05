@@ -10,7 +10,6 @@ public record AdminResponse(
         String adminName,
         String email,
         String department,
-        boolean workspaceAdmin,
         List<String> groups,
         LocalDate serviceExpiresAt,
         LocalDateTime lastLoginAt,

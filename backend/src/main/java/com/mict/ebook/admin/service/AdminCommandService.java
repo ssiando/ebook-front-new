@@ -61,7 +61,6 @@ public class AdminCommandService {
                 request.department(),
                 request.status(),
                 request.registrant(),
-                request.workspaceAdmin(),
                 joinGroups(request.groups()),
                 request.serviceExpiresAt());
         adminMapper.update(admin);

@@ -4,7 +4,6 @@
     "title": "관리자 목록"
   },
   "deleteConfirm": "선택한 {{count}}건을 삭제하시겠습니까?",
-  "updatedAt": "수정일",
   "keyword": "관리자명/ID",
   "keywordPlaceholder": "관리자명 또는 ID를 입력해 주세요",
   "department": "소속부서",
@@ -16,7 +15,6 @@
     "nameEmail": "이름/이메일",
     "department": "소속",
     "roles": "역할",
-    "workspaceAdmin": "워크스페이스 관리자",
     "groups": "그룹",
     "status": "상태",
     "registrant": "등록자",
@@ -50,12 +48,6 @@
     "groupsHelper": "태그는 Enter로 추가합니다. 저장 버튼을 눌러야 반영되며, 저장 시 기존 그룹을 전체 교체(replace)합니다.",
     "serviceExpiresAt": "서비스 사용 만료일",
     "serviceExpiresAtHelper": "이 날짜가 도래하면 자동으로 비활성 처리됩니다. 비워두면 영구 사용 계정으로 간주합니다.",
-    "permission": "관리자 권한",
-    "workspaceAdmin": "워크스페이스 관리자",
-    "workspaceAdminDesc": "워크스페이스 전체 관리 권한. 사용자·시스템·구독 설정을 변경할 수 있습니다.",
-    "generalUser": "일반 사용자",
-    "generalUserDesc": "기본값. 시스템 역할 범위 내에서만 접근 가능하며 워크스페이스 관리 권한이 없습니다.",
-    "policyNotice": "[적용 정책] 변경분은 대상 관리자가 재로그인할 때 적용됩니다.",
     "statTotal": "전체 관리자",
     "statActive": "활성 관리자",
     "statInactive": "비활성 관리자"

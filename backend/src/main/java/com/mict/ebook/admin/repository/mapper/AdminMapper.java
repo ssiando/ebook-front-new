@@ -15,11 +15,7 @@ public interface AdminMapper {
     List<String> findRoleNamesByAdminId(@Param("adminId") Long adminId);
 
     List<Admin> search(
-            @Param("updatedFrom") LocalDateTime updatedFrom,
-            @Param("updatedTo") LocalDateTime updatedTo,
-            @Param("keyword") String keyword,
-            @Param("department") String department,
-            @Param("status") String status);
+            @Param("keyword") String keyword, @Param("department") String department, @Param("status") String status);
 
     Optional<Admin> findById(@Param("id") Long id);
 

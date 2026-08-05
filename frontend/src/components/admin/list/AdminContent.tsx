@@ -38,7 +38,7 @@ interface AdminContentProps {
 }
 
 export function AdminContent({ params, searchRevision }: AdminContentProps) {
-  const { t } = useTranslation('admin')
+  const { t } = useTranslation(['admin', 'common'])
   const { data, isFetching } = useAdminsQuery(params, searchRevision)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
@@ -79,17 +79,6 @@ export function AdminContent({ params, searchRevision }: AdminContentProps) {
               </div>
             </div>
           ),
-      },
-      {
-        field: 'workspaceAdmin',
-        headerName: t('columns.workspaceAdmin'),
-        width: 160,
-        cellDataType: false,
-        cellRenderer: (p: { value: Admin['workspaceAdmin'] }) => (
-          <div className="flex h-full items-center">
-            <input type="checkbox" checked={p.value} readOnly disabled className="h-3.5 w-3.5" />
-          </div>
-        ),
       },
       {
         field: 'groups',

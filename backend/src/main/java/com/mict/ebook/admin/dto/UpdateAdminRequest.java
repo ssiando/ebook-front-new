@@ -12,6 +12,5 @@ public record UpdateAdminRequest(
         @Size(max = 100) String department,
         @NotBlank @Size(max = 20) String status,
         @Size(max = 50) String registrant,
-        boolean workspaceAdmin,
         List<String> groups,
         LocalDate serviceExpiresAt) {}
