@@ -136,12 +136,14 @@ export function AdminContent({ params, searchRevision }: AdminContentProps) {
               {t('totalCount', { count: data?.length ?? 0 })}
             </span>
             <div className="flex gap-2">
-              <AddButton onClick={() => setCreateOpen(true)}>{t('register')}</AddButton>
+              <AddButton onClick={() => setCreateOpen(true)}>
+                {t('common:button.register')}
+              </AddButton>
               <DeleteButton
                 onClick={handleDelete}
                 disabled={checkedIds.length === 0 || deleteAdmin.isPending}
               >
-                {t('delete')}
+                {t('common:button.delete')}
               </DeleteButton>
             </div>
           </div>

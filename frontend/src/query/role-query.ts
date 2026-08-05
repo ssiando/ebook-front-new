@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { deleteRoles, fetchRoles, saveRoles, updateRolePrograms } from '@/api/role-api'
-import type { Role, RoleSearchParams } from '@/types/role'
+import { createRole, deleteRole, fetchRoles, updateRole, updateRolePrograms } from '@/api/role-api'
+import type { RoleSearchParams } from '@/types/role'
 
 export const roleKeys = {
   all: ['roles'] as const,
@@ -15,20 +15,30 @@ export function useRolesQuery(params: RoleSearchParams) {
   })
 }
 
-export function useSaveRolesMutation() {
+export function useCreateRoleMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (roles: Role[]) => saveRoles(roles),
+    mutationFn: createRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.all })
     },
   })
 }
 
-export function useDeleteRolesMutation() {
+export function useUpdateRoleMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (ids: string[]) => deleteRoles(ids),
+    mutationFn: updateRole,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: roleKeys.all })
+    },
+  })
+}
+
+export function useDeleteRoleMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.all })
     },

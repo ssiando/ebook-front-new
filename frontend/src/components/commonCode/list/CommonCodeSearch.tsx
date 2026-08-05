@@ -1,10 +1,10 @@
 import type { Control } from 'react-hook-form'
 import { FormInput } from '@/components/common/form/FormInput'
 import { FormSelect } from '@/components/common/form/FormSelect'
-import type { CommonCodeSearchFormValues } from './commonCodeSearchSchema'
+import type { CommonCodeSearchParams } from '@/types/commonCode'
 
 interface CommonCodeSearchProps {
-  control: Control<CommonCodeSearchFormValues>
+  control: Control<CommonCodeSearchParams>
 }
 
 export function CommonCodeSearch({ control }: CommonCodeSearchProps) {

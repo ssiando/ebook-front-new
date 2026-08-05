@@ -13,8 +13,16 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
+// 백엔드는 모든 응답을 ApiResponse<T> = { success, data, errorCode, message } 로 감싸서 내려준다.
+// 각 api 파일은 실제 데이터 타입(T)만 다루면 되도록 여기서 한 번에 풀어준다.
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const body = response.data
+    if (body && typeof body === 'object' && 'success' in body) {
+      response.data = body.data
+    }
+    return response
+  },
   (error) => {
     if (error.response?.status === 401) {
       // TODO: 인증 만료 처리 (로그인 페이지 리다이렉트 등)

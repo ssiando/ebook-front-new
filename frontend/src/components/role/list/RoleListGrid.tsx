@@ -34,10 +34,7 @@ export function RoleListGrid({
       { headerCheckboxSelection: true, checkboxSelection: true, width: 44, pinned: 'left' },
       { field: 'roleName', headerName: '역할명', width: 160, editable: true },
       { field: 'description', headerName: '설명', flex: 1, minWidth: 180, editable: true },
-      { field: 'system', headerName: '시스템명', width: 110, editable: true },
       { field: 'memberCount', headerName: '소속 인원', width: 100 },
-      { field: 'createdAt', headerName: '등록일시', width: 160 },
-      { field: 'updatedAt', headerName: '수정일시', width: 160 },
     ],
     [],
   )

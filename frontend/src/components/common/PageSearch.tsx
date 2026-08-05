@@ -33,11 +33,12 @@ export function PageSearch<TFieldValues extends FieldValues = FieldValues>({
   onSearch,
   searchLabel,
 }: PageSearchProps<TFieldValues>) {
-   const { t } = useTranslation('admin')
-   
+  const { t } = useTranslation('common')
+
   const handleDefaultReset = () => {
     const resolvedReset = reset ?? control?._reset
-    const resolvedDefaultValues = defaultValues ?? (control?._defaultValues as TFieldValues | undefined)
+    const resolvedDefaultValues =
+      defaultValues ?? (control?._defaultValues as TFieldValues | undefined)
     if (!resolvedReset || !resolvedDefaultValues) return
 
     const defaults =
@@ -59,6 +60,9 @@ export function PageSearch<TFieldValues extends FieldValues = FieldValues>({
     <div className="flex flex-wrap items-end gap-4 rounded border border-gray-200 bg-white p-4">
       {children}
       <div className="mb-0.5 ml-auto flex shrink-0 items-center gap-2">
+        {onSearch && (
+          <SearchButton onClick={onSearch}>{searchLabel ?? t('button.search')}</SearchButton>
+        )}
         <button
           type="button"
           onClick={handleReset}
@@ -67,7 +71,6 @@ export function PageSearch<TFieldValues extends FieldValues = FieldValues>({
         >
           <RotateCcw size={14} />
         </button>
-        {onSearch && <SearchButton onClick={onSearch}>{searchLabel ?? t('common.button.search')}</SearchButton>}
       </div>
     </div>
   )

@@ -6,7 +6,6 @@
         <id property="id" column="id" />
         <result property="roleName" column="role_name" />
         <result property="description" column="description" />
-        <result property="system" column="system" typeHandler="com.mict.ebook.role.domain.SystemTypeHandler" />
         <result property="registrant" column="registrant" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
@@ -14,9 +13,6 @@
 
     <sql id="searchCondition">
         <where>
-            <if test="system != null">
-                AND r.system = #{system, typeHandler=com.mict.ebook.role.domain.SystemTypeHandler}
-            </if>
             <if test="keyword != null and keyword != ''">
                 AND (r.role_name LIKE CONCAT('%', #{keyword}, '%')
                 OR r.description LIKE CONCAT('%', #{keyword}, '%'))
@@ -25,32 +21,28 @@
     </sql>
 
     <select id="search" resultMap="roleResultMap">
-        SELECT r.id, r.role_name, r.description, r.system, r.registrant, r.created_at, r.updated_at
+        SELECT r.id, r.role_name, r.description, r.registrant, r.created_at, r.updated_at
         FROM role r
         <include refid="searchCondition" />
         ORDER BY r.id DESC
     </select>
 
     <select id="findById" resultMap="roleResultMap">
-        SELECT id, role_name, description, system, registrant, created_at, updated_at
+        SELECT id, role_name, description, registrant, created_at, updated_at
         FROM role
         WHERE id = #{id}
     </select>
 
-    <select id="existsByRoleNameAndSystem" resultType="boolean">
+    <select id="existsByRoleName" resultType="boolean">
         SELECT EXISTS(
         SELECT 1 FROM role
         WHERE role_name = #{roleName}
-        AND system = #{system, typeHandler=com.mict.ebook.role.domain.SystemTypeHandler}
         )
     </select>
 
     <insert id="insert" parameterType="com.mict.ebook.role.domain.Role" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO role (role_name, description, system, registrant)
-        VALUES (#{roleName},
-        #{description},
-        #{system, typeHandler=com.mict.ebook.role.domain.SystemTypeHandler},
-        #{registrant})
+        INSERT INTO role (role_name, description, registrant)
+        VALUES (#{roleName}, #{description}, #{registrant})
     </insert>
 
     <update id="update" parameterType="com.mict.ebook.role.domain.Role">

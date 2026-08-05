@@ -12,14 +12,12 @@ public class Role extends BaseEntity {
     private Long id;
     private String roleName;
     private String description;
-    private SystemType system;
     private String registrant;
 
-    public static Role createNew(String roleName, String description, SystemType system, String registrant) {
+    public static Role createNew(String roleName, String description, String registrant) {
         Role role = new Role();
         role.roleName = roleName;
         role.description = description;
-        role.system = system;
         role.registrant = registrant;
         return role;
     }

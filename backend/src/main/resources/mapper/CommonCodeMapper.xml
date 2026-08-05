@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.commoncode.repository.mapper.CommonCodeMapper">
+
+    <resultMap id="codeGroupResultMap" type="com.mict.ebook.commoncode.domain.CodeGroup">
+        <id property="id" column="id" />
+        <result property="groupCode" column="group_code" />
+        <result property="groupName" column="group_name" />
+        <result property="description" column="description" />
+        <result property="useYn" column="use_yn" typeHandler="com.mict.ebook.commoncode.domain.UseYnTypeHandler" />
+        <result property="i18nKey" column="i18n_key" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <resultMap id="codeItemResultMap" type="com.mict.ebook.commoncode.domain.CodeItem">
+        <id property="id" column="id" />
+        <result property="groupId" column="group_id" />
+        <result property="code" column="code" />
+        <result property="codeName" column="code_name" />
+        <result property="sortOrder" column="sort_order" />
+        <result property="useYn" column="use_yn" typeHandler="com.mict.ebook.commoncode.domain.UseYnTypeHandler" />
+        <result property="description" column="description" />
+        <result property="metadata" column="metadata" />
+        <result property="i18nKey" column="i18n_key" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <sql id="codeGroupColumns">
+        id, group_code, group_name, description, use_yn, i18n_key, created_at, updated_at
+    </sql>
+
+    <sql id="codeItemColumns">
+        id, group_id, code, code_name, sort_order, use_yn, description, metadata, i18n_key, created_at, updated_at
+    </sql>
+
+    <select id="searchGroups" resultMap="codeGroupResultMap">
+        SELECT <include refid="codeGroupColumns" />
+        FROM common_code_group
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (group_code LIKE CONCAT('%', #{keyword}, '%')
+                OR group_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND use_yn = #{useYn}
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <select id="findGroupById" resultMap="codeGroupResultMap">
+        SELECT <include refid="codeGroupColumns" />
+        FROM common_code_group
+        WHERE id = #{id}
+    </select>
+
+    <select id="findGroupByCode" resultMap="codeGroupResultMap">
+        SELECT <include refid="codeGroupColumns" />
+        FROM common_code_group
+        WHERE group_code = #{groupCode}
+    </select>
+
+    <select id="existsGroupByCode" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM common_code_group
+        WHERE group_code = #{groupCode}
+        )
+    </select>
+
+    <select id="existsGroupByCodeExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM common_code_group
+        WHERE group_code = #{groupCode}
+        AND id != #{id}
+        )
+    </select>
+
+    <insert id="insertGroup" parameterType="com.mict.ebook.commoncode.domain.CodeGroup" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO common_code_group (group_code, group_name, description, use_yn, i18n_key)
+        VALUES (#{groupCode},
+        #{groupName},
+        #{description},
+        #{useYn, typeHandler=com.mict.ebook.commoncode.domain.UseYnTypeHandler},
+        #{i18nKey})
+    </insert>
+
+    <update id="updateGroup" parameterType="com.mict.ebook.commoncode.domain.CodeGroup">
+        UPDATE common_code_group
+        SET group_code  = #{groupCode},
+            group_name  = #{groupName},
+            description = #{description},
+            use_yn      = #{useYn, typeHandler=com.mict.ebook.commoncode.domain.UseYnTypeHandler},
+            i18n_key    = #{i18nKey}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteGroupById">
+        DELETE
+        FROM common_code_group
+        WHERE id = #{id}
+    </delete>
+
+    <select id="findItemsByGroupId" resultMap="codeItemResultMap">
+        SELECT <include refid="codeItemColumns" />
+        FROM common_code_item
+        WHERE group_id = #{groupId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="findItemsByGroupCode" resultMap="codeItemResultMap">
+        SELECT i.id, i.group_id, i.code, i.code_name, i.sort_order, i.use_yn, i.description, i.metadata,
+        i.i18n_key, i.created_at, i.updated_at
+        FROM common_code_item i
+        JOIN common_code_group g ON g.id = i.group_id
+        WHERE g.group_code = #{groupCode}
+        ORDER BY i.sort_order ASC, i.id ASC
+    </select>
+
+    <select id="findItemById" resultMap="codeItemResultMap">
+        SELECT <include refid="codeItemColumns" />
+        FROM common_code_item
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsItemByGroupIdAndCode" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM common_code_item
+        WHERE group_id = #{groupId}
+        AND code = #{code}
+        )
+    </select>
+
+    <select id="existsItemByGroupIdAndCodeExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM common_code_item
+        WHERE group_id = #{groupId}
+        AND code = #{code}
+        AND id != #{id}
+        )
+    </select>
+
+    <insert id="insertItem" parameterType="com.mict.ebook.commoncode.domain.CodeItem" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO common_code_item (group_id, code, code_name, sort_order, use_yn, description, metadata,
+        i18n_key)
+        VALUES (#{groupId},
+        #{code},
+        #{codeName},
+        #{sortOrder},
+        #{useYn, typeHandler=com.mict.ebook.commoncode.domain.UseYnTypeHandler},
+        #{description},
+        #{metadata},
+        #{i18nKey})
+    </insert>
+
+    <update id="updateItem" parameterType="com.mict.ebook.commoncode.domain.CodeItem">
+        UPDATE common_code_item
+        SET code        = #{code},
+            code_name   = #{codeName},
+            sort_order  = #{sortOrder},
+            use_yn      = #{useYn, typeHandler=com.mict.ebook.commoncode.domain.UseYnTypeHandler},
+            description = #{description},
+            metadata    = #{metadata},
+            i18n_key    = #{i18nKey}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteItemById">
+        DELETE
+        FROM common_code_item
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

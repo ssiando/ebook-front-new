@@ -1,14 +1,12 @@
 {
   "home": "홈",
   "menuSearchPlaceholder": "메뉴를 검색해 주세요",
-  "common":{
-    "button": {
-      "search": "조회",
-      "register": "등록",
-      "delete": "삭제"
-    },
-    "msg":{
-      "deleteConfirm": "선택한 {{count}}건을 삭제하시겠습니까?"
-    }
+  "button": {
+    "search": "조회",
+    "register": "등록",
+    "delete": "삭제"
+  },
+  "msg": {
+    "deleteConfirm": "선택한 {{count}}건을 삭제하시겠습니까?"
   }
 }

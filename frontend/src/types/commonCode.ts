@@ -23,19 +23,36 @@ export interface CodeItem {
   updatedAt: string
 }
 
-export interface CodeGroupListResponse {
-  items: CodeGroup[]
-  totalCount: number
-}
-
-export interface CodeItemListResponse {
-  items: CodeItem[]
-  totalCount: number
-}
-
 export type UseYnFilter = 'ALL' | 'Y' | 'N'
 
 export interface CommonCodeSearchParams {
   keyword: string
   useYn: UseYnFilter
+}
+
+export interface CreateCodeGroupPayload {
+  groupCode: string
+  groupName: string
+  description: string
+  useYn: boolean
+  i18nKey: string
+}
+
+export interface UpdateCodeGroupPayload extends CreateCodeGroupPayload {
+  id: string
+}
+
+export interface CreateCodeItemPayload {
+  groupId: string
+  code: string
+  codeName: string
+  sortOrder: number
+  useYn: boolean
+  description: string
+  metadata: string
+  i18nKey: string
+}
+
+export interface UpdateCodeItemPayload extends CreateCodeItemPayload {
+  id: string
 }

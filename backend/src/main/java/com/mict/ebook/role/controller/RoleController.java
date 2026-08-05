@@ -1,7 +1,6 @@
 package com.mict.ebook.role.controller;
 
 import com.mict.ebook.common.response.ApiResponse;
-import com.mict.ebook.role.domain.SystemType;
 import com.mict.ebook.role.dto.CreateRoleRequest;
 import com.mict.ebook.role.dto.RoleResponse;
 import com.mict.ebook.role.dto.RoleSearchRequest;
@@ -35,9 +34,8 @@ public class RoleController {
     private final RoleCommandService roleCommandService;
 
     @GetMapping
-    public ApiResponse<List<RoleResponse>> search(
-            @RequestParam(required = false) SystemType system, @RequestParam(required = false) String keyword) {
-        var request = new RoleSearchRequest(system, keyword);
+    public ApiResponse<List<RoleResponse>> search(@RequestParam(required = false) String keyword) {
+        var request = new RoleSearchRequest(keyword);
         return ApiResponse.success(roleQueryService.search(request));
     }
 

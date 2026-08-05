@@ -1,12 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  createCodeGroup,
+  createCodeItem,
+  deleteCodeGroup,
+  deleteCodeItem,
   fetchCodeGroups,
   fetchCodeItems,
   fetchCodeItemsByGroupCode,
-  saveCodeGroups,
-  saveCodeItems,
+  updateCodeGroup,
+  updateCodeItem,
 } from '@/api/common-code-api'
-import type { CodeGroup, CodeItem, CommonCodeSearchParams } from '@/types/commonCode'
+import type { CommonCodeSearchParams } from '@/types/commonCode'
 
 export const commonCodeKeys = {
   groups: (params: CommonCodeSearchParams) => ['codeGroups', params] as const,
@@ -21,10 +25,30 @@ export function useCodeGroupsQuery(params: CommonCodeSearchParams) {
   })
 }
 
-export function useSaveCodeGroupsMutation() {
+export function useCreateCodeGroupMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (groups: CodeGroup[]) => saveCodeGroups(groups),
+    mutationFn: createCodeGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['codeGroups'] })
+    },
+  })
+}
+
+export function useUpdateCodeGroupMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateCodeGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['codeGroups'] })
+    },
+  })
+}
+
+export function useDeleteCodeGroupMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteCodeGroup,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['codeGroups'] })
     },
@@ -49,10 +73,30 @@ export function useCodeItemsByGroupCodeQuery(groupCode: string) {
   })
 }
 
-export function useSaveCodeItemsMutation(groupId: string | null) {
+export function useCreateCodeItemMutation(groupId: string | null) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (items: CodeItem[]) => saveCodeItems(groupId ?? '', items),
+    mutationFn: createCodeItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: commonCodeKeys.items(groupId ?? '') })
+    },
+  })
+}
+
+export function useUpdateCodeItemMutation(groupId: string | null) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateCodeItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: commonCodeKeys.items(groupId ?? '') })
+    },
+  })
+}
+
+export function useDeleteCodeItemMutation(groupId: string | null) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deleteCodeItem(groupId ?? '', id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: commonCodeKeys.items(groupId ?? '') })
     },

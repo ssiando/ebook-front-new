@@ -33,9 +33,9 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
   const { t } = useTranslation('admin')
   const createAdmin = useCreateAdminMutation()
   // 역할 다중 선택 목록을 위해 전체 역할을 조회합니다 (역할 관리 화면과 동일한 Role 엔티티 참조).
-  const rolesQuery = useRolesQuery({ system: 'ALL', keyword: '' })
+  const rolesQuery = useRolesQuery({ keyword: '' })
   const roleOptions = (rolesQuery.data ?? []).map((role) => ({
-    label: `${role.roleName} (${role.system})`,
+    label: role.roleName,
     value: role.id,
   }))
 

@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Button } from '@/components/common/ui/Button'
-import { FormTagInput } from '@/components/common/form/FormTagInput'
 import { AdminRoleAssignSection } from './AdminRoleAssignSection'
 import { clsx } from '@/utils/clsx'
 import { useUpdateAdminMutation, useUpdateAdminRolesMutation } from '@/query/admin-query'
@@ -72,11 +71,11 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
   const statusCodesQuery = useCodeItemsByGroupCodeQuery(ADMIN_STATUS_GROUP_CODE)
   const statusCodes = statusCodesQuery.data ?? []
   // 역할 할당 그룹을 표시하기 위해 전체 역할 목록을 함께 조회합니다.
-  const rolesQuery = useRolesQuery({ system: 'ALL', keyword: '' })
+  const rolesQuery = useRolesQuery({ keyword: '' })
   const roles = rolesQuery.data ?? []
   const [checkedRoleIds, setCheckedRoleIds] = useState<Set<string>>(new Set())
 
-  const { control, handleSubmit, reset, watch, setValue } = useForm<DetailFormValues>({
+  const { handleSubmit, reset, watch, setValue } = useForm<DetailFormValues>({
     resolver: zodResolver(detailSchema),
     defaultValues: { groups: [], serviceExpiresAt: '', status: '' },
   })
@@ -165,28 +164,6 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
         onToggleRole={handleToggleRole}
         onSave={handleSaveRoles}
       />
-
-      <FormTagInput
-        name="groups"
-        control={control}
-        label={t('detail.groups')}
-        placeholder={t('detail.groupsPlaceholder')}
-        helperText={t('detail.groupsHelper')}
-      />
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="serviceExpiresAt" className="text-xs font-medium text-gray-600">
-          {t('detail.serviceExpiresAt')}
-        </label>
-        <input
-          id="serviceExpiresAt"
-          type="date"
-          value={watch('serviceExpiresAt')}
-          onChange={(e) => setValue('serviceExpiresAt', e.target.value)}
-          className="h-8 rounded border border-gray-300 px-2 text-sm focus:border-rose-500 focus:outline-none"
-        />
-        <span className="text-xs text-gray-400">{t('detail.serviceExpiresAtHelper')}</span>
-      </div>
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-gray-700">{t('columns.status')}</h2>
