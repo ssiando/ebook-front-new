@@ -1,0 +1,18 @@
+package com.mict.ebook.admin.domain;
+
+import com.mict.ebook.common.exception.ErrorCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@RequiredArgsConstructor
+public enum AdminErrorCode implements ErrorCode {
+    ADMIN_NOT_FOUND("A001", "관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ADMIN_ID_DUPLICATE("A002", "이미 존재하는 관리자 ID입니다.", HttpStatus.CONFLICT),
+    EMAIL_DUPLICATE("A003", "이미 존재하는 이메일입니다.", HttpStatus.CONFLICT);
+
+    private final String code;
+    private final String message;
+    private final HttpStatus status;
+}

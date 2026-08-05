@@ -1,7 +1,6 @@
 package com.mict.ebook.role.service;
 
 import com.mict.ebook.common.exception.BusinessException;
-import com.mict.ebook.common.response.PageResponse;
 import com.mict.ebook.role.domain.Role;
 import com.mict.ebook.role.domain.RoleErrorCode;
 import com.mict.ebook.role.dto.RoleResponse;
@@ -21,12 +20,9 @@ public class RoleQueryService {
     private final RoleMapper roleMapper;
     private final RoleRestMapper roleRestMapper;
 
-    public PageResponse<RoleResponse> search(RoleSearchRequest request) {
-        List<Role> roles = roleMapper.search(request.system(), request.keyword(), request.offset(), request.pageSize());
-        long totalCount = roleMapper.countBySearch(request.system(), request.keyword());
-
-        List<RoleResponse> items = roles.stream().map(this::toResponse).toList();
-        return PageResponse.of(items, totalCount, request.page(), request.pageSize());
+    public List<RoleResponse> search(RoleSearchRequest request) {
+        List<Role> roles = roleMapper.search(request.system(), request.keyword());
+        return roles.stream().map(this::toResponse).toList();
     }
 
     public RoleResponse getById(Long id) {

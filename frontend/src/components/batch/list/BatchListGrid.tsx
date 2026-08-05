@@ -16,8 +16,6 @@ const gridTheme = themeQuartz.withParams({
 interface BatchListGridProps {
   rows: Batch[]
   loading: boolean
-  page: number
-  pageSize: number
   runningId: string | null
   onHistoryClick: (id: string) => void
   onRunClick: (id: string) => void
@@ -26,8 +24,6 @@ interface BatchListGridProps {
 export function BatchListGrid({
   rows,
   loading,
-  page,
-  pageSize,
   runningId,
   onHistoryClick,
   onRunClick,
@@ -37,8 +33,7 @@ export function BatchListGrid({
       {
         headerName: '#',
         width: 70,
-        valueGetter: (p: ValueGetterParams<Batch>) =>
-          (page - 1) * pageSize + (p.node?.rowIndex ?? 0) + 1,
+        valueGetter: (p: ValueGetterParams<Batch>) => (p.node?.rowIndex ?? 0) + 1,
       },
       { field: 'batchCode', headerName: '배치 코드', width: 200 },
       { field: 'batchName', headerName: '배치명', flex: 1, minWidth: 220 },
@@ -83,7 +78,7 @@ export function BatchListGrid({
         ),
       },
     ],
-    [page, pageSize, runningId, onHistoryClick, onRunClick],
+    [runningId, onHistoryClick, onRunClick],
   )
 
   return (

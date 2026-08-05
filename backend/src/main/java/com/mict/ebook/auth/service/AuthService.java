@@ -32,6 +32,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(LoginRequest request) {
         Admin admin = adminMapper
                 .findByAccount(request.account())
@@ -43,6 +44,8 @@ public class AuthService {
         if (!ACTIVE_STATUS.equals(admin.getStatus())) {
             throw new BusinessException(AuthErrorCode.ACCOUNT_INACTIVE);
         }
+
+        adminMapper.updateLastLogin(admin.getId(), LocalDateTime.now());
 
         List<String> roles = adminMapper.findRoleNamesByAdminId(admin.getId());
         String accessToken =

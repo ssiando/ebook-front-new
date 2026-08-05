@@ -3,11 +3,10 @@ import type { Control } from 'react-hook-form'
 import { FormInput } from '@/components/common/form/FormInput'
 import { FormSelect } from '@/components/common/form/FormSelect'
 import { useCodeItemsByGroupCodeQuery } from '@/query/common-code-query'
-import { ADMIN_DEPARTMENTS, ADMIN_STATUS_GROUP_CODE } from '@/types/admin'
-import type { AdminSearchFormValues } from './searchSchema'
+import { ADMIN_DEPARTMENTS, ADMIN_STATUS_GROUP_CODE, type AdminSearchParams } from '@/types/admin'
 
 interface AdminSearchProps {
-  control: Control<AdminSearchFormValues>
+  control: Control<AdminSearchParams>
 }
 
 export function AdminSearch({ control }: AdminSearchProps) {
@@ -18,7 +17,7 @@ export function AdminSearch({ control }: AdminSearchProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 ">
         <label className="text-xs font-medium text-gray-600">{t('updatedAt')}</label>
         <div className="flex items-center gap-2">
           <FormInput name="updatedFrom" control={control} type="date" />

@@ -4,10 +4,7 @@
   {
     "id": "admin",
     "label": "관리자",
-    "children": [
-      { "id": "adminManagement", "label": "관리자 관리", "path": "/adminManagement" },
-      { "id": "adminRoleManagement", "label": "관리자별 역할 관리", "path": "/adminRoleManagement" }
-    ]
+    "children": [{ "id": "adminManagement", "label": "관리자 관리", "path": "/adminManagement" }]
   },
   {
     "id": "system",

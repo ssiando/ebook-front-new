@@ -5,6 +5,7 @@ import { Plus, Minus } from 'lucide-react'
 import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
 import { Button } from '@/components/common/ui/Button'
+import { DeleteButton } from '@/components/common/ui/DeleteButton'
 import { Authorized } from '@/components/auth/Authorized'
 import { ProgramSearch } from '@/components/program/list/ProgramSearch'
 import {
@@ -164,14 +165,10 @@ export default function ProgramManagement() {
             >
               단건수정
             </Button>
-            <Button
-              type="button"
-              variant="danger"
+            <DeleteButton
               onClick={handleDelete}
               disabled={checkedIds.length === 0 || deletePrograms.isPending}
-            >
-              삭제
-            </Button>
+            />
           </div>
         </div>
 

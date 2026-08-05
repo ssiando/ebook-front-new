@@ -115,6 +115,7 @@ public class SecurityConfig {
                                 "/api-docs/**",
                                 "/v3/api-docs/**",
                                 "/actuator/health",
+                                "/api/**",
                                 "/actuator/info")
                         .permitAll()
                         .anyRequest()

@@ -8,6 +8,7 @@ import { FormInput } from '@/components/common/form/FormInput'
 import { FormCheckboxGroup } from '@/components/common/form/FormCheckboxGroup'
 import { useCreateAdminMutation } from '@/query/admin-query'
 import { useRolesQuery } from '@/query/role-query'
+import { useAuthStore } from '@/store/useAuthStore'
 import { showFormErrors, type FormRules } from '@/utils/formUtils'
 
 // roleIds가 다중 선택(체크박스)이라 defineFormRules 표준 규칙(문자열/숫자/불리언) 밖의 경우 —
@@ -16,6 +17,7 @@ const createAdminSchema = z.object({
   adminId: z.string().min(1, '관리자ID를 입력해 주세요'),
   adminName: z.string().min(1, '관리자명을 입력해 주세요'),
   email: z.string().min(1, '이메일을 입력해 주세요').email('이메일 형식이 올바르지 않습니다'),
+  password: z.string().min(8, '비밀번호는 8자 이상 입력해 주세요'),
   department: z.string().min(1, '소속을 입력해 주세요'),
   roleIds: z.array(z.string()).min(1, '역할을 하나 이상 선택해 주세요'),
 })
@@ -31,15 +33,24 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
   const { t } = useTranslation('admin')
   const createAdmin = useCreateAdminMutation()
   // 역할 다중 선택 목록을 위해 전체 역할을 조회합니다 (역할 관리 화면과 동일한 Role 엔티티 참조).
-  const rolesQuery = useRolesQuery({ system: 'ALL', keyword: '', page: 1, pageSize: 200 })
-  const roleOptions = (rolesQuery.data?.items ?? []).map((role) => ({
+  const rolesQuery = useRolesQuery({ system: 'ALL', keyword: '' })
+  const roleOptions = (rolesQuery.data ?? []).map((role) => ({
     label: `${role.roleName} (${role.system})`,
     value: role.id,
   }))
 
+  const currentAdmin = useAuthStore((s) => s.currentAdmin)
+
   const methods = useForm<CreateAdminFormValues>({
     resolver: zodResolver(createAdminSchema),
-    defaultValues: { adminId: '', adminName: '', email: '', department: '', roleIds: [] },
+    defaultValues: {
+      adminId: '',
+      adminName: '',
+      email: '',
+      password: '',
+      department: '',
+      roleIds: [],
+    },
   })
 
   // 패턴 B에서도 showFormErrors에 라벨만 넘기기 위한 최소 매핑
@@ -47,13 +58,17 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
     adminId: { type: 'string', label: t('modal.adminId') },
     adminName: { type: 'string', label: t('modal.adminName') },
     email: { type: 'string', label: t('modal.email') },
+    password: { type: 'string', label: t('modal.password') },
     department: { type: 'string', label: t('modal.department') },
     roleIds: { type: 'string', label: t('modal.roles') },
   }
 
   const handleSubmit = methods.handleSubmit(
     async (values) => {
-      await createAdmin.mutateAsync(values)
+      await createAdmin.mutateAsync({
+        ...values,
+        registrant: currentAdmin?.adminId ?? '',
+      })
       methods.reset()
       onClose()
     },
@@ -75,6 +90,13 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
           control={methods.control}
           type="email"
           label={t('modal.email')}
+          required
+        />
+        <FormInput
+          name="password"
+          control={methods.control}
+          type="password"
+          label={t('modal.password')}
           required
         />
         <FormInput

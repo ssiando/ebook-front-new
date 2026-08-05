@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form'
 import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
 import { Button } from '@/components/common/ui/Button'
-import { Pagination } from '@/components/common/Pagination'
+import { AddButton } from '@/components/common/ui/AddButton'
+import { SaveButton } from '@/components/common/ui/SaveButton'
+import { DeleteButton } from '@/components/common/ui/DeleteButton'
 import { Authorized } from '@/components/auth/Authorized'
 import { RoleSearch } from '@/components/role/list/RoleSearch'
 import {
@@ -27,11 +29,7 @@ const DEFAULT_SEARCH: RoleSearchFormValues = { system: 'ALL', keyword: '' }
 const programs = programsData as ProgramItem[]
 
 export default function RoleManagement() {
-  const [params, setParams] = useState<RoleSearchParams>({
-    ...DEFAULT_SEARCH,
-    page: 1,
-    pageSize: 15,
-  })
+  const [params, setParams] = useState<RoleSearchParams>(DEFAULT_SEARCH)
   const [roleRows, setRoleRows] = useState<Role[]>([])
   const [checkedRoleIds, setCheckedRoleIds] = useState<string[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -48,7 +46,7 @@ export default function RoleManagement() {
   const updatePrograms = useUpdateRoleProgramsMutation()
 
   useEffect(() => {
-    if (rolesQuery.data) setRoleRows(rolesQuery.data.items)
+    if (rolesQuery.data) setRoleRows(rolesQuery.data)
   }, [rolesQuery.data])
 
   const selectedRole = roleRows.find((role) => role.id === selectedId) ?? null
@@ -59,12 +57,12 @@ export default function RoleManagement() {
   }, [selectedRole])
 
   const handleSearch = methods.handleSubmit((values) => {
-    setParams((prev) => ({ ...prev, ...values, page: 1 }))
+    setParams(values)
   })
 
   const handleReset = () => {
     methods.reset(DEFAULT_SEARCH)
-    setParams((prev) => ({ ...prev, ...DEFAULT_SEARCH, page: 1 }))
+    setParams(DEFAULT_SEARCH)
   }
 
   const handleCellChange = (id: string, field: keyof Role, value: string) => {
@@ -130,12 +128,10 @@ export default function RoleManagement() {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-sm text-gray-500">
               <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-              역할 목록 총 {rolesQuery.data?.totalCount ?? 0}건
+              역할 목록 총 {rolesQuery.data?.length ?? 0}건
             </span>
             <div className="flex gap-2">
-              <Button type="button" variant="primary" onClick={handleAddRole}>
-                등록
-              </Button>
+              <AddButton onClick={handleAddRole} />
               <Button
                 type="button"
                 variant="secondary"
@@ -144,14 +140,10 @@ export default function RoleManagement() {
               >
                 수정
               </Button>
-              <Button
-                type="button"
-                variant="danger"
+              <DeleteButton
                 onClick={handleDeleteRoles}
                 disabled={checkedRoleIds.length === 0 || deleteRoles.isPending}
-              >
-                삭제
-              </Button>
+              />
             </div>
           </div>
 
@@ -163,13 +155,6 @@ export default function RoleManagement() {
             onCellChange={handleCellChange}
             onSelectionChange={setCheckedRoleIds}
           />
-
-          <Pagination
-            page={params.page}
-            pageSize={params.pageSize}
-            totalCount={rolesQuery.data?.totalCount ?? 0}
-            onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
-          />
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
@@ -177,14 +162,7 @@ export default function RoleManagement() {
               <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
               메뉴 목록{selectedRole ? ` · ${selectedRole.roleName}` : ''} 총 {programs.length}건
             </span>
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleSaveMenus}
-              disabled={!selectedRole || updatePrograms.isPending}
-            >
-              저장
-            </Button>
+            <SaveButton onClick={handleSaveMenus} disabled={!selectedRole || updatePrograms.isPending} />
           </div>
           {!selectedRole && (
             <p className="text-xs text-gray-400">역할을 선택하면 메뉴를 지정할 수 있습니다.</p>

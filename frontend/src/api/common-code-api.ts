@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
 import { ADMIN_STATUS_GROUP_CODE } from '@/types/admin'
@@ -190,7 +191,7 @@ const MOCK_ITEMS: CodeItem[] = [
 ]
 
 function now(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
 export async function fetchCodeGroups(
@@ -246,9 +247,7 @@ export async function fetchCodeItems(groupId: string): Promise<CodeItemListRespo
 export async function fetchCodeItemsByGroupCode(groupCode: string): Promise<CodeItem[]> {
   if (import.meta.env.DEV) {
     const group = MOCK_GROUPS.find((g) => g.groupCode === groupCode)
-    const items = group
-      ? MOCK_ITEMS.filter((item) => item.groupId === group.id && item.useYn)
-      : []
+    const items = group ? MOCK_ITEMS.filter((item) => item.groupId === group.id && item.useYn) : []
     return delay([...items].sort((a, b) => a.sortOrder - b.sortOrder))
   }
 

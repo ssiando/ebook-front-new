@@ -19,11 +19,7 @@ import { useToastStore } from '@/store/useToastStore'
 const DEFAULT_SEARCH: BatchSearchFormValues = { keyword: '' }
 
 export default function BatchManagement() {
-  const [params, setParams] = useState<BatchSearchParams>({
-    ...DEFAULT_SEARCH,
-    page: 1,
-    pageSize: 15,
-  })
+  const [params, setParams] = useState<BatchSearchParams>(DEFAULT_SEARCH)
 
   const { control, reset, handleSubmit } = useForm<BatchSearchFormValues>({
     resolver: zodResolver(batchSearchSchema),
@@ -34,13 +30,13 @@ export default function BatchManagement() {
   const runBatch = useRunBatchMutation()
 
   const handleSearch = handleSubmit(
-    (values) => setParams((prev) => ({ ...prev, ...values, page: 1 })),
+    (values) => setParams(values),
     (errors) => showFormErrors(errors, batchSearchRules),
   )
 
   const handleReset = () => {
     reset(DEFAULT_SEARCH)
-    setParams((prev) => ({ ...prev, ...DEFAULT_SEARCH, page: 1 }))
+    setParams(DEFAULT_SEARCH)
   }
 
   const handleHistoryClick = () => {
@@ -67,15 +63,11 @@ export default function BatchManagement() {
         <BatchSearch control={control} />
       </PageSearch>
 
-      {/* 3. 본문 — 그리드·페이지네이션은 화면 전용 컴포넌트로 분리 */}
+      {/* 3. 본문 — 그리드는 화면 전용 컴포넌트로 분리 */}
       <BatchContent
         data={data}
         isLoading={isFetching}
-        page={params.page}
-        pageSize={params.pageSize}
-        runningId={runBatch.isPending ? runBatch.variables ?? null : null}
-        onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
-        onPageSizeChange={(pageSize) => setParams((prev) => ({ ...prev, pageSize, page: 1 }))}
+        runningId={runBatch.isPending ? (runBatch.variables ?? null) : null}
         onHistoryClick={handleHistoryClick}
         onRunClick={handleRunClick}
       />

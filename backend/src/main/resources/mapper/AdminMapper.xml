@@ -9,14 +9,23 @@
         <result property="email" column="email" />
         <result property="passwordHash" column="password_hash" />
         <result property="department" column="department" />
+        <result property="workspaceAdmin" column="is_workspace_admin" />
+        <result property="groupNames" column="group_names" />
+        <result property="serviceExpiresAt" column="service_expires_at" />
+        <result property="lastLoginAt" column="last_login_at" />
         <result property="status" column="status" />
         <result property="registrant" column="registrant" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
     </resultMap>
 
+    <sql id="adminColumns">
+        id, admin_id, admin_name, email, password_hash, department, is_workspace_admin, group_names,
+        service_expires_at, last_login_at, status, registrant, created_at, updated_at
+    </sql>
+
     <select id="findByAccount" resultMap="adminResultMap">
-        SELECT id, admin_id, admin_name, email, password_hash, department, status, registrant, created_at, updated_at
+        SELECT <include refid="adminColumns" />
         FROM admin
         WHERE admin_id = #{account}
         OR email = #{account}
@@ -28,5 +37,106 @@
         JOIN role r ON r.id = ar.role_id
         WHERE ar.admin_id = #{adminId}
     </select>
+
+    <sql id="searchCondition">
+        <where>
+            <if test="updatedFrom != null">
+                AND a.updated_at &gt;= #{updatedFrom}
+            </if>
+            <if test="updatedTo != null">
+                AND a.updated_at &lt;= #{updatedTo}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (a.admin_name LIKE CONCAT('%', #{keyword}, '%')
+                OR a.admin_id LIKE CONCAT('%', #{keyword}, '%')
+                OR a.email LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="department != null and department != ''">
+                AND a.department = #{department}
+            </if>
+            <if test="status != null and status != ''">
+                AND a.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="search" resultMap="adminResultMap">
+        SELECT a.id, a.admin_id, a.admin_name, a.email, a.password_hash, a.department, a.is_workspace_admin,
+        a.group_names, a.service_expires_at, a.last_login_at, a.status, a.registrant,
+        a.created_at, a.updated_at
+        FROM admin a
+        <include refid="searchCondition" />
+        ORDER BY a.id DESC
+    </select>
+
+    <select id="findById" resultMap="adminResultMap">
+        SELECT <include refid="adminColumns" />
+        FROM admin
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsByAdminId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM admin
+        WHERE admin_id = #{adminId}
+        )
+    </select>
+
+    <select id="existsByEmail" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM admin
+        WHERE email = #{email}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.admin.domain.Admin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admin (admin_id, admin_name, email, password_hash, department, status, registrant)
+        VALUES (#{adminId}, #{adminName}, #{email}, #{passwordHash}, #{department}, #{status}, #{registrant})
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.admin.domain.Admin">
+        UPDATE admin
+        SET admin_name          = #{adminName},
+            email               = #{email},
+            department          = #{department},
+            status              = #{status},
+            registrant          = #{registrant},
+            is_workspace_admin  = #{workspaceAdmin},
+            group_names         = #{groupNames},
+            service_expires_at  = #{serviceExpiresAt}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateLastLogin">
+        UPDATE admin
+        SET last_login_at = #{lastLoginAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE
+        FROM admin
+        WHERE id = #{id}
+    </delete>
+
+    <select id="findRoleIdsByAdminId" resultType="long">
+        SELECT role_id
+        FROM admin_role
+        WHERE admin_id = #{adminId}
+    </select>
+
+    <delete id="deleteAdminRoles">
+        DELETE
+        FROM admin_role
+        WHERE admin_id = #{adminId}
+    </delete>
+
+    <insert id="insertAdminRoles">
+        INSERT INTO admin_role (admin_id, role_id)
+        VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{adminId}, #{roleId})
+        </foreach>
+    </insert>
 
 </mapper>

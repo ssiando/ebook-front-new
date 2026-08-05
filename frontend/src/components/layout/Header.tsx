@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import dayjs, { type Dayjs } from 'dayjs'
 import { Bell, ChevronDown, LogOut, Star } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })
+function formatTime(date: Dayjs): string {
+  return date.format('HH:mm')
 }
 
 export function Header() {
-  const [now, setNow] = useState(() => new Date())
+  const [now, setNow] = useState(() => dayjs())
   const navigate = useNavigate()
   const currentAdmin = useAuthStore((s) => s.currentAdmin)
   const logout = useAuthStore((s) => s.logout)
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000 * 30)
+    const timer = setInterval(() => setNow(dayjs()), 1000 * 30)
     return () => clearInterval(timer)
   }, [])
 

@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { PageTitle } from '@/components/common/PageTitle'
 import { PageSearch } from '@/components/common/PageSearch'
-import { Button } from '@/components/common/ui/Button'
+import { SaveButton } from '@/components/common/ui/SaveButton'
 import { Authorized } from '@/components/auth/Authorized'
 import { CommonCodeSearch } from '@/components/commonCode/list/CommonCodeSearch'
 import {
@@ -121,22 +121,15 @@ export default function CommonCodeManagement() {
         actionButtonsProps={{
           extra: (
             <>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => saveGroups.mutate(groupRows)}
-                disabled={saveGroups.isPending}
-              >
+              <SaveButton onClick={() => saveGroups.mutate(groupRows)} disabled={saveGroups.isPending}>
                 그룹 저장
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
+              </SaveButton>
+              <SaveButton
                 onClick={() => saveItems.mutate(itemRows)}
                 disabled={!selectedGroupId || saveItems.isPending}
               >
                 항목 저장
-              </Button>
+              </SaveButton>
             </>
           ),
           onSearch: handleSearch,

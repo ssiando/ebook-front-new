@@ -19,9 +19,8 @@ spring:
 
 app:
   jwt:
-    # 자체 발급 JWT(HS256) 서명 비밀키. 운영 환경에서는 반드시 JWT_SECRET 환경변수로 32바이트 이상의 값으로 교체할 것.
-    secret: ${JWT_SECRET:local-dev-only-jwt-secret-key-change-me-in-production-please}
-    access-token-validity-seconds: ${JWT_ACCESS_TOKEN_VALIDITY_SECONDS:3600}
+    secret: "8f4c9a2e7b1d5f0a3c6e9d2b7a4f8c1e5d9a2b6c7f1e3d8"
+    access-token-validity-seconds: 3600
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
 

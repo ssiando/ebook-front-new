@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { Info, Star } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
-import { Button } from '@/components/common/ui/Button'
+import { SearchButton } from '@/components/common/ui/SearchButton'
+import { AddButton } from '@/components/common/ui/AddButton'
 import menuData from '@/data/menu.json'
 import type { MenuItem } from '@/types/menu'
 
@@ -54,14 +55,14 @@ export function PageTitle({ title, breadcrumb, description, actionButtonsProps }
           <div className="flex gap-2">
             {actionButtonsProps.extra}
             {actionButtonsProps.onSearch && (
-              <Button type="button" variant="secondary" onClick={actionButtonsProps.onSearch}>
+              <SearchButton onClick={actionButtonsProps.onSearch}>
                 {actionButtonsProps.searchLabel ?? '조회'}
-              </Button>
+              </SearchButton>
             )}
             {actionButtonsProps.onRegister && (
-              <Button type="button" variant="primary" onClick={actionButtonsProps.onRegister}>
+              <AddButton onClick={actionButtonsProps.onRegister}>
                 {actionButtonsProps.registerLabel ?? '등록'}
-              </Button>
+              </AddButton>
             )}
           </div>
         )}

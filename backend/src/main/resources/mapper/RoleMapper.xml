@@ -29,13 +29,6 @@
         FROM role r
         <include refid="searchCondition" />
         ORDER BY r.id DESC
-        LIMIT #{pageSize} OFFSET #{offset}
-    </select>
-
-    <select id="countBySearch" resultType="long">
-        SELECT COUNT(*)
-        FROM role r
-        <include refid="searchCondition" />
     </select>
 
     <select id="findById" resultMap="roleResultMap">

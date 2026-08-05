@@ -10,13 +10,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface RoleMapper {
 
-    List<Role> search(
-            @Param("system") SystemType system,
-            @Param("keyword") String keyword,
-            @Param("offset") int offset,
-            @Param("pageSize") int pageSize);
-
-    long countBySearch(@Param("system") SystemType system, @Param("keyword") String keyword);
+    List<Role> search(@Param("system") SystemType system, @Param("keyword") String keyword);
 
     Optional<Role> findById(@Param("id") Long id);
 

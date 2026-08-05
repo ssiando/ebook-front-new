@@ -1,11 +1,12 @@
+import dayjs from 'dayjs'
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
 import {
   ADMIN_DEPARTMENTS,
   type Admin,
-  type AdminListResponse,
   type AdminSearchParams,
   type CreateAdminPayload,
+  type UpdateAdminPayload,
   type UpdateAdminRolesPayload,
 } from '@/types/admin'
 
@@ -15,9 +16,12 @@ import {
 // status 값은 common-code-api.ts의 ADMIN_STATUS 그룹 코드(ACTIVE/DORMANT/INACTIVE/NEW)를 그대로 참조합니다.
 const ROLE_ID_POOL = ['role-2', 'role-3', 'role-4', 'role-8', 'role-11', 'role-14']
 const STATUS_POOL = ['ACTIVE', 'ACTIVE', 'ACTIVE', 'DORMANT', 'INACTIVE']
+const GROUP_POOL = ['디즈니', '마블', '픽사', '내셔널지오그래픽']
 
 const MOCK_ADMINS: Admin[] = Array.from({ length: 23 }, (_, i) => {
   const idx = 23 - i
+  // idx가 3의 배수인 계정만 워크스페이스 관리자 권한을 가진다 (그림의 "워크스페이스 관리자" 체크와 동일한 의미).
+  const isWorkspaceAdmin = idx % 3 === 0
   return {
     id: String(idx),
     adminId: `admin${String(idx).padStart(3, '0')}`,
@@ -31,6 +35,14 @@ const MOCK_ADMINS: Admin[] = Array.from({ length: 23 }, (_, i) => {
         : idx % 3 === 0
           ? [ROLE_ID_POOL[idx % ROLE_ID_POOL.length], ROLE_ID_POOL[(idx + 1) % ROLE_ID_POOL.length]]
           : [ROLE_ID_POOL[idx % ROLE_ID_POOL.length]],
+    workspaceAdmin: isWorkspaceAdmin,
+    groups: idx % 4 === 0 ? [] : [GROUP_POOL[idx % GROUP_POOL.length]],
+    serviceExpiresAt:
+      idx % 5 === 0 ? `2026-${String((idx % 12) + 1).padStart(2, '0')}-28` : undefined,
+    lastLoginAt:
+      idx % 7 === 0
+        ? undefined
+        : `2026-08-${String((idx % 4) + 1).padStart(2, '0')} 1${idx % 9}:00:00`,
     status: STATUS_POOL[idx % STATUS_POOL.length],
     registrant: 'vfx',
     updatedAt: `2026-07-${String((idx % 28) + 1).padStart(2, '0')}`,
@@ -38,10 +50,10 @@ const MOCK_ADMINS: Admin[] = Array.from({ length: 23 }, (_, i) => {
 })
 
 function now(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
-export async function fetchAdmins(params: AdminSearchParams): Promise<AdminListResponse> {
+export async function fetchAdmins(params: AdminSearchParams): Promise<Admin[]> {
   if (import.meta.env.DEV) {
     const filtered = MOCK_ADMINS.filter((admin) => {
       const matchesKeyword = params.keyword
@@ -49,10 +61,12 @@ export async function fetchAdmins(params: AdminSearchParams): Promise<AdminListR
           admin.adminId.includes(params.keyword) ||
           admin.email.includes(params.keyword)
         : true
+      // updatedAt은 시:분:초까지 포함할 수 있어, 날짜만 있는 검색 범위와 비교할 때는 날짜 부분만 잘라 비교한다.
       const matchesDate =
         !params.updatedFrom || !params.updatedTo
           ? true
-          : admin.updatedAt >= params.updatedFrom && admin.updatedAt <= params.updatedTo
+          : admin.updatedAt.slice(0, 10) >= params.updatedFrom &&
+            admin.updatedAt.slice(0, 10) <= params.updatedTo
       const matchesDepartment =
         !params.department || params.department === 'ALL'
           ? true
@@ -61,23 +75,24 @@ export async function fetchAdmins(params: AdminSearchParams): Promise<AdminListR
         !params.status || params.status === 'ALL' ? true : admin.status === params.status
       return matchesKeyword && matchesDate && matchesDepartment && matchesStatus
     })
-    const start = (params.page - 1) * params.pageSize
-    const items = filtered.slice(start, start + params.pageSize)
-    return delay({ items, totalCount: filtered.length })
+    return delay(filtered)
   }
 
-  const { data } = await apiClient.get<AdminListResponse>('/admins', { params })
+  const { data } = await apiClient.get<Admin[]>('/admins', { params })
   return data
 }
 
 export async function createAdmin(payload: CreateAdminPayload): Promise<Admin> {
   if (import.meta.env.DEV) {
+    // password는 서버에서 해시로 저장하는 값이라 목데이터에는 남기지 않는다.
+    const { password: _password, ...rest } = payload
     const created: Admin = {
       id: String(Date.now()),
-      ...payload,
+      ...rest,
+      workspaceAdmin: false,
+      groups: [],
       status: 'NEW',
-      registrant: 'me',
-      updatedAt: new Date().toISOString().slice(0, 10),
+      updatedAt: dayjs().format('YYYY-MM-DD'),
     }
     MOCK_ADMINS.unshift(created)
     return delay(created)
@@ -85,6 +100,34 @@ export async function createAdmin(payload: CreateAdminPayload): Promise<Admin> {
 
   const { data } = await apiClient.post<Admin>('/admins', payload)
   return data
+}
+
+export async function updateAdmin(payload: UpdateAdminPayload): Promise<Admin> {
+  if (import.meta.env.DEV) {
+    const index = MOCK_ADMINS.findIndex((admin) => admin.id === payload.id)
+    if (index === -1) throw new Error('Admin not found')
+    const { id: _id, ...rest } = payload
+    // 기존 객체를 mutate하면 Ag-Grid가 참조 동일성으로 변경 감지를 못한다 — 새 객체로 교체.
+    const updated: Admin = { ...MOCK_ADMINS[index], ...rest, updatedAt: now() }
+    MOCK_ADMINS[index] = updated
+    return delay(updated)
+  }
+
+  const { id, ...body } = payload
+  const { data } = await apiClient.put<Admin>(`/admins/${id}`, body)
+  return data
+}
+
+export async function deleteAdmin(id: string): Promise<void> {
+  if (import.meta.env.DEV) {
+    const index = MOCK_ADMINS.findIndex((admin) => admin.id === id)
+    if (index === -1) throw new Error('Admin not found')
+    MOCK_ADMINS.splice(index, 1)
+    await delay(undefined)
+    return
+  }
+
+  await apiClient.delete(`/admins/${id}`)
 }
 
 export async function findAdminByAccount(account: string): Promise<Admin | undefined> {

@@ -1,7 +1,6 @@
 package com.mict.ebook.role.controller;
 
 import com.mict.ebook.common.response.ApiResponse;
-import com.mict.ebook.common.response.PageResponse;
 import com.mict.ebook.role.domain.SystemType;
 import com.mict.ebook.role.dto.CreateRoleRequest;
 import com.mict.ebook.role.dto.RoleResponse;
@@ -11,6 +10,7 @@ import com.mict.ebook.role.dto.UpdateRoleRequest;
 import com.mict.ebook.role.service.RoleCommandService;
 import com.mict.ebook.role.service.RoleQueryService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,12 +35,9 @@ public class RoleController {
     private final RoleCommandService roleCommandService;
 
     @GetMapping
-    public ApiResponse<PageResponse<RoleResponse>> search(
-            @RequestParam(required = false) SystemType system,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int pageSize) {
-        var request = new RoleSearchRequest(system, keyword, page, pageSize);
+    public ApiResponse<List<RoleResponse>> search(
+            @RequestParam(required = false) SystemType system, @RequestParam(required = false) String keyword) {
+        var request = new RoleSearchRequest(system, keyword);
         return ApiResponse.success(roleQueryService.search(request));
     }
 

@@ -1,16 +1,19 @@
+import dayjs from 'dayjs'
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
-import type {
-  Role,
-  RoleListResponse,
-  RoleSearchParams,
-  UpdateRoleProgramsPayload,
-} from '@/types/role'
+import type { Role, RoleSearchParams, UpdateRoleProgramsPayload } from '@/types/role'
 
 // NOTE: 백엔드 연동 전까지 화면 확인용 목데이터를 사용합니다.
 // 실제 연동 시 아래 목데이터/지연 로직을 제거하고 apiClient 호출만 남기면 됩니다.
 const DEFAULT_PROGRAM_IDS = ['test-misc', 'workflow']
-const ADMIN_PROGRAM_IDS = ['test-misc', 'workflow', 'work-list', 'work-list-read', 'bbs-list', 'bbs-list-read']
+const ADMIN_PROGRAM_IDS = [
+  'test-misc',
+  'workflow',
+  'work-list',
+  'work-list-read',
+  'bbs-list',
+  'bbs-list-read',
+]
 const SUPER_ADMIN_PROGRAM_IDS = [
   'project-list',
   'project-detail',
@@ -189,10 +192,10 @@ const MOCK_ROLES: Role[] = [
 ]
 
 function now(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
-export async function fetchRoles(params: RoleSearchParams): Promise<RoleListResponse> {
+export async function fetchRoles(params: RoleSearchParams): Promise<Role[]> {
   if (import.meta.env.DEV) {
     const filtered = MOCK_ROLES.filter((role) => {
       const matchesSystem = params.system === 'ALL' ? true : role.system === params.system
@@ -201,16 +204,14 @@ export async function fetchRoles(params: RoleSearchParams): Promise<RoleListResp
         : true
       return matchesSystem && matchesKeyword
     })
-    const start = (params.page - 1) * params.pageSize
-    const items = filtered.slice(start, start + params.pageSize)
-    return delay({ items, totalCount: filtered.length })
+    return delay(filtered)
   }
 
-  const { data } = await apiClient.get<RoleListResponse>('/roles', { params })
+  const { data } = await apiClient.get<Role[]>('/roles', { params })
   return data
 }
 
-export async function saveRoles(roles: Role[]): Promise<RoleListResponse> {
+export async function saveRoles(roles: Role[]): Promise<Role[]> {
   if (import.meta.env.DEV) {
     const saved = roles.map((role) =>
       role.id.startsWith('new-')
@@ -223,10 +224,10 @@ export async function saveRoles(roles: Role[]): Promise<RoleListResponse> {
         : { ...role, updatedAt: now() },
     )
     MOCK_ROLES.splice(0, MOCK_ROLES.length, ...saved)
-    return delay({ items: [...MOCK_ROLES], totalCount: MOCK_ROLES.length })
+    return delay([...MOCK_ROLES])
   }
 
-  const { data } = await apiClient.put<RoleListResponse>('/roles', { roles })
+  const { data } = await apiClient.put<Role[]>('/roles', { roles })
   return data
 }
 

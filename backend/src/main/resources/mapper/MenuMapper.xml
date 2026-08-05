@@ -35,7 +35,7 @@
         FROM menu m
         <include refid="searchCondition" />
         ORDER BY m.sort_order ASC, m.id ASC
-        LIMIT #{pageSize} OFFSET #{offset}
+<!--        LIMIT #{pageSize} OFFSET #{offset}-->
     </select>
 
     <select id="countBySearch" resultType="long">

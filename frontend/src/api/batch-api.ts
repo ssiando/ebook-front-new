@@ -1,6 +1,7 @@
+import dayjs from 'dayjs'
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
-import type { Batch, BatchListResponse, BatchSearchParams } from '@/types/batch'
+import type { Batch, BatchSearchParams } from '@/types/batch'
 
 // NOTE: 백엔드 연동 전까지 화면 확인용 목데이터를 사용합니다.
 // 실제 연동 시 아래 목데이터/지연 로직을 제거하고 apiClient 호출만 남기면 됩니다.
@@ -80,20 +81,18 @@ const MOCK_BATCHES: Batch[] = [
 ]
 
 function now(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
-export async function fetchBatches(params: BatchSearchParams): Promise<BatchListResponse> {
+export async function fetchBatches(params: BatchSearchParams): Promise<Batch[]> {
   if (import.meta.env.DEV) {
     const filtered = MOCK_BATCHES.filter((batch) =>
       params.keyword ? batch.batchName.includes(params.keyword) : true,
     )
-    const start = (params.page - 1) * params.pageSize
-    const items = filtered.slice(start, start + params.pageSize)
-    return delay({ items, totalCount: filtered.length })
+    return delay(filtered)
   }
 
-  const { data } = await apiClient.get<BatchListResponse>('/batches', { params })
+  const { data } = await apiClient.get<Batch[]>('/batches', { params })
   return data
 }
 

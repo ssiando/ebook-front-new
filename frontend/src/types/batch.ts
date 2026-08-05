@@ -9,13 +9,6 @@ export interface Batch {
   status: BatchRunStatus
 }
 
-export interface BatchListResponse {
-  items: Batch[]
-  totalCount: number
-}
-
 export interface BatchSearchParams {
   keyword: string
-  page: number
-  pageSize: number
 }

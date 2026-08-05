@@ -13,18 +13,11 @@ export interface Role {
   updatedAt: string
 }
 
-export interface RoleListResponse {
-  items: Role[]
-  totalCount: number
-}
-
 export type SystemFilter = 'ALL' | SystemName
 
 export interface RoleSearchParams {
   system: SystemFilter
   keyword: string
-  page: number
-  pageSize: number
 }
 
 export interface UpdateRoleProgramsPayload {

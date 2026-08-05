@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { apiClient } from '@/lib/axios'
 import { delay } from '@/utils/delay'
 import type {
@@ -213,7 +214,7 @@ const MOCK_PROGRAMS: ProgramAdminItem[] = [
 let nextId = 1000
 
 function now(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ')
+  return dayjs().format('YYYY-MM-DD HH:mm:ss')
 }
 
 export async function fetchPrograms(
