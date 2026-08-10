@@ -21,7 +21,7 @@ public class RoleQueryService {
     private final RoleRestMapper roleRestMapper;
 
     public List<RoleResponse> search(RoleSearchRequest request) {
-        List<Role> roles = roleMapper.search(request.keyword());
+        List<Role> roles = roleMapper.search(request.system(), request.keyword());
         return roles.stream().map(this::toResponse).toList();
     }
 

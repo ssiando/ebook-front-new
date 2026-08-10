@@ -1,3 +1,5 @@
 package com.mict.ebook.role.dto;
 
-public record RoleSearchRequest(String keyword) {}
+import com.mict.ebook.role.domain.SystemType;
+
+public record RoleSearchRequest(SystemType system, String keyword) {}

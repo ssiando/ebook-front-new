@@ -150,9 +150,10 @@ JWT(HS256, 공유 비밀키)를 발급·검증합니다.
   그대로 재사용하되, 외부 IdP의 `issuer-uri` 대신 자체 비밀키(`app.jwt.secret`)를 사용합니다.
   실제 IdP(Keycloak 등) 연동 시 `SecurityConfig`의 `jwtDecoder` 빈만 `issuer-uri`/`jwk-set-uri`
   기반으로 교체하면 됩니다.
-- **비밀키/만료시간 설정**: `application.yml`의 `app.jwt.secret`, `app.jwt.access-token-validity-seconds`
-  (환경변수 `JWT_SECRET`, `JWT_ACCESS_TOKEN_VALIDITY_SECONDS`). **운영 배포 전 `JWT_SECRET`을
-  반드시 32바이트 이상의 랜덤 값으로 교체**하세요 (기본값은 로컬 개발 전용).
+- **비밀키/만료시간 설정**: `application.yml`의 `app.jwt.secret`, `app.jwt.access-token-validity-seconds`에
+  값을 직접 씁니다(환경변수 미사용, `.env` 파일도 두지 않습니다 — 로컬 개발 환경 하나만 다루므로
+  `application.yml`이 유일한 설정 소스입니다). **운영 배포 전 `JWT_SECRET`을 반드시 32바이트
+  이상의 랜덤 값으로 교체**하세요 (기본값은 로컬 개발 전용).
 - **권한 클레임**: JWT의 `roles` 클레임(관리자가 보유한 `role.role_name` distinct 목록)을
   `JwtAuthenticationConverter`가 `ROLE_{roleName}` 형태의 `GrantedAuthority`로 변환합니다.
   프론트엔드 `src/utils/menuPermission.ts`의 `system` 메뉴 그룹 접근 규칙(SUPER_ADMIN/
@@ -167,9 +168,8 @@ JWT(HS256, 공유 비밀키)를 발급·검증합니다.
   - 인증 실패(토큰 없음/무효)는 `common/security/RestAuthenticationEntryPoint`가,
     인가 실패(`@PreAuthorize` 거부)는 `GlobalExceptionHandler`의
     `AccessDeniedException` 핸들러가 각각 `ApiResponse.failure()` 포맷으로 응답합니다.
-- **CORS**: `app.cors.allowed-origins`(환경변수 `CORS_ALLOWED_ORIGINS`, 기본
-  `http://localhost:5173`)에 프론트엔드 개발 서버 Origin을 등록해 뒀습니다. 배포 도메인이
-  늘어나면 콤마로 추가하세요.
+- **CORS**: `app.cors.allowed-origins`(`http://localhost:5173`, `application.yml`에 직접 명시)에
+  프론트엔드 개발 서버 Origin을 등록해 뒀습니다. 배포 도메인이 늘어나면 콤마로 추가하세요.
 
 ## 예시: role 도메인
 

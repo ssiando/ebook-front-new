@@ -1,6 +1,7 @@
 package com.mict.ebook.role.repository.mapper;
 
 import com.mict.ebook.role.domain.Role;
+import com.mict.ebook.role.domain.SystemType;
 import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,11 +10,11 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface RoleMapper {
 
-    List<Role> search(@Param("keyword") String keyword);
+    List<Role> search(@Param("system") SystemType system, @Param("keyword") String keyword);
 
     Optional<Role> findById(@Param("id") Long id);
 
-    boolean existsByRoleName(@Param("roleName") String roleName);
+    boolean existsByRoleNameAndSystem(@Param("roleName") String roleName, @Param("system") SystemType system);
 
     void insert(Role role);
 

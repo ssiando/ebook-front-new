@@ -47,7 +47,12 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    // waffle-jna(Windows SSPI/GSSAPI 통합 인증)를 제외합니다. 이게 classpath에 있으면
+    // mariadb-java-client가 우리가 지정한 계정(username/password) 대신 현재 프로세스의
+    // Windows 로그인 계정으로 통합 인증을 먼저 시도해 로컬 DB 접속이 깨집니다.
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client") {
+        exclude(group = "com.github.waffle", module = "waffle-jna")
+    }
 
     // DTO <-> Entity 매핑
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
@@ -69,9 +74,6 @@ dependencies {
     // JSON 로그 출력
     implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 
-    // 로컬 .env 로딩
-    implementation("me.paulschwarz:spring-dotenv:4.0.0")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 }
@@ -85,9 +87,10 @@ tasks.withType<Test> {
 // 자동으로 같은 위치(src/main/resources/db/migration)의 스크립트를 적용하므로
 // 아래 설정은 로컬에서 DB만 미리 정리하고 싶을 때 쓰는 보조 수단입니다.
 flyway {
-    url = System.getenv("DB_URL") ?: "jdbc:mariadb://localhost:3306/ebook"
-    user = System.getenv("DB_USERNAME") ?: "ipnac"
-    password = System.getenv("DB_PASSWORD") ?: "ipnac"
+    url =
+        "jdbc:mariadb://127.0.0.1:13306/ebook?restrictedAuth=mysql_native_password,mysql_clear_password,client_ed25519,caching_sha2_password"
+    user = "ipnac"
+    password = "ipnac"
     locations = arrayOf("classpath:db/migration")
 }
 

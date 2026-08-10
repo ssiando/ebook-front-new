@@ -23,11 +23,11 @@ public class RoleCommandService {
     private final RoleRestMapper roleRestMapper;
 
     public RoleResponse create(CreateRoleRequest request) {
-        if (roleMapper.existsByRoleName(request.roleName())) {
+        if (roleMapper.existsByRoleNameAndSystem(request.roleName(), request.system())) {
             throw new BusinessException(RoleErrorCode.ROLE_NAME_DUPLICATE);
         }
 
-        Role role = Role.createNew(request.roleName(), request.description(), request.registrant());
+        Role role = Role.createNew(request.roleName(), request.description(), request.system(), request.registrant());
         roleMapper.insert(role);
         return roleRestMapper.toResponse(role, 0, List.of());
     }

@@ -2,12 +2,6 @@ spring:
   application:
     name: ebook-backend
 
-  datasource:
-    url: ${DB_URL:jdbc:mariadb://localhost:3306/ebook}
-    username: ${DB_USERNAME:ipnac}
-    password: ${DB_PASSWORD:ipnac}
-    driver-class-name: org.mariadb.jdbc.Driver
-
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -18,11 +12,22 @@ spring:
 # 최신 스타터 문서 기준으로 추가하세요 (여기서는 기본값을 그대로 사용).
 
 app:
+  # spring.datasource.*를 쓰지 않고 app.datasource.*로 따로 둡니다. 이 PC에는 다른 프로젝트가
+  # 남겨둔 시스템 환경변수 SPRING_DATASOURCE_USERNAME/PASSWORD가 전역으로 설정되어 있는데,
+  # Spring Boot는 환경변수를 application.yml보다 우선시켜서 spring.datasource.*를 그대로 쓰면
+  # 이 프로젝트의 값이 그 환경변수에 조용히 덮어써집니다. app.datasource.*는 그 환경변수와
+  # 이름이 겹치지 않으므로 안전합니다. common/config/DataSourceConfig.java가 이 값을 읽어
+  # DataSource 빈을 직접 만듭니다.
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:13306/ebook?restrictedAuth=mysql_native_password,mysql_clear_password,client_ed25519,caching_sha2_password
+    username: ipnac
+    password: ipnac
+    driver-class-name: org.mariadb.jdbc.Driver
   jwt:
     secret: "8f4c9a2e7b1d5f0a3c6e9d2b7a4f8c1e5d9a2b6c7f1e3d8"
     access-token-validity-seconds: 3600
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+    allowed-origins: http://localhost:5173
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
@@ -42,7 +47,7 @@ management:
         include: health, info, metrics
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: 8080
 
 logging:
   config: classpath:logback.xml
