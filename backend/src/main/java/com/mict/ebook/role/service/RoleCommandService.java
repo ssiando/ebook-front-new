@@ -22,19 +22,23 @@ public class RoleCommandService {
     private final RoleMapper roleMapper;
     private final RoleRestMapper roleRestMapper;
 
-    public RoleResponse create(CreateRoleRequest request) {
-        if (roleMapper.existsByRoleNameAndSystem(request.roleName(), request.system())) {
+    public RoleResponse create(CreateRoleRequest request, Long currentAdminPk) {
+        if (roleMapper.existsByWorkspaceIdAndRoleName(request.workspaceId(), request.roleName())) {
             throw new BusinessException(RoleErrorCode.ROLE_NAME_DUPLICATE);
         }
 
-        Role role = Role.createNew(request.roleName(), request.description(), request.system(), request.registrant());
+        Role role = Role.createNew(request.workspaceId(), request.roleName(), request.description(), currentAdminPk);
         roleMapper.insert(role);
         return roleRestMapper.toResponse(role, 0, List.of());
     }
 
-    public RoleResponse update(Long id, UpdateRoleRequest request) {
+    public RoleResponse update(Long id, UpdateRoleRequest request, Long currentAdminPk) {
         Role role = findRole(id);
-        role.update(request.roleName(), request.description(), request.registrant());
+        if (roleMapper.existsByWorkspaceIdAndRoleNameExcludingId(role.getWorkspaceId(), request.roleName(), id)) {
+            throw new BusinessException(RoleErrorCode.ROLE_NAME_DUPLICATE);
+        }
+
+        role.update(request.roleName(), request.description(), currentAdminPk);
         roleMapper.update(role);
         return roleRestMapper.toResponse(
                 role, roleMapper.countMembersByRoleId(id), roleMapper.findProgramIdsByRoleId(id));

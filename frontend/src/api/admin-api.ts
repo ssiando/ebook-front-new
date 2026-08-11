@@ -120,15 +120,6 @@ export async function deleteAdmin(id: string): Promise<void> {
   await apiClient.delete(`/admins/${id}`)
 }
 
-export async function findAdminByAccount(account: string): Promise<Admin | undefined> {
-  if (import.meta.env.DEV) {
-    return delay(MOCK_ADMINS.find((admin) => admin.adminId === account || admin.email === account))
-  }
-
-  const { data } = await apiClient.get<Admin | undefined>('/admins/lookup', { params: { account } })
-  return data
-}
-
 export async function updateAdminRoles(payload: UpdateAdminRolesPayload): Promise<Admin> {
   if (import.meta.env.DEV) {
     const index = MOCK_ADMINS.findIndex((admin) => admin.id === payload.id)

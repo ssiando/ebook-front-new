@@ -8,8 +8,6 @@ import com.mict.ebook.auth.dto.LoginResponse;
 import com.mict.ebook.auth.repository.mapper.AuthTokenBlacklistMapper;
 import com.mict.ebook.common.exception.BusinessException;
 import com.mict.ebook.common.security.JwtTokenProvider;
-import com.mict.ebook.menu.dto.MenuTreeResponse;
-import com.mict.ebook.menu.service.MenuQueryService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -28,7 +26,6 @@ public class AuthService {
 
     private final AdminMapper adminMapper;
     private final AuthTokenBlacklistMapper authTokenBlacklistMapper;
-    private final MenuQueryService menuQueryService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -45,12 +42,9 @@ public class AuthService {
             throw new BusinessException(AuthErrorCode.ACCOUNT_INACTIVE);
         }
 
-        adminMapper.updateLastLogin(admin.getId(), LocalDateTime.now());
-
         List<String> roles = adminMapper.findRoleNamesByAdminId(admin.getId());
         String accessToken =
                 jwtTokenProvider.createAccessToken(admin.getAdminId(), admin.getId(), admin.getAdminName(), roles);
-        List<MenuTreeResponse> menus = menuQueryService.getMenuTree(roles);
 
         return new LoginResponse(
                 accessToken,
@@ -62,8 +56,7 @@ public class AuthService {
                 admin.getEmail(),
                 admin.getDepartment(),
                 admin.getStatus(),
-                roles,
-                menus);
+                roles);
     }
 
     @Transactional(rollbackFor = Exception.class)

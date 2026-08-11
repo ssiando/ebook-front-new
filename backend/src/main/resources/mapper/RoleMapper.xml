@@ -4,89 +4,101 @@
 
     <resultMap id="roleResultMap" type="com.mict.ebook.role.domain.Role">
         <id property="id" column="id" />
-        <result property="roleName" column="role_name" />
-        <result property="description" column="description" />
-        <result property="system" column="system" typeHandler="com.mict.ebook.role.domain.SystemTypeHandler" />
-        <result property="registrant" column="registrant" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedAt" column="updated_at" />
+        <result property="workspaceId" column="workspace_id" />
+        <result property="roleName" column="role_nm" />
+        <result property="description" column="descp" />
+        <result property="activeYn" column="active_yn" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
     </resultMap>
+
+    <sql id="roleColumns">
+        id, workspace_id, role_nm, descp, active_yn, regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
 
     <sql id="searchCondition">
         <where>
-            <if test="system != null">
-                AND r.system = #{system, typeHandler=com.mict.ebook.role.domain.SystemTypeHandler}
-            </if>
+            AND workspace_id = #{workspaceId}
             <if test="keyword != null and keyword != ''">
-                AND (r.role_name LIKE CONCAT('%', #{keyword}, '%')
-                OR r.description LIKE CONCAT('%', #{keyword}, '%'))
+                AND (role_nm LIKE CONCAT('%', #{keyword}, '%')
+                OR descp LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
     </sql>
 
     <select id="search" resultMap="roleResultMap">
-        SELECT r.id, r.role_name, r.description, r.system, r.registrant, r.created_at, r.updated_at
-        FROM role r
+        SELECT <include refid="roleColumns" />
+        FROM cm_role_bas
         <include refid="searchCondition" />
-        ORDER BY r.id DESC
+        ORDER BY id DESC
     </select>
 
     <select id="findById" resultMap="roleResultMap">
-        SELECT id, role_name, description, system, registrant, created_at, updated_at
-        FROM role
+        SELECT <include refid="roleColumns" />
+        FROM cm_role_bas
         WHERE id = #{id}
     </select>
 
-    <select id="existsByRoleNameAndSystem" resultType="boolean">
+    <select id="existsByWorkspaceIdAndRoleName" resultType="boolean">
         SELECT EXISTS(
-        SELECT 1 FROM role
-        WHERE role_name = #{roleName}
-        AND system = #{system, typeHandler=com.mict.ebook.role.domain.SystemTypeHandler}
+        SELECT 1 FROM cm_role_bas
+        WHERE workspace_id = #{workspaceId}
+        AND role_nm = #{roleName}
+        AND active_yn = 1
+        )
+    </select>
+
+    <select id="existsByWorkspaceIdAndRoleNameExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_role_bas
+        WHERE workspace_id = #{workspaceId}
+        AND role_nm = #{roleName}
+        AND active_yn = 1
+        AND id != #{id}
         )
     </select>
 
     <insert id="insert" parameterType="com.mict.ebook.role.domain.Role" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO role (role_name, description, system, registrant)
-        VALUES (#{roleName},
-        #{description},
-        #{system, typeHandler=com.mict.ebook.role.domain.SystemTypeHandler},
-        #{registrant})
+        INSERT INTO cm_role_bas (workspace_id, role_nm, descp, active_yn, regr_id, updr_id)
+        VALUES (#{workspaceId}, #{roleName}, #{description}, #{activeYn}, #{registrantId}, #{updaterId})
     </insert>
 
     <update id="update" parameterType="com.mict.ebook.role.domain.Role">
-        UPDATE role
-        SET role_name   = #{roleName},
-            description = #{description},
-            registrant  = #{registrant}
+        UPDATE cm_role_bas
+        SET role_nm = #{roleName},
+            descp   = #{description},
+            updr_id = #{updaterId}
         WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
         DELETE
-        FROM role
+        FROM cm_role_bas
         WHERE id = #{id}
     </delete>
 
     <select id="countMembersByRoleId" resultType="long">
         SELECT COUNT(*)
-        FROM admin_role
+        FROM cm_admin_role
         WHERE role_id = #{roleId}
     </select>
 
-    <select id="findProgramIdsByRoleId" resultType="string">
+    <select id="findProgramIdsByRoleId" resultType="long">
         SELECT program_id
-        FROM role_program
+        FROM cm_role_program
         WHERE role_id = #{roleId}
     </select>
 
     <delete id="deleteRolePrograms">
         DELETE
-        FROM role_program
+        FROM cm_role_program
         WHERE role_id = #{roleId}
     </delete>
 
     <insert id="insertRolePrograms">
-        INSERT INTO role_program (role_id, program_id)
+        INSERT INTO cm_role_program (role_id, program_id)
         VALUES
         <foreach collection="programIds" item="programId" separator=",">
             (#{roleId}, #{programId})

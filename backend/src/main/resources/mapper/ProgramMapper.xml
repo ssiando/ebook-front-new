@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.program.repository.mapper.ProgramMapper">
+
+    <resultMap id="programResultMap" type="com.mict.ebook.program.domain.Program">
+        <id property="id" column="id" />
+        <result property="workspaceId" column="workspace_id" />
+        <result property="parentProgramId" column="prnt_id" />
+        <result property="code" column="pgm_cd" />
+        <result property="name" column="pgm_nm" />
+        <result property="type" column="pgm_type" />
+        <result property="httpMethod" column="http_mthd" />
+        <result property="url" column="url" />
+        <result property="sortOrder" column="sort_sseq" />
+        <result property="displayYn" column="mark_yn" />
+        <result property="useYn" column="active_yn" />
+        <result property="i18nKeyId" column="i18n_key_id" />
+        <result property="description" column="descp" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
+    </resultMap>
+
+    <sql id="programColumns">
+        id, workspace_id, prnt_id, pgm_cd, pgm_nm, pgm_type, http_mthd, url, sort_sseq,
+        mark_yn, active_yn, i18n_key_id, descp, regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="search" resultMap="programResultMap">
+        SELECT <include refid="programColumns" />
+        FROM cm_program_bas
+        <where>
+            AND workspace_id = #{workspaceId}
+            <if test="keyword != null and keyword != ''">
+                AND pgm_nm LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type != null and type != ''">
+                AND pgm_type = #{type}
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND active_yn = #{useYn}
+            </if>
+        </where>
+        ORDER BY sort_sseq ASC, id ASC
+    </select>
+
+    <select id="findById" resultMap="programResultMap">
+        SELECT <include refid="programColumns" />
+        FROM cm_program_bas
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsByWorkspaceIdAndCode" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_program_bas
+        WHERE workspace_id = #{workspaceId}
+        AND pgm_cd = #{code}
+        )
+    </select>
+
+    <select id="existsByWorkspaceIdAndCodeExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_program_bas
+        WHERE workspace_id = #{workspaceId}
+        AND pgm_cd = #{code}
+        AND id != #{id}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.program.domain.Program" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO cm_program_bas
+        (workspace_id, prnt_id, pgm_cd, pgm_nm, pgm_type, http_mthd, url, sort_sseq,
+        mark_yn, active_yn, i18n_key_id, descp, regr_id, updr_id)
+        VALUES (#{workspaceId},
+        #{parentProgramId},
+        #{code},
+        #{name},
+        #{type},
+        #{httpMethod},
+        #{url},
+        #{sortOrder},
+        #{displayYn},
+        #{useYn},
+        #{i18nKeyId},
+        #{description},
+        #{registrantId},
+        #{updaterId})
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.program.domain.Program">
+        UPDATE cm_program_bas
+        SET prnt_id     = #{parentProgramId},
+            pgm_cd      = #{code},
+            pgm_nm      = #{name},
+            pgm_type    = #{type},
+            http_mthd   = #{httpMethod},
+            url         = #{url},
+            sort_sseq   = #{sortOrder},
+            mark_yn     = #{displayYn},
+            active_yn   = #{useYn},
+            i18n_key_id = #{i18nKeyId},
+            descp       = #{description},
+            updr_id     = #{updaterId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        DELETE FROM cm_program_bas
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

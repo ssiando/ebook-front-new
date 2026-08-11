@@ -21,7 +21,7 @@ public class RoleQueryService {
     private final RoleRestMapper roleRestMapper;
 
     public List<RoleResponse> search(RoleSearchRequest request) {
-        List<Role> roles = roleMapper.search(request.system(), request.keyword());
+        List<Role> roles = roleMapper.search(request.workspaceId(), request.keyword());
         return roles.stream().map(this::toResponse).toList();
     }
 
@@ -35,7 +35,7 @@ public class RoleQueryService {
 
     private RoleResponse toResponse(Role role) {
         long memberCount = roleMapper.countMembersByRoleId(role.getId());
-        List<String> programIds = roleMapper.findProgramIdsByRoleId(role.getId());
+        List<Long> programIds = roleMapper.findProgramIdsByRoleId(role.getId());
         return roleRestMapper.toResponse(role, memberCount, programIds);
     }
 }

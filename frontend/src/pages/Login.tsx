@@ -54,7 +54,7 @@ export default function Login() {
         <p className="text-center text-[11px] leading-relaxed text-gray-400">
           데모 계정: admin001(SUPER_ADMIN) · admin004(ADMIN) · admin006(MEMBER)
           <br />
-          비밀번호는 아무 값이나 입력하세요.
+          비밀번호: ebook!2026
         </p>
       </form>
     </div>

@@ -1,58 +1,54 @@
 package com.mict.ebook.admin.domain;
 
-import com.mict.ebook.common.entity.BaseEntity;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/** cm_admin_bas 테이블 — reg_dtm/upd_dtm 컬럼명이 공용 BaseEntity와 달라 직접 둔다. */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Admin extends BaseEntity {
-
-    private static final String DEFAULT_STATUS = "NEW";
+public class Admin {
 
     private Long id;
-    private String adminId;
     private String adminName;
     private String email;
     private String passwordHash;
-    private String department;
-    // 콤마(,)로 구분한 그룹 태그 원본 문자열. 목록 형태는 AdminRestMapper에서 변환한다.
-    private String groupNames;
-    private LocalDate serviceExpiresAt;
+    private int failCount;
+    private Long registrantId;
+    private Long updaterId;
+    private boolean activeYn;
     private LocalDateTime lastLoginAt;
-    private String status;
-    private String registrant;
+    private String lastLoginIp;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public static Admin createNew(
-            String adminId, String adminName, String email, String passwordHash, String department, String registrant) {
+    public static Admin createNew(String adminName, String email, String passwordHash, Long registrantId) {
         Admin admin = new Admin();
-        admin.adminId = adminId;
         admin.adminName = adminName;
         admin.email = email;
         admin.passwordHash = passwordHash;
-        admin.department = department;
-        admin.status = DEFAULT_STATUS;
-        admin.registrant = registrant;
+        admin.failCount = 0;
+        admin.activeYn = true;
+        admin.registrantId = registrantId;
+        admin.updaterId = registrantId;
         return admin;
     }
 
-    public void update(
-            String adminName,
-            String email,
-            String department,
-            String status,
-            String registrant,
-            String groupNames,
-            LocalDate serviceExpiresAt) {
+    public void update(String adminName, String email, boolean activeYn, Long updaterId) {
         this.adminName = adminName;
         this.email = email;
-        this.department = department;
-        this.status = status;
-        this.registrant = registrant;
-        this.groupNames = groupNames;
-        this.serviceExpiresAt = serviceExpiresAt;
+        this.activeYn = activeYn;
+        this.updaterId = updaterId;
+    }
+
+    public void recordLoginSuccess(String ip) {
+        this.failCount = 0;
+        this.lastLoginAt = LocalDateTime.now();
+        this.lastLoginIp = ip;
+    }
+
+    public void recordLoginFailure() {
+        this.failCount++;
     }
 }

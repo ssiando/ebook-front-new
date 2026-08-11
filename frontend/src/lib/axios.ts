@@ -27,6 +27,9 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // TODO: 인증 만료 처리 (로그인 페이지 리다이렉트 등)
     }
+    // 백엔드는 에러도 ApiResponse.message에 사용자에게 보여줄 문구를 담아 내려준다.
+    const message = error.response?.data?.message
+    if (message) error.message = message
     return Promise.reject(error)
   },
 )

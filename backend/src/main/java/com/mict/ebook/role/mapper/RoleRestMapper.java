@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface RoleRestMapper {
 
-    RoleResponse toResponse(Role role, long memberCount, List<String> programIds);
+    RoleResponse toResponse(Role role, long memberCount, List<Long> programIds);
 }

@@ -55,14 +55,7 @@ public class AdminCommandService {
             throw new BusinessException(AdminErrorCode.EMAIL_DUPLICATE);
         }
 
-        admin.update(
-                request.adminName(),
-                request.email(),
-                request.department(),
-                request.status(),
-                request.registrant(),
-                joinGroups(request.groups()),
-                request.serviceExpiresAt());
+        admin.update(request.adminName(), request.email(), request.department(), request.status(), request.registrant());
         adminMapper.update(admin);
         return adminRestMapper.toResponse(admin, adminMapper.findRoleIdsByAdminId(id));
     }
@@ -84,9 +77,5 @@ public class AdminCommandService {
 
     private Admin findAdmin(Long id) {
         return adminMapper.findById(id).orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
-    }
-
-    private String joinGroups(List<String> groups) {
-        return groups == null || groups.isEmpty() ? null : String.join(",", groups);
     }
 }

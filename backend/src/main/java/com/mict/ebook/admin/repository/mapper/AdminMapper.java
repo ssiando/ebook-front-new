@@ -10,22 +10,26 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface AdminMapper {
 
-    Optional<Admin> findByAccount(@Param("account") String account);
+    Optional<Admin> findByEmail(@Param("email") String email);
 
     List<String> findRoleNamesByAdminId(@Param("adminId") Long adminId);
 
-    List<Admin> search(
-            @Param("keyword") String keyword, @Param("department") String department, @Param("status") String status);
+    List<Admin> search(@Param("keyword") String keyword, @Param("activeYn") Boolean activeYn);
 
     Optional<Admin> findById(@Param("id") Long id);
 
-    boolean existsByAdminId(@Param("adminId") String adminId);
-
     boolean existsByEmail(@Param("email") String email);
+
+    boolean existsByEmailExcludingId(@Param("email") String email, @Param("id") Long id);
 
     void insert(Admin admin);
 
     void update(Admin admin);
+
+    void recordLoginSuccess(
+            @Param("id") Long id, @Param("lastLoginAt") LocalDateTime lastLoginAt, @Param("lastLoginIp") String lastLoginIp);
+
+    void recordLoginFailure(@Param("id") Long id);
 
     void deleteById(@Param("id") Long id);
 
@@ -34,6 +38,4 @@ public interface AdminMapper {
     void deleteAdminRoles(@Param("adminId") Long adminId);
 
     void insertAdminRoles(@Param("adminId") Long adminId, @Param("roleIds") List<Long> roleIds);
-
-    void updateLastLogin(@Param("id") Long id, @Param("lastLoginAt") LocalDateTime lastLoginAt);
 }

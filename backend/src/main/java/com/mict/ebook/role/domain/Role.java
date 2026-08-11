@@ -1,32 +1,39 @@
 package com.mict.ebook.role.domain;
 
-import com.mict.ebook.common.entity.BaseEntity;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/** cm_role_bas 테이블 — 워크스페이스별 역할. reg_dtm/upd_dtm 컬럼명이 공용 BaseEntity와 달라 직접 둔다. */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Role extends BaseEntity {
+public class Role {
 
     private Long id;
+    private Long workspaceId;
     private String roleName;
     private String description;
-    private SystemType system;
-    private String registrant;
+    private boolean activeYn;
+    private Long registrantId;
+    private Long updaterId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public static Role createNew(String roleName, String description, SystemType system, String registrant) {
+    public static Role createNew(Long workspaceId, String roleName, String description, Long registrantId) {
         Role role = new Role();
+        role.workspaceId = workspaceId;
         role.roleName = roleName;
         role.description = description;
-        role.system = system;
-        role.registrant = registrant;
+        role.activeYn = true;
+        role.registrantId = registrantId;
+        role.updaterId = registrantId;
         return role;
     }
 
-    public void update(String roleName, String description, String registrant) {
+    public void update(String roleName, String description, Long updaterId) {
         this.roleName = roleName;
         this.description = description;
-        this.registrant = registrant;
+        this.updaterId = updaterId;
     }
 }

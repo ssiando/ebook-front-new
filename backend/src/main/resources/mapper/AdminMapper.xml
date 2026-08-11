@@ -9,9 +9,6 @@
         <result property="email" column="email" />
         <result property="passwordHash" column="password_hash" />
         <result property="department" column="department" />
-        <result property="groupNames" column="group_names" />
-        <result property="serviceExpiresAt" column="service_expires_at" />
-        <result property="lastLoginAt" column="last_login_at" />
         <result property="status" column="status" />
         <result property="registrant" column="registrant" />
         <result property="createdAt" column="created_at" />
@@ -19,8 +16,7 @@
     </resultMap>
 
     <sql id="adminColumns">
-        id, admin_id, admin_name, email, password_hash, department, group_names,
-        service_expires_at, last_login_at, status, registrant, created_at, updated_at
+        id, admin_id, admin_name, email, password_hash, department, status, registrant, created_at, updated_at
     </sql>
 
     <select id="findByAccount" resultMap="adminResultMap">
@@ -55,8 +51,7 @@
 
     <select id="search" resultMap="adminResultMap">
         SELECT a.id, a.admin_id, a.admin_name, a.email, a.password_hash, a.department,
-        a.group_names, a.service_expires_at, a.last_login_at, a.status, a.registrant,
-        a.created_at, a.updated_at
+        a.status, a.registrant, a.created_at, a.updated_at
         FROM admin a
         <include refid="searchCondition" />
         ORDER BY a.id DESC
@@ -89,19 +84,11 @@
 
     <update id="update" parameterType="com.mict.ebook.admin.domain.Admin">
         UPDATE admin
-        SET admin_name          = #{adminName},
-            email               = #{email},
-            department          = #{department},
-            status              = #{status},
-            registrant          = #{registrant},
-            group_names         = #{groupNames},
-            service_expires_at  = #{serviceExpiresAt}
-        WHERE id = #{id}
-    </update>
-
-    <update id="updateLastLogin">
-        UPDATE admin
-        SET last_login_at = #{lastLoginAt}
+        SET admin_name = #{adminName},
+            email       = #{email},
+            department  = #{department},
+            status      = #{status},
+            registrant  = #{registrant}
         WHERE id = #{id}
     </update>
 

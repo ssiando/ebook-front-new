@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum AdminErrorCode implements ErrorCode {
     ADMIN_NOT_FOUND("A001", "관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    ADMIN_ID_DUPLICATE("A002", "이미 존재하는 관리자 ID입니다.", HttpStatus.CONFLICT),
     EMAIL_DUPLICATE("A003", "이미 존재하는 이메일입니다.", HttpStatus.CONFLICT);
 
     private final String code;
