@@ -67,7 +67,7 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
     async (values) => {
       await createAdmin.mutateAsync({
         ...values,
-        registrant: currentAdmin?.adminId ?? '',
+        registrant: currentAdmin?.email ?? '',
       })
       methods.reset()
       onClose()

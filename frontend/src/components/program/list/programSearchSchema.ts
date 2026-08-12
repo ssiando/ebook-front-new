@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { SYSTEMS } from '@/types/role'
 
-// system/type/useYn이 모두 enum select라 defineFormRules 표준 규칙 밖의 경우 — 패턴 B 사용.
+// workspaceId/type/useYn이 모두 select(값이 항상 문자열)라 defineFormRules 표준 규칙 밖의 경우 — 패턴 B 사용.
+// workspaceId는 실제 조회/등록 시 ProgramManagement에서 Number()로 변환한다.
 export const programSearchSchema = z.object({
-  system: z.enum(SYSTEMS),
+  workspaceId: z.string().min(1, '워크스페이스를 선택해 주세요'),
   keyword: z.string(),
   type: z.enum(['ALL', 'API', 'PAGE']),
   useYn: z.enum(['ALL', 'Y', 'N']),

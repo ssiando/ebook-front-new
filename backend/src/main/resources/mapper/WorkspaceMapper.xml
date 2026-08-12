@@ -7,14 +7,67 @@
         <result property="name" column="name" />
         <result property="stat" column="stat" />
         <result property="description" column="descp" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
         <result property="createdAt" column="reg_dtm" />
         <result property="updatedAt" column="upd_dtm" />
     </resultMap>
 
-    <select id="findAll" resultMap="workspaceResultMap">
-        SELECT id, name, stat, descp, reg_dtm, upd_dtm
+    <sql id="workspaceColumns">
+        id, name, stat, descp, regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="search" resultMap="workspaceResultMap">
+        SELECT <include refid="workspaceColumns" />
         FROM cm_workspace_bas
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%')
+                OR descp LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
         ORDER BY id ASC
     </select>
+
+    <select id="findById" resultMap="workspaceResultMap">
+        SELECT <include refid="workspaceColumns" />
+        FROM cm_workspace_bas
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsByName" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_workspace_bas
+        WHERE name = #{name}
+        )
+    </select>
+
+    <select id="existsByNameExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_workspace_bas
+        WHERE name = #{name}
+        AND id != #{id}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.workspace.domain.Workspace" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cm_workspace_bas (name, stat, descp, regr_id, updr_id)
+        VALUES (#{name}, #{stat}, #{description}, #{registrantId}, #{updaterId})
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.workspace.domain.Workspace">
+        UPDATE cm_workspace_bas
+        SET name    = #{name},
+            descp   = #{description},
+            stat    = #{stat},
+            updr_id = #{updaterId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE
+        FROM cm_workspace_bas
+        WHERE id = #{id}
+    </delete>
 
 </mapper>

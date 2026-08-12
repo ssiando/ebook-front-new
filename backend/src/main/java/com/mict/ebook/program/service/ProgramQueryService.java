@@ -20,11 +20,18 @@ public class ProgramQueryService {
 
     public ProgramListResponse search(ProgramSearchRequest request) {
         var programs = programMapper.search(
-                request.workspaceId(), request.keyword(), normalize(request.type()), normalize(request.useYn()));
+                request.workspaceId(), request.keyword(), normalize(request.type()), toBoolean(request.useYn()));
         return ProgramListResponse.of(programRestMapper.toResponses(programs));
     }
 
     private String normalize(String filter) {
         return filter == null || NO_FILTER.equals(filter) ? null : filter;
+    }
+
+    private Boolean toBoolean(String useYn) {
+        if (useYn == null || NO_FILTER.equals(useYn)) {
+            return null;
+        }
+        return "Y".equals(useYn);
     }
 }

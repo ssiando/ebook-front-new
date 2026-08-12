@@ -1,7 +1,7 @@
 import type { Control } from 'react-hook-form'
 import { FormInput } from '@/components/common/form/FormInput'
 import { FormSelect } from '@/components/common/form/FormSelect'
-import { SYSTEMS } from '@/types/role'
+import { useWorkspacesQuery } from '@/query/workspace-query'
 import type { ProgramSearchFormValues } from './programSearchSchema'
 
 interface ProgramSearchProps {
@@ -9,15 +9,18 @@ interface ProgramSearchProps {
 }
 
 export function ProgramSearch({ control }: ProgramSearchProps) {
+  const workspacesQuery = useWorkspacesQuery()
+  const workspaces = workspacesQuery.data ?? []
+
   return (
     <>
       <FormSelect
-        name="system"
+        name="workspaceId"
         control={control}
-        label="시스템"
+        label="워크스페이스"
         required
-        className="w-32"
-        options={SYSTEMS.map((system) => ({ label: system, value: system }))}
+        className="w-40"
+        options={workspaces.map((workspace) => ({ label: workspace.name, value: String(workspace.id) }))}
       />
       <FormInput
         name="keyword"

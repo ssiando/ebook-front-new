@@ -6,11 +6,8 @@ import type { CurrentAdmin, LoginResponse } from '@/types/auth'
 function toCurrentAdmin(response: LoginResponse): CurrentAdmin {
   return {
     id: response.adminPk,
-    adminId: response.adminId,
     adminName: response.adminName,
     email: response.email,
-    department: response.department,
-    status: response.status,
     roles: response.roles,
   }
 }

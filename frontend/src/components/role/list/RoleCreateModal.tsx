@@ -35,7 +35,7 @@ export function RoleCreateModal({ open, onClose }: RoleCreateModalProps) {
 
   const onSubmit = handleSubmit(
     async (values) => {
-      await createRole.mutateAsync({ ...values, registrant: currentAdmin?.adminId ?? '' })
+      await createRole.mutateAsync({ ...values, registrant: currentAdmin?.email ?? '' })
       handleClose()
     },
     (errors) => showFormErrors(errors, createRoleRules),

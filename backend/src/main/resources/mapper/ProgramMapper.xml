@@ -38,7 +38,7 @@
             <if test="type != null and type != ''">
                 AND pgm_type = #{type}
             </if>
-            <if test="useYn != null and useYn != ''">
+            <if test="useYn != null">
                 AND active_yn = #{useYn}
             </if>
         </where>

@@ -7,11 +7,12 @@ export const programAdminKeys = {
   list: (params: ProgramSearchParams) => [...programAdminKeys.all, 'list', params] as const,
 }
 
-export function useProgramsQuery(params: ProgramSearchParams) {
+export function useProgramsQuery(params: ProgramSearchParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: programAdminKeys.list(params),
     queryFn: () => fetchPrograms(params),
     placeholderData: (prev) => prev,
+    enabled: options?.enabled,
   })
 }
 

@@ -18,10 +18,18 @@ import {
   useProgramsQuery,
   useSaveProgramsMutation,
 } from '@/query/program-admin-query'
+import { useWorkspacesQuery } from '@/query/workspace-query'
 import type { ProgramAdminItem, ProgramSearchParams } from '@/types/programAdmin'
 
-const DEFAULT_SEARCH: ProgramSearchFormValues = {
-  system: 'VFX',
+const DEFAULT_SEARCH_FORM: ProgramSearchFormValues = {
+  workspaceId: '',
+  keyword: '',
+  type: 'ALL',
+  useYn: 'ALL',
+}
+
+const DEFAULT_PARAMS: ProgramSearchParams = {
+  workspaceId: 0,
   keyword: '',
   type: 'ALL',
   useYn: 'ALL',
@@ -30,30 +38,41 @@ const DEFAULT_SEARCH: ProgramSearchFormValues = {
 let tempIdCounter = 0
 
 export default function ProgramManagement() {
-  const [params, setParams] = useState<ProgramSearchParams>(DEFAULT_SEARCH)
+  const [params, setParams] = useState<ProgramSearchParams>(DEFAULT_PARAMS)
   const [rows, setRows] = useState<ProgramAdminItem[]>([])
   const [checkedIds, setCheckedIds] = useState<number[]>([])
 
   const methods = useForm<ProgramSearchFormValues>({
     resolver: zodResolver(programSearchSchema),
-    defaultValues: DEFAULT_SEARCH,
+    defaultValues: DEFAULT_SEARCH_FORM,
   })
 
-  const programsQuery = useProgramsQuery(params)
+  const workspacesQuery = useWorkspacesQuery()
+  const programsQuery = useProgramsQuery(params, { enabled: params.workspaceId > 0 })
   const savePrograms = useSaveProgramsMutation()
   const deletePrograms = useDeleteProgramsMutation()
+
+  // 워크스페이스 목록이 로드되면 최초 1회 첫 워크스페이스를 기본 선택한다.
+  useEffect(() => {
+    const workspaces = workspacesQuery.data
+    if (!workspaces || workspaces.length === 0 || params.workspaceId > 0) return
+    const firstId = workspaces[0].id
+    methods.reset({ ...DEFAULT_SEARCH_FORM, workspaceId: String(firstId) })
+    setParams((prev) => ({ ...prev, workspaceId: firstId }))
+  }, [workspacesQuery.data, params.workspaceId, methods])
 
   useEffect(() => {
     if (programsQuery.data) setRows(programsQuery.data.items)
   }, [programsQuery.data])
 
   const handleSearch = methods.handleSubmit((values) => {
-    setParams(values)
+    setParams({ ...values, workspaceId: Number(values.workspaceId) })
   })
 
   const handleReset = () => {
-    methods.reset(DEFAULT_SEARCH)
-    setParams(DEFAULT_SEARCH)
+    const defaults = { ...DEFAULT_SEARCH_FORM, workspaceId: String(params.workspaceId) }
+    methods.reset(defaults)
+    setParams({ ...DEFAULT_PARAMS, workspaceId: params.workspaceId })
   }
 
   const handleCellChange = (
@@ -68,7 +87,7 @@ export default function ProgramManagement() {
     tempIdCounter -= 1
     const newRow: ProgramAdminItem = {
       id: tempIdCounter,
-      system: params.system,
+      workspaceId: params.workspaceId,
       parentProgramId: null,
       code: '',
       name: '',
@@ -78,8 +97,7 @@ export default function ProgramManagement() {
       sortOrder: 0,
       displayYn: true,
       useYn: true,
-      platformAdminOnly: false,
-      i18nKeyId: '',
+      i18nKeyId: null,
       description: '',
       createdAt: '-',
       updatedAt: '-',

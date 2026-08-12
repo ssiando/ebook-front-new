@@ -4,114 +4,126 @@
 
     <resultMap id="adminResultMap" type="com.mict.ebook.admin.domain.Admin">
         <id property="id" column="id" />
-        <result property="adminId" column="admin_id" />
-        <result property="adminName" column="admin_name" />
-        <result property="email" column="email" />
-        <result property="passwordHash" column="password_hash" />
-        <result property="department" column="department" />
-        <result property="status" column="status" />
-        <result property="registrant" column="registrant" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedAt" column="updated_at" />
+        <result property="adminName" column="admin_nm" />
+        <result property="email" column="admin_email" />
+        <result property="passwordHash" column="admin_pwd" />
+        <result property="failCount" column="fail_fcnt" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="activeYn" column="active_yn" />
+        <result property="lastLoginAt" column="last_login_dtm" />
+        <result property="lastLoginIp" column="last_login_ip" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
     </resultMap>
 
     <sql id="adminColumns">
-        id, admin_id, admin_name, email, password_hash, department, status, registrant, created_at, updated_at
+        id, admin_nm, admin_email, admin_pwd, fail_fcnt, regr_id, updr_id, active_yn,
+        last_login_dtm, last_login_ip, reg_dtm, upd_dtm
     </sql>
 
-    <select id="findByAccount" resultMap="adminResultMap">
+    <select id="findByEmail" resultMap="adminResultMap">
         SELECT <include refid="adminColumns" />
-        FROM admin
-        WHERE admin_id = #{account}
-        OR email = #{account}
+        FROM cm_admin_bas
+        WHERE admin_email = #{email}
     </select>
 
     <select id="findRoleNamesByAdminId" resultType="string">
-        SELECT DISTINCT r.role_name
-        FROM admin_role ar
-        JOIN role r ON r.id = ar.role_id
+        SELECT DISTINCT r.role_nm
+        FROM cm_admin_role ar
+        JOIN cm_role_bas r ON r.id = ar.role_id
         WHERE ar.admin_id = #{adminId}
+        AND r.active_yn = 1
     </select>
 
     <sql id="searchCondition">
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (a.admin_name LIKE CONCAT('%', #{keyword}, '%')
-                OR a.admin_id LIKE CONCAT('%', #{keyword}, '%')
-                OR a.email LIKE CONCAT('%', #{keyword}, '%'))
+                AND (admin_nm LIKE CONCAT('%', #{keyword}, '%')
+                OR admin_email LIKE CONCAT('%', #{keyword}, '%'))
             </if>
-            <if test="department != null and department != ''">
-                AND a.department = #{department}
-            </if>
-            <if test="status != null and status != ''">
-                AND a.status = #{status}
+            <if test="activeYn != null">
+                AND active_yn = #{activeYn}
             </if>
         </where>
     </sql>
 
     <select id="search" resultMap="adminResultMap">
-        SELECT a.id, a.admin_id, a.admin_name, a.email, a.password_hash, a.department,
-        a.status, a.registrant, a.created_at, a.updated_at
-        FROM admin a
+        SELECT <include refid="adminColumns" />
+        FROM cm_admin_bas
         <include refid="searchCondition" />
-        ORDER BY a.id DESC
+        ORDER BY id DESC
     </select>
 
     <select id="findById" resultMap="adminResultMap">
         SELECT <include refid="adminColumns" />
-        FROM admin
+        FROM cm_admin_bas
         WHERE id = #{id}
-    </select>
-
-    <select id="existsByAdminId" resultType="boolean">
-        SELECT EXISTS(
-        SELECT 1 FROM admin
-        WHERE admin_id = #{adminId}
-        )
     </select>
 
     <select id="existsByEmail" resultType="boolean">
         SELECT EXISTS(
-        SELECT 1 FROM admin
-        WHERE email = #{email}
+        SELECT 1 FROM cm_admin_bas
+        WHERE admin_email = #{email}
+        )
+    </select>
+
+    <select id="existsByEmailExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_admin_bas
+        WHERE admin_email = #{email}
+        AND id != #{id}
         )
     </select>
 
     <insert id="insert" parameterType="com.mict.ebook.admin.domain.Admin" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO admin (admin_id, admin_name, email, password_hash, department, status, registrant)
-        VALUES (#{adminId}, #{adminName}, #{email}, #{passwordHash}, #{department}, #{status}, #{registrant})
+        INSERT INTO cm_admin_bas (admin_nm, admin_email, admin_pwd, fail_fcnt, active_yn, regr_id, updr_id)
+        VALUES (#{adminName}, #{email}, #{passwordHash}, #{failCount}, #{activeYn}, #{registrantId}, #{updaterId})
     </insert>
 
     <update id="update" parameterType="com.mict.ebook.admin.domain.Admin">
-        UPDATE admin
-        SET admin_name = #{adminName},
-            email       = #{email},
-            department  = #{department},
-            status      = #{status},
-            registrant  = #{registrant}
+        UPDATE cm_admin_bas
+        SET admin_nm  = #{adminName},
+            admin_email = #{email},
+            active_yn = #{activeYn},
+            updr_id   = #{updaterId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="recordLoginSuccess">
+        UPDATE cm_admin_bas
+        SET fail_fcnt      = 0,
+            last_login_dtm = #{lastLoginAt},
+            last_login_ip  = #{lastLoginIp}
+        WHERE id = #{id}
+    </update>
+
+    <update id="recordLoginFailure">
+        UPDATE cm_admin_bas
+        SET fail_fcnt = fail_fcnt + 1
         WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
         DELETE
-        FROM admin
+        FROM cm_admin_bas
         WHERE id = #{id}
     </delete>
 
     <select id="findRoleIdsByAdminId" resultType="long">
         SELECT role_id
-        FROM admin_role
+        FROM cm_admin_role
         WHERE admin_id = #{adminId}
     </select>
 
     <delete id="deleteAdminRoles">
         DELETE
-        FROM admin_role
+        FROM cm_admin_role
         WHERE admin_id = #{adminId}
     </delete>
 
     <insert id="insertAdminRoles">
-        INSERT INTO admin_role (admin_id, role_id)
+        INSERT INTO cm_admin_role (admin_id, role_id)
         VALUES
         <foreach collection="roleIds" item="roleId" separator=",">
             (#{adminId}, #{roleId})

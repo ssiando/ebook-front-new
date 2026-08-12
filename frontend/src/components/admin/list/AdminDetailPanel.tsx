@@ -103,7 +103,7 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
       adminName: admin.adminName,
       email: admin.email,
       department: admin.department,
-      registrant: currentAdmin?.adminId ?? admin.registrant,
+      registrant: currentAdmin?.email ?? admin.registrant,
       status: values.status,
       groups: values.groups,
       serviceExpiresAt: values.serviceExpiresAt || undefined,

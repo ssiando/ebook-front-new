@@ -1,13 +1,6 @@
 export interface LoginPayload {
-  account: string
+  email: string
   password: string
-}
-
-export interface MenuTreeNode {
-  id: string
-  label: string
-  path: string | null
-  children: MenuTreeNode[]
 }
 
 // 백엔드 LoginResponse(com.mict.ebook.auth.dto.LoginResponse)와 동일한 형태.
@@ -16,23 +9,16 @@ export interface LoginResponse {
   tokenType: string
   expiresIn: number
   adminPk: number
-  adminId: string
   adminName: string
   email: string
-  department: string
-  status: string
   roles: string[]
-  menus: MenuTreeNode[]
 }
 
 // 로그인한 관리자의 클라이언트 상태. Admin Management 화면에서 다루는 Admin(목데이터)과는
 // 별개로, 로그인·권한 판단에 필요한 최소 정보만 담는다.
 export interface CurrentAdmin {
   id: number
-  adminId: string
   adminName: string
   email: string
-  department: string
-  status: string
   roles: string[]
 }

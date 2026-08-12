@@ -13,7 +13,7 @@ public interface ProgramMapper {
             @Param("workspaceId") Long workspaceId,
             @Param("keyword") String keyword,
             @Param("type") String type,
-            @Param("useYn") String useYn);
+            @Param("useYn") Boolean useYn);
 
     Optional<Program> findById(@Param("id") Long id);
 

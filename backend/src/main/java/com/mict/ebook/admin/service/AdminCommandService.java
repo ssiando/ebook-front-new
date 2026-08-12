@@ -24,22 +24,13 @@ public class AdminCommandService {
     private final AdminRestMapper adminRestMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public AdminResponse create(CreateAdminRequest request) {
-        if (adminMapper.existsByAdminId(request.adminId())) {
-            throw new BusinessException(AdminErrorCode.ADMIN_ID_DUPLICATE);
-        }
+    public AdminResponse create(CreateAdminRequest request, Long currentAdminPk) {
         if (adminMapper.existsByEmail(request.email())) {
             throw new BusinessException(AdminErrorCode.EMAIL_DUPLICATE);
         }
 
         String passwordHash = passwordEncoder.encode(request.password());
-        Admin admin = Admin.createNew(
-                request.adminId(),
-                request.adminName(),
-                request.email(),
-                passwordHash,
-                request.department(),
-                request.registrant());
+        Admin admin = Admin.createNew(request.adminName(), request.email(), passwordHash, currentAdminPk);
         adminMapper.insert(admin);
 
         List<Long> roleIds = request.roleIds() == null ? List.of() : request.roleIds();
@@ -49,13 +40,13 @@ public class AdminCommandService {
         return adminRestMapper.toResponse(admin, roleIds);
     }
 
-    public AdminResponse update(Long id, UpdateAdminRequest request) {
+    public AdminResponse update(Long id, UpdateAdminRequest request, Long currentAdminPk) {
         Admin admin = findAdmin(id);
-        if (!admin.getEmail().equals(request.email()) && adminMapper.existsByEmail(request.email())) {
+        if (!admin.getEmail().equals(request.email()) && adminMapper.existsByEmailExcludingId(request.email(), id)) {
             throw new BusinessException(AdminErrorCode.EMAIL_DUPLICATE);
         }
 
-        admin.update(request.adminName(), request.email(), request.department(), request.status(), request.registrant());
+        admin.update(request.adminName(), request.email(), request.activeYn(), currentAdminPk);
         adminMapper.update(admin);
         return adminRestMapper.toResponse(admin, adminMapper.findRoleIdsByAdminId(id));
     }

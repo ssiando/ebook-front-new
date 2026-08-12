@@ -9,7 +9,7 @@ import { defineFormRules, showFormErrors, validateForm } from '@/utils/formUtils
 import { useToastStore } from '@/store/useToastStore'
 
 const loginRules = defineFormRules({
-  account: { type: 'string', required: true, label: '아이디' },
+  email: { type: 'string', required: true, label: '이메일' },
   password: { type: 'string', required: true, label: '비밀번호' },
 })
 const loginSchema = validateForm(loginRules)
@@ -20,7 +20,7 @@ export default function Login() {
   const login = useLoginMutation()
   const { control, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { account: '', password: '' },
+    defaultValues: { email: '', password: '' },
   })
 
   const onSubmit = handleSubmit(
@@ -46,13 +46,13 @@ export default function Login() {
           <h1 className="text-lg font-semibold text-gray-800">4DPLEX 관리자 로그인</h1>
           <p className="mt-1 text-xs text-gray-400">관리자 계정으로 로그인해 주세요.</p>
         </div>
-        <FormInput name="account" control={control} label="아이디·이메일" required autoFocus />
+        <FormInput name="email" control={control} label="이메일" required autoFocus />
         <FormInput name="password" control={control} type="password" label="비밀번호" required />
         <Button type="submit" variant="primary" disabled={login.isPending} className="mt-2 w-full">
           로그인
         </Button>
         <p className="text-center text-[11px] leading-relaxed text-gray-400">
-          데모 계정: admin001(SUPER_ADMIN) · admin004(ADMIN) · admin006(MEMBER)
+          데모 계정: admin001@cj.net(SUPER_ADMIN) · admin002@cj.net(MEMBER)
           <br />
           비밀번호: ebook!2026
         </p>

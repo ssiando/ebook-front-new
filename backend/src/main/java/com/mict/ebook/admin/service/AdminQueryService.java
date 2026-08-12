@@ -21,7 +21,7 @@ public class AdminQueryService {
     private final AdminRestMapper adminRestMapper;
 
     public List<AdminResponse> search(AdminSearchRequest request) {
-        List<Admin> admins = adminMapper.search(request.keyword(), request.department(), request.status());
+        List<Admin> admins = adminMapper.search(request.keyword(), request.activeYn());
 
         return admins.stream().map(this::toResponse).toList();
     }

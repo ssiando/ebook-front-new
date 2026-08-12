@@ -184,17 +184,12 @@ export function ProgramListGrid({
         ),
       },
       {
-        field: 'platformAdminOnly',
-        headerName: '플랫폼 관리자 전용',
-        width: 130,
-        cellRenderer: (p: { data: ProgramAdminItem; value: boolean }) => (
-          <CheckboxCell
-            checked={p.value}
-            onChange={(v) => onCellChange(p.data.id, 'platformAdminOnly', v)}
-          />
-        ),
+        field: 'i18nKeyId',
+        headerName: 'i18n 키 ID',
+        width: 110,
+        editable: true,
+        valueFormatter: (p) => (p.value == null ? '' : String(p.value)),
       },
-      { field: 'i18nKeyId', headerName: 'i18n 키 ID', width: 110, editable: true },
       { field: 'description', headerName: '설명', flex: 1, minWidth: 160, editable: true },
       { field: 'createdAt', headerName: '등록일시', width: 150 },
       { field: 'updatedAt', headerName: '수정일시', width: 150 },
@@ -222,7 +217,7 @@ export function ProgramListGrid({
           if (!e.data || !e.colDef.field) return
           const field = e.colDef.field as keyof ProgramAdminItem
           const value =
-            field === 'sortOrder' || field === 'parentProgramId'
+            field === 'sortOrder' || field === 'parentProgramId' || field === 'i18nKeyId'
               ? e.newValue === '' || e.newValue == null
                 ? null
                 : Number(e.newValue)

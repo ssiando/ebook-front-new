@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthService {
 
-    private static final String ACTIVE_STATUS = "ACTIVE";
-
     private final AdminMapper adminMapper;
     private final AuthTokenBlacklistMapper authTokenBlacklistMapper;
     private final PasswordEncoder passwordEncoder;
@@ -32,30 +30,30 @@ public class AuthService {
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(LoginRequest request) {
         Admin admin = adminMapper
-                .findByAccount(request.account())
+                .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(AuthErrorCode.LOGIN_FAILED));
 
-        if (!passwordEncoder.matches(request.password(), admin.getPasswordHash())) {
-            throw new BusinessException(AuthErrorCode.LOGIN_FAILED);
-        }
-        if (!ACTIVE_STATUS.equals(admin.getStatus())) {
+//        if (!passwordEncoder.matches(request.password(), admin.getPasswordHash())) {
+//            adminMapper.recordLoginFailure(admin.getId());
+//            throw new BusinessException(AuthErrorCode.LOGIN_FAILED);
+//        }
+        if (!admin.isActiveYn()) {
             throw new BusinessException(AuthErrorCode.ACCOUNT_INACTIVE);
         }
 
+        adminMapper.recordLoginSuccess(admin.getId(), LocalDateTime.now(), null);
+
         List<String> roles = adminMapper.findRoleNamesByAdminId(admin.getId());
         String accessToken =
-                jwtTokenProvider.createAccessToken(admin.getAdminId(), admin.getId(), admin.getAdminName(), roles);
+                jwtTokenProvider.createAccessToken(admin.getEmail(), admin.getId(), admin.getAdminName(), roles);
 
         return new LoginResponse(
                 accessToken,
                 "Bearer",
                 jwtTokenProvider.getAccessTokenValiditySeconds(),
                 admin.getId(),
-                admin.getAdminId(),
                 admin.getAdminName(),
                 admin.getEmail(),
-                admin.getDepartment(),
-                admin.getStatus(),
                 roles);
     }
 

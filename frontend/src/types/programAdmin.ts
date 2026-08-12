@@ -1,11 +1,9 @@
-import type { SystemName } from '@/types/role'
-
 export type ProgramType = 'API' | 'PAGE'
 export type HttpMethod = '' | 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface ProgramAdminItem {
   id: number
-  system: SystemName
+  workspaceId: number
   parentProgramId: number | null
   code: string
   name: string
@@ -15,8 +13,7 @@ export interface ProgramAdminItem {
   sortOrder: number
   displayYn: boolean
   useYn: boolean
-  platformAdminOnly: boolean
-  i18nKeyId: string
+  i18nKeyId: number | null
   description: string
   createdAt: string
   updatedAt: string
@@ -31,7 +28,7 @@ export type ProgramTypeFilter = 'ALL' | ProgramType
 export type UseYnFilter = 'ALL' | 'Y' | 'N'
 
 export interface ProgramSearchParams {
-  system: SystemName
+  workspaceId: number
   keyword: string
   type: ProgramTypeFilter
   useYn: UseYnFilter
