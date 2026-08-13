@@ -23,8 +23,9 @@ public class ProgramCommandService {
     private final ProgramRestMapper programRestMapper;
 
     public ProgramListResponse saveAll(SaveProgramsRequest request, Long currentAdminPk) {
-        List<Program> saved =
-                request.programs().stream().map(item -> save(item, currentAdminPk)).toList();
+        List<Program> saved = request.programs().stream()
+                .map(item -> save(item, currentAdminPk))
+                .toList();
         return ProgramListResponse.of(programRestMapper.toResponses(saved));
     }
 

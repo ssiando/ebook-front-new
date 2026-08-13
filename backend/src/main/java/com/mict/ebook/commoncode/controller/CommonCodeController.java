@@ -1,5 +1,6 @@
 package com.mict.ebook.commoncode.controller;
 
+import com.mict.ebook.common.response.ApiResponse;
 import com.mict.ebook.commoncode.dto.CodeGroupResponse;
 import com.mict.ebook.commoncode.dto.CodeItemResponse;
 import com.mict.ebook.commoncode.dto.CommonCodeSearchRequest;
@@ -9,7 +10,6 @@ import com.mict.ebook.commoncode.dto.UpdateCodeGroupRequest;
 import com.mict.ebook.commoncode.dto.UpdateCodeItemRequest;
 import com.mict.ebook.commoncode.service.CommonCodeCommandService;
 import com.mict.ebook.commoncode.service.CommonCodeQueryService;
-import com.mict.ebook.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class CommonCodeController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'WORKSPACE_ADMIN')")
     public ApiResponse<List<CodeGroupResponse>> searchGroups(
             @RequestParam(required = false) String keyword, @RequestParam(required = false) String useYn) {
-        var request = new CommonCodeSearchRequest(keyword, useYn);
+        CommonCodeSearchRequest request = new CommonCodeSearchRequest(keyword, useYn);
         return ApiResponse.success(commonCodeQueryService.searchGroups(request));
     }
 

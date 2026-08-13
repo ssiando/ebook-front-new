@@ -1,6 +1,11 @@
 import { useMemo } from 'react'
 import { AgGridReact } from 'ag-grid-react'
-import { themeQuartz, type ColDef, type ValueGetterParams } from 'ag-grid-community'
+import {
+  themeQuartz,
+  type ColDef,
+  type SelectionChangedEvent,
+  type ValueGetterParams,
+} from 'ag-grid-community'
 import { Badge } from '@/components/common/ui/Badge'
 import { Button } from '@/components/common/ui/Button'
 import type { Batch } from '@/types/batch'
@@ -19,6 +24,8 @@ interface BatchListGridProps {
   runningId: string | null
   onHistoryClick: (id: string) => void
   onRunClick: (id: string) => void
+  onEditClick: (id: string) => void
+  onSelectionChanged: (ids: string[]) => void
 }
 
 export function BatchListGrid({
@@ -27,22 +34,25 @@ export function BatchListGrid({
   runningId,
   onHistoryClick,
   onRunClick,
+  onEditClick,
+  onSelectionChanged,
 }: BatchListGridProps) {
   const columnDefs = useMemo<ColDef<Batch>[]>(
     () => [
+      { headerCheckboxSelection: true, checkboxSelection: true, width: 44, pinned: 'left' },
       {
         headerName: '#',
-        width: 70,
+        width: 60,
         valueGetter: (p: ValueGetterParams<Batch>) => (p.node?.rowIndex ?? 0) + 1,
       },
-      { field: 'batchCode', headerName: '배치 코드', width: 200 },
-      { field: 'batchName', headerName: '배치명', flex: 1, minWidth: 220 },
-      { field: 'schedule', headerName: '정기배치 시간', width: 180 },
-      { field: 'updatedAt', headerName: '최근업데이트일시', width: 160 },
+      { field: 'batchCode', headerName: '배치 코드', width: 180 },
+      { field: 'batchName', headerName: '배치명', flex: 1, minWidth: 200 },
+      { field: 'schedule', headerName: '정기배치 시간', width: 160 },
+      { field: 'updatedAt', headerName: '최근업데이트일시', width: 150 },
       {
         field: 'status',
         headerName: '실행결과',
-        width: 110,
+        width: 100,
         cellRenderer: (p: { value: Batch['status'] }) => {
           if (p.value === 'default') return <span className="text-xs text-gray-400">default</span>
           return <Badge tone={p.value === 'success' ? 'blue' : 'red'}>{p.value}</Badge>
@@ -50,7 +60,7 @@ export function BatchListGrid({
       },
       {
         headerName: '이력',
-        width: 90,
+        width: 80,
         cellRenderer: (p: { data?: Batch }) => (
           <Button
             type="button"
@@ -64,7 +74,7 @@ export function BatchListGrid({
       },
       {
         headerName: '수동 실행',
-        width: 90,
+        width: 80,
         cellRenderer: (p: { data?: Batch }) => (
           <Button
             type="button"
@@ -77,8 +87,22 @@ export function BatchListGrid({
           </Button>
         ),
       },
+      {
+        headerName: '수정',
+        width: 80,
+        cellRenderer: (p: { data?: Batch }) => (
+          <Button
+            type="button"
+            variant="secondary"
+            className="h-6 px-2 text-xs"
+            onClick={() => p.data && onEditClick(p.data.id)}
+          >
+            수정
+          </Button>
+        ),
+      },
     ],
-    [runningId, onHistoryClick, onRunClick],
+    [runningId, onHistoryClick, onRunClick, onEditClick],
   )
 
   return (
@@ -90,6 +114,12 @@ export function BatchListGrid({
         loading={loading}
         rowHeight={40}
         headerHeight={40}
+        rowSelection="multiple"
+        suppressRowClickSelection
+        getRowId={(p) => p.data.id}
+        onSelectionChanged={(e: SelectionChangedEvent<Batch>) =>
+          onSelectionChanged(e.api.getSelectedRows().map((row) => row.id))
+        }
         suppressCellFocus
       />
     </div>

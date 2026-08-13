@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.batch.repository.mapper.BatchMapper">
+
+    <resultMap id="batchJobResultMap" type="com.mict.ebook.batch.domain.BatchJob">
+        <id property="id" column="id" />
+        <result property="batchCode" column="batch_code" />
+        <result property="batchName" column="batch_name" />
+        <result property="schedule" column="schedule" />
+        <result property="description" column="description" />
+        <result property="requiresPath" column="requires_path" />
+        <result property="lastRunStatus" column="last_run_status" />
+        <result property="lastRunAt" column="last_run_at" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
+    </resultMap>
+
+    <sql id="batchColumns">
+        id, batch_code, batch_name, schedule, description, requires_path, last_run_status, last_run_at,
+        regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="search" resultMap="batchJobResultMap">
+        SELECT <include refid="batchColumns" />
+        FROM cm_batch_bas
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND batch_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY id ASC
+    </select>
+
+    <select id="findById" resultMap="batchJobResultMap">
+        SELECT <include refid="batchColumns" />
+        FROM cm_batch_bas
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByCode" resultMap="batchJobResultMap">
+        SELECT <include refid="batchColumns" />
+        FROM cm_batch_bas
+        WHERE batch_code = #{batchCode}
+    </select>
+
+    <select id="existsByCode" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_batch_bas
+        WHERE batch_code = #{batchCode}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.batch.domain.BatchJob" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cm_batch_bas
+            (batch_code, batch_name, schedule, description, requires_path, last_run_status, regr_id, updr_id)
+        VALUES
+            (#{batchCode}, #{batchName}, #{schedule}, #{description}, #{requiresPath}, #{lastRunStatus},
+             #{registrantId}, #{updaterId})
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.batch.domain.BatchJob">
+        UPDATE cm_batch_bas
+        SET batch_name    = #{batchName},
+            schedule      = #{schedule},
+            description   = #{description},
+            requires_path = #{requiresPath},
+            updr_id       = #{updaterId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateRunResult">
+        UPDATE cm_batch_bas
+        SET last_run_status = #{status},
+            last_run_at     = #{runAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE
+        FROM cm_batch_bas
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

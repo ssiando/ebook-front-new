@@ -32,7 +32,9 @@ public interface AdminMapper {
     void update(Admin admin);
 
     void recordLoginSuccess(
-            @Param("id") Long id, @Param("lastLoginAt") LocalDateTime lastLoginAt, @Param("lastLoginIp") String lastLoginIp);
+            @Param("id") Long id,
+            @Param("lastLoginAt") LocalDateTime lastLoginAt,
+            @Param("lastLoginIp") String lastLoginIp);
 
     void recordLoginFailure(@Param("id") Long id);
 

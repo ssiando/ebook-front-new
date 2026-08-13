@@ -33,10 +33,10 @@ public class AuthService {
                 .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(AuthErrorCode.LOGIN_FAILED));
 
-//        if (!passwordEncoder.matches(request.password(), admin.getPasswordHash())) {
-//            adminMapper.recordLoginFailure(admin.getId());
-//            throw new BusinessException(AuthErrorCode.LOGIN_FAILED);
-//        }
+        //        if (!passwordEncoder.matches(request.password(), admin.getPasswordHash())) {
+        //            adminMapper.recordLoginFailure(admin.getId());
+        //            throw new BusinessException(AuthErrorCode.LOGIN_FAILED);
+        //        }
         if (!admin.isActiveYn()) {
             throw new BusinessException(AuthErrorCode.ACCOUNT_INACTIVE);
         }

@@ -1,14 +1,13 @@
 package com.mict.ebook.commoncode.service;
 
+import com.mict.ebook.common.exception.BusinessException;
 import com.mict.ebook.commoncode.domain.CodeGroup;
-import com.mict.ebook.commoncode.domain.CodeItem;
 import com.mict.ebook.commoncode.domain.CommonCodeErrorCode;
 import com.mict.ebook.commoncode.dto.CodeGroupResponse;
 import com.mict.ebook.commoncode.dto.CodeItemResponse;
 import com.mict.ebook.commoncode.dto.CommonCodeSearchRequest;
 import com.mict.ebook.commoncode.mapper.CommonCodeRestMapper;
 import com.mict.ebook.commoncode.repository.mapper.CommonCodeMapper;
-import com.mict.ebook.common.exception.BusinessException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

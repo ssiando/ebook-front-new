@@ -10,7 +10,6 @@ import com.mict.ebook.program.service.ProgramQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/programs")
 @RequiredArgsConstructor
-//@PreAuthorize("hasAnyRole('SUPER_ADMIN', 'WORKSPACE_ADMIN')")
+// @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'WORKSPACE_ADMIN')")
 public class ProgramController {
 
     private final ProgramQueryService programQueryService;
@@ -37,7 +36,7 @@ public class ProgramController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String useYn) {
-        var request = new ProgramSearchRequest(workspaceId, keyword, type, useYn);
+        ProgramSearchRequest request = new ProgramSearchRequest(workspaceId, keyword, type, useYn);
         return ApiResponse.success(programQueryService.search(request));
     }
 

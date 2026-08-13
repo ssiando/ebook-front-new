@@ -40,7 +40,7 @@ public class AdminController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String status) {
-        var request = new AdminSearchRequest(keyword, department, status);
+        AdminSearchRequest request = new AdminSearchRequest(keyword, department, status);
         return ApiResponse.success(adminQueryService.search(request));
     }
 

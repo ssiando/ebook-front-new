@@ -1,9 +1,11 @@
 package com.mict.ebook.program.service;
 
+import com.mict.ebook.program.domain.Program;
 import com.mict.ebook.program.dto.ProgramListResponse;
 import com.mict.ebook.program.dto.ProgramSearchRequest;
 import com.mict.ebook.program.mapper.ProgramRestMapper;
 import com.mict.ebook.program.repository.mapper.ProgramMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,7 @@ public class ProgramQueryService {
     private final ProgramRestMapper programRestMapper;
 
     public ProgramListResponse search(ProgramSearchRequest request) {
-        var programs = programMapper.search(
+        List<Program> programs = programMapper.search(
                 request.workspaceId(), request.keyword(), normalize(request.type()), toBoolean(request.useYn()));
         return ProgramListResponse.of(programRestMapper.toResponses(programs));
     }

@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/workspaces")
 @RequiredArgsConstructor
-//@PreAuthorize("hasAnyRole('SUPER_ADMIN', 'WORKSPACE_ADMIN')")
+// @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'WORKSPACE_ADMIN')")
 public class WorkspaceController {
 
     private final WorkspaceQueryService workspaceQueryService;
@@ -54,7 +53,9 @@ public class WorkspaceController {
 
     @PutMapping("/{id}")
     public ApiResponse<WorkspaceResponse> update(
-            @PathVariable Long id, @Valid @RequestBody UpdateWorkspaceRequest request, @AuthenticationPrincipal Jwt jwt) {
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateWorkspaceRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
         Long currentAdminPk = jwt.getClaim("adminPk");
         return ApiResponse.success(workspaceCommandService.update(id, request, currentAdminPk));
     }

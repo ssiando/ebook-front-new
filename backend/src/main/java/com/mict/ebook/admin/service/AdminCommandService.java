@@ -34,7 +34,12 @@ public class AdminCommandService {
 
         String passwordHash = passwordEncoder.encode(request.password());
         Admin admin = Admin.createNew(
-                request.loginId(), request.adminName(), request.email(), passwordHash, request.department(), currentAdminPk);
+                request.loginId(),
+                request.adminName(),
+                request.email(),
+                passwordHash,
+                request.department(),
+                currentAdminPk);
         adminMapper.insert(admin);
 
         List<Long> roleIds = request.roleIds() == null ? List.of() : request.roleIds();
@@ -51,8 +56,12 @@ public class AdminCommandService {
         }
 
         admin.update(
-                request.adminName(), request.email(), request.department(), request.status(),
-                request.serviceExpiresAt(), currentAdminPk);
+                request.adminName(),
+                request.email(),
+                request.department(),
+                request.status(),
+                request.serviceExpiresAt(),
+                currentAdminPk);
         adminMapper.update(admin);
 
         List<String> groupCodes = request.groupCodes() == null ? List.of() : request.groupCodes();

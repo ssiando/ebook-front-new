@@ -38,7 +38,7 @@ public class RoleController {
     @GetMapping
     public ApiResponse<List<RoleResponse>> search(
             @RequestParam Long workspaceId, @RequestParam(required = false) String keyword) {
-        var request = new RoleSearchRequest(workspaceId, keyword);
+        RoleSearchRequest request = new RoleSearchRequest(workspaceId, keyword);
         return ApiResponse.success(roleQueryService.search(request));
     }
 
@@ -49,7 +49,8 @@ public class RoleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<RoleResponse> create(@Valid @RequestBody CreateRoleRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ApiResponse<RoleResponse> create(
+            @Valid @RequestBody CreateRoleRequest request, @AuthenticationPrincipal Jwt jwt) {
         Long currentAdminPk = jwt.getClaim("adminPk");
         return ApiResponse.success(roleCommandService.create(request, currentAdminPk));
     }

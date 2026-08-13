@@ -47,6 +47,8 @@ public class WorkspaceCommandService {
     }
 
     private Workspace findWorkspace(Long id) {
-        return workspaceMapper.findById(id).orElseThrow(() -> new BusinessException(WorkspaceErrorCode.WORKSPACE_NOT_FOUND));
+        return workspaceMapper
+                .findById(id)
+                .orElseThrow(() -> new BusinessException(WorkspaceErrorCode.WORKSPACE_NOT_FOUND));
     }
 }

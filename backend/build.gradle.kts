@@ -47,6 +47,10 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
+
+    // 배치 작업 (DB 백업 등 수동 실행 배치). 메타데이터 테이블은 Flyway 마이그레이션으로 직접
+    // 관리하므로 spring.batch.jdbc.initialize-schema는 never로 둡니다 (application.yml 참고).
+    implementation("org.springframework.boot:spring-boot-starter-batch")
     // waffle-jna(Windows SSPI/GSSAPI 통합 인증)를 제외합니다. 이게 classpath에 있으면
     // mariadb-java-client가 우리가 지정한 계정(username/password) 대신 현재 프로세스의
     // Windows 로그인 계정으로 통합 인증을 먼저 시도해 로컬 DB 접속이 깨집니다.
