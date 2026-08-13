@@ -8,7 +8,7 @@ import { FormInput } from '@/components/common/form/FormInput'
 import { FormCheckboxGroup } from '@/components/common/form/FormCheckboxGroup'
 import { useCreateAdminMutation } from '@/query/admin-query'
 import { useRolesQuery } from '@/query/role-query'
-import { useAuthStore } from '@/store/useAuthStore'
+import { useWorkspacesQuery } from '@/query/workspace-query'
 import { showFormErrors, type FormRules } from '@/utils/formUtils'
 
 // roleIds가 다중 선택(체크박스)이라 defineFormRules 표준 규칙(문자열/숫자/불리언) 밖의 경우 —
@@ -33,13 +33,14 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
   const { t } = useTranslation('admin')
   const createAdmin = useCreateAdminMutation()
   // 역할 다중 선택 목록을 위해 전체 역할을 조회합니다 (역할 관리 화면과 동일한 Role 엔티티 참조).
-  const rolesQuery = useRolesQuery({ keyword: '' })
+  // 관리자 관리 화면에는 아직 워크스페이스 선택 UI가 없어 첫 번째 워크스페이스를 기본으로 사용합니다.
+  const workspacesQuery = useWorkspacesQuery()
+  const workspaceId = workspacesQuery.data?.[0]?.id ?? 0
+  const rolesQuery = useRolesQuery({ workspaceId, keyword: '' }, { enabled: workspaceId > 0 })
   const roleOptions = (rolesQuery.data ?? []).map((role) => ({
     label: role.roleName,
     value: role.id,
   }))
-
-  const currentAdmin = useAuthStore((s) => s.currentAdmin)
 
   const methods = useForm<CreateAdminFormValues>({
     resolver: zodResolver(createAdminSchema),
@@ -65,10 +66,7 @@ export function AdminCreateModal({ open, onClose }: AdminCreateModalProps) {
 
   const handleSubmit = methods.handleSubmit(
     async (values) => {
-      await createAdmin.mutateAsync({
-        ...values,
-        registrant: currentAdmin?.email ?? '',
-      })
+      await createAdmin.mutateAsync(values)
       methods.reset()
       onClose()
     },

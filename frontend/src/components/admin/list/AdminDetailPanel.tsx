@@ -9,7 +9,7 @@ import { clsx } from '@/utils/clsx'
 import { useUpdateAdminMutation, useUpdateAdminRolesMutation } from '@/query/admin-query'
 import { useCodeItemsByGroupCodeQuery } from '@/query/common-code-query'
 import { useRolesQuery } from '@/query/role-query'
-import { useAuthStore } from '@/store/useAuthStore'
+import { useWorkspacesQuery } from '@/query/workspace-query'
 import { ADMIN_STATUS_GROUP_CODE, type Admin } from '@/types/admin'
 
 const detailSchema = z.object({
@@ -67,11 +67,13 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
   const { t } = useTranslation('admin')
   const updateAdmin = useUpdateAdminMutation()
   const updateAdminRoles = useUpdateAdminRolesMutation()
-  const currentAdmin = useAuthStore((s) => s.currentAdmin)
   const statusCodesQuery = useCodeItemsByGroupCodeQuery(ADMIN_STATUS_GROUP_CODE)
   const statusCodes = statusCodesQuery.data ?? []
   // 역할 할당 그룹을 표시하기 위해 전체 역할 목록을 함께 조회합니다.
-  const rolesQuery = useRolesQuery({ keyword: '' })
+  // 관리자 관리 화면에는 아직 워크스페이스 선택 UI가 없어 첫 번째 워크스페이스를 기본으로 사용합니다.
+  const workspacesQuery = useWorkspacesQuery()
+  const workspaceId = workspacesQuery.data?.[0]?.id ?? 0
+  const rolesQuery = useRolesQuery({ workspaceId, keyword: '' }, { enabled: workspaceId > 0 })
   const roles = rolesQuery.data ?? []
   const [checkedRoleIds, setCheckedRoleIds] = useState<Set<string>>(new Set())
 
@@ -103,7 +105,6 @@ export function AdminDetailPanel({ admin }: AdminDetailPanelProps) {
       adminName: admin.adminName,
       email: admin.email,
       department: admin.department,
-      registrant: currentAdmin?.email ?? admin.registrant,
       status: values.status,
       groups: values.groups,
       serviceExpiresAt: values.serviceExpiresAt || undefined,

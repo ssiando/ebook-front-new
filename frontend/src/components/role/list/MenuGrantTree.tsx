@@ -1,28 +1,30 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, Folder, FolderOpen } from 'lucide-react'
 import { clsx } from '@/utils/clsx'
-import type { ProgramItem } from '@/types/program'
+import type { ProgramAdminItem } from '@/types/programAdmin'
 
-interface ProgramTreeNode extends ProgramItem {
+interface ProgramTreeNode extends ProgramAdminItem {
   children: ProgramTreeNode[]
 }
 
 interface MenuGrantTreeProps {
-  rows: ProgramItem[]
+  rows: ProgramAdminItem[]
   loading: boolean
-  checkedIds: Set<string>
+  checkedIds: Set<number>
   disabled: boolean
-  onToggle: (id: string, checked: boolean) => void
+  onToggle: (id: number, checked: boolean) => void
 }
 
 const COLUMNS = 'grid grid-cols-[1fr_1fr_90px_90px] items-center'
 
-function buildTree(rows: ProgramItem[]): ProgramTreeNode[] {
-  const nodeMap = new Map<string, ProgramTreeNode>(rows.map((row) => [row.id, { ...row, children: [] }]))
+function buildTree(rows: ProgramAdminItem[]): ProgramTreeNode[] {
+  const nodeMap = new Map<number, ProgramTreeNode>(
+    rows.map((row) => [row.id, { ...row, children: [] }]),
+  )
   const roots: ProgramTreeNode[] = []
   for (const row of rows) {
     const node = nodeMap.get(row.id)!
-    const parent = row.parentId ? nodeMap.get(row.parentId) : undefined
+    const parent = row.parentProgramId != null ? nodeMap.get(row.parentProgramId) : undefined
     if (parent) parent.children.push(node)
     else roots.push(node)
   }
@@ -30,22 +32,28 @@ function buildTree(rows: ProgramItem[]): ProgramTreeNode[] {
 }
 
 // 역할을 바꿔 선택했을 때 이미 체크된 하위 항목이 접힌 폴더 속에 숨지 않도록 조상 노드를 자동으로 펼친다.
-function collectAncestorIds(rows: ProgramItem[], targetIds: Set<string>): Set<string> {
+function collectAncestorIds(rows: ProgramAdminItem[], targetIds: Set<number>): Set<number> {
   const byId = new Map(rows.map((row) => [row.id, row]))
-  const ancestors = new Set<string>()
+  const ancestors = new Set<number>()
   for (const id of targetIds) {
     let current = byId.get(id)
-    while (current?.parentId) {
-      ancestors.add(current.parentId)
-      current = byId.get(current.parentId)
+    while (current?.parentProgramId != null) {
+      ancestors.add(current.parentProgramId)
+      current = byId.get(current.parentProgramId)
     }
   }
   return ancestors
 }
 
-export function MenuGrantTree({ rows, loading, checkedIds, disabled, onToggle }: MenuGrantTreeProps) {
+export function MenuGrantTree({
+  rows,
+  loading,
+  checkedIds,
+  disabled,
+  onToggle,
+}: MenuGrantTreeProps) {
   const tree = useMemo(() => buildTree(rows), [rows])
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set())
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(() => new Set())
 
   useEffect(() => {
     const ancestors = collectAncestorIds(rows, checkedIds)
@@ -55,7 +63,7 @@ export function MenuGrantTree({ rows, loading, checkedIds, disabled, onToggle }:
     })
   }, [rows, checkedIds])
 
-  const toggleExpand = (id: string) => {
+  const toggleExpand = (id: number) => {
     setExpandedIds((prev) => {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
@@ -97,8 +105,8 @@ export function MenuGrantTree({ rows, loading, checkedIds, disabled, onToggle }:
                 <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
               </span>
             )}
-            <span className="truncate" title={node.label}>
-              {node.label}
+            <span className="truncate" title={node.name}>
+              {node.name}
             </span>
           </div>
           <span className="truncate pr-2 text-gray-500" title={node.code}>
@@ -130,7 +138,12 @@ export function MenuGrantTree({ rows, loading, checkedIds, disabled, onToggle }:
 
   return (
     <div className="flex flex-col rounded border border-gray-200">
-      <div className={clsx(COLUMNS, 'border-b border-gray-200 bg-gray-50 py-2 text-xs font-medium text-gray-600')}>
+      <div
+        className={clsx(
+          COLUMNS,
+          'border-b border-gray-200 bg-gray-50 py-2 text-xs font-medium text-gray-600',
+        )}
+      >
         <span className="pl-2">프로그램명</span>
         <span>코드</span>
         <span className="text-center">타입</span>
@@ -138,10 +151,12 @@ export function MenuGrantTree({ rows, loading, checkedIds, disabled, onToggle }:
       </div>
       <div style={{ height: 420 }} className="overflow-y-auto">
         {loading ? (
-          <div className="flex h-full items-center justify-center text-sm text-gray-400">불러오는 중...</div>
+          <div className="flex h-full items-center justify-center text-sm text-gray-400">
+            불러오는 중...
+          </div>
         ) : tree.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
-            표시할 메뉴가 없습니다.
+            표시할 프로그램이 없습니다.
           </div>
         ) : (
           tree.map((node) => renderNode(node, 0))

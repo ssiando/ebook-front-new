@@ -14,13 +14,18 @@ public interface AdminMapper {
 
     List<String> findRoleNamesByAdminId(@Param("adminId") Long adminId);
 
-    List<Admin> search(@Param("keyword") String keyword, @Param("activeYn") Boolean activeYn);
+    List<Admin> search(
+            @Param("keyword") String keyword, @Param("department") String department, @Param("status") String status);
 
     Optional<Admin> findById(@Param("id") Long id);
 
     boolean existsByEmail(@Param("email") String email);
 
     boolean existsByEmailExcludingId(@Param("email") String email, @Param("id") Long id);
+
+    boolean existsByLoginId(@Param("loginId") String loginId);
+
+    boolean existsByLoginIdExcludingId(@Param("loginId") String loginId, @Param("id") Long id);
 
     void insert(Admin admin);
 
@@ -38,4 +43,10 @@ public interface AdminMapper {
     void deleteAdminRoles(@Param("adminId") Long adminId);
 
     void insertAdminRoles(@Param("adminId") Long adminId, @Param("roleIds") List<Long> roleIds);
+
+    List<String> findGroupCodesByAdminId(@Param("adminId") Long adminId);
+
+    void deleteAdminGroups(@Param("adminId") Long adminId);
+
+    void insertAdminGroups(@Param("adminId") Long adminId, @Param("groupCodes") List<String> groupCodes);
 }

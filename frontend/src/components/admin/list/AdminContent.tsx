@@ -16,7 +16,12 @@ import { DeleteButton } from '@/components/common/ui/DeleteButton'
 import { Badge } from '@/components/common/ui/Badge'
 import { useAdminsQuery, useDeleteAdminMutation } from '@/query/admin-query'
 import { useCodeItemsByGroupCodeQuery } from '@/query/common-code-query'
-import { ADMIN_STATUS_GROUP_CODE, type Admin, type AdminSearchParams } from '@/types/admin'
+import {
+  ADMIN_GROUP_GROUP_CODE,
+  ADMIN_STATUS_GROUP_CODE,
+  type Admin,
+  type AdminSearchParams,
+} from '@/types/admin'
 import { toBadgeTone } from '@/utils/badgeTone'
 
 const gridTheme = themeQuartz.withParams({
@@ -50,6 +55,12 @@ export function AdminContent({ params, searchRevision }: AdminContentProps) {
   const statusCodeByValue = useMemo(
     () => new Map((statusCodesQuery.data ?? []).map((code) => [code.code, code])),
     [statusCodesQuery.data],
+  )
+
+  const groupCodesQuery = useCodeItemsByGroupCodeQuery(ADMIN_GROUP_GROUP_CODE)
+  const groupNameByCode = useMemo(
+    () => new Map((groupCodesQuery.data ?? []).map((code) => [code.code, code.codeName])),
+    [groupCodesQuery.data],
   )
 
   const rowClassRules = useMemo<RowClassRules<Admin>>(
@@ -93,7 +104,7 @@ export function AdminContent({ params, searchRevision }: AdminContentProps) {
             ) : (
               p.value.map((group) => (
                 <Badge key={group} tone="blue">
-                  {group}
+                  {groupNameByCode.get(group) ?? group}
                 </Badge>
               ))
             )}
@@ -116,7 +127,7 @@ export function AdminContent({ params, searchRevision }: AdminContentProps) {
         valueFormatter: (p) => formatLastLogin(p.value),
       },
     ],
-    [t, statusCodeByValue],
+    [t, statusCodeByValue, groupNameByCode],
   )
 
   const handleDelete = async () => {

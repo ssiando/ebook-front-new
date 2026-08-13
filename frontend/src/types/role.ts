@@ -5,33 +5,33 @@ export type SystemFilter = 'ALL' | SystemName
 
 export interface Role {
   id: string
+  workspaceId: number
   roleName: string
   description: string
   memberCount: number
-  programIds: string[]
-  registrant: string
+  programIds: number[]
   createdAt: string
   updatedAt: string
 }
 
 export interface RoleSearchParams {
+  workspaceId: number
   keyword: string
 }
 
 export interface CreateRolePayload {
+  workspaceId: number
   roleName: string
   description: string
-  registrant: string
 }
 
 export interface UpdateRolePayload {
   id: string
   roleName: string
   description: string
-  registrant: string
 }
 
 export interface UpdateRoleProgramsPayload {
   id: string
-  programIds: string[]
+  programIds: number[]
 }

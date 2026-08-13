@@ -11,27 +11,35 @@ import {
   useUpdateRoleMutation,
   useUpdateRoleProgramsMutation,
 } from '@/query/role-query'
+import { useProgramsQuery } from '@/query/program-admin-query'
 import type { Role, RoleSearchParams } from '@/types/role'
-import type { ProgramItem } from '@/types/program'
-import programsData from '@/data/programs.json'
-
-const programs = programsData as ProgramItem[]
+import type { ProgramSearchParams } from '@/types/programAdmin'
 
 interface RoleContentProps {
   params: RoleSearchParams
+  enabled: boolean
 }
 
-export function RoleContent({ params }: RoleContentProps) {
+export function RoleContent({ params, enabled }: RoleContentProps) {
   const [roleRows, setRoleRows] = useState<Role[]>([])
   const [checkedRoleIds, setCheckedRoleIds] = useState<string[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [checkedMenuIds, setCheckedMenuIds] = useState<Set<string>>(new Set())
+  const [checkedMenuIds, setCheckedMenuIds] = useState<Set<number>>(new Set())
   const [createOpen, setCreateOpen] = useState(false)
 
-  const rolesQuery = useRolesQuery(params)
+  const rolesQuery = useRolesQuery(params, { enabled })
   const updateRole = useUpdateRoleMutation()
   const deleteRole = useDeleteRoleMutation()
   const updatePrograms = useUpdateRoleProgramsMutation()
+
+  const programSearchParams: ProgramSearchParams = {
+    workspaceId: params.workspaceId,
+    keyword: '',
+    type: 'ALL',
+    useYn: 'ALL',
+  }
+  const programsQuery = useProgramsQuery(programSearchParams, { enabled })
+  const programs = programsQuery.data?.items ?? []
 
   useEffect(() => {
     if (rolesQuery.data) setRoleRows(rolesQuery.data)
@@ -58,7 +66,7 @@ export function RoleContent({ params }: RoleContentProps) {
     setCheckedRoleIds([])
   }
 
-  const handleToggleMenu = (id: string, checked: boolean) => {
+  const handleToggleMenu = (id: number, checked: boolean) => {
     setCheckedMenuIds((prev) => {
       const next = new Set(prev)
       if (checked) next.add(id)
@@ -105,21 +113,30 @@ export function RoleContent({ params }: RoleContentProps) {
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1.5 text-sm text-gray-500">
             <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-            메뉴 목록{selectedRole ? ` · ${selectedRole.roleName}` : ''} 총 {programs.length}건
+            프로그램 목록{selectedRole ? ` · ${selectedRole.roleName}` : ''} 총 {programs.length}건
           </span>
-          <SaveButton onClick={handleSaveMenus} disabled={!selectedRole || updatePrograms.isPending} />
+          <SaveButton
+            onClick={handleSaveMenus}
+            disabled={!selectedRole || updatePrograms.isPending}
+          />
         </div>
-        {!selectedRole && <p className="text-xs text-gray-400">역할을 선택하면 메뉴를 지정할 수 있습니다.</p>}
+        {!selectedRole && (
+          <p className="text-xs text-gray-400">역할을 선택하면 프로그램을 지정할 수 있습니다.</p>
+        )}
         <MenuGrantTree
           rows={programs}
-          loading={false}
+          loading={programsQuery.isFetching}
           checkedIds={checkedMenuIds}
           disabled={!selectedRole}
           onToggle={handleToggleMenu}
         />
       </div>
 
-      <RoleCreateModal open={createOpen} onClose={() => setCreateOpen(false)} />
+      <RoleCreateModal
+        open={createOpen}
+        workspaceId={params.workspaceId}
+        onClose={() => setCreateOpen(false)}
+      />
     </div>
   )
 }

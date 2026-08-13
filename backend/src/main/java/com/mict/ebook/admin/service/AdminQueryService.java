@@ -21,7 +21,7 @@ public class AdminQueryService {
     private final AdminRestMapper adminRestMapper;
 
     public List<AdminResponse> search(AdminSearchRequest request) {
-        List<Admin> admins = adminMapper.search(request.keyword(), request.activeYn());
+        List<Admin> admins = adminMapper.search(request.keyword(), request.department(), request.status());
 
         return admins.stream().map(this::toResponse).toList();
     }
@@ -36,6 +36,7 @@ public class AdminQueryService {
 
     private AdminResponse toResponse(Admin admin) {
         List<Long> roleIds = adminMapper.findRoleIdsByAdminId(admin.getId());
-        return adminRestMapper.toResponse(admin, roleIds);
+        List<String> groupCodes = adminMapper.findGroupCodesByAdminId(admin.getId());
+        return adminRestMapper.toResponse(admin, roleIds, groupCodes);
     }
 }

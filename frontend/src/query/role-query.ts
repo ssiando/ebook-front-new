@@ -7,11 +7,12 @@ export const roleKeys = {
   list: (params: RoleSearchParams) => [...roleKeys.all, 'list', params] as const,
 }
 
-export function useRolesQuery(params: RoleSearchParams) {
+export function useRolesQuery(params: RoleSearchParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: roleKeys.list(params),
     queryFn: () => fetchRoles(params),
     placeholderData: (prev) => prev,
+    enabled: options?.enabled,
   })
 }
 

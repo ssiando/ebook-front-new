@@ -4,7 +4,6 @@ import { Modal } from '@/components/common/ui/Modal'
 import { Button } from '@/components/common/ui/Button'
 import { FormInput } from '@/components/common/form/FormInput'
 import { useCreateRoleMutation } from '@/query/role-query'
-import { useAuthStore } from '@/store/useAuthStore'
 import { defineFormRules, showFormErrors, validateForm } from '@/utils/formUtils'
 
 const createRoleRules = defineFormRules({
@@ -16,12 +15,12 @@ const createRoleSchema = validateForm(createRoleRules)
 
 interface RoleCreateModalProps {
   open: boolean
+  workspaceId: number
   onClose: () => void
 }
 
-export function RoleCreateModal({ open, onClose }: RoleCreateModalProps) {
+export function RoleCreateModal({ open, workspaceId, onClose }: RoleCreateModalProps) {
   const createRole = useCreateRoleMutation()
-  const currentAdmin = useAuthStore((s) => s.currentAdmin)
 
   const { control, handleSubmit, reset } = useForm({
     resolver: zodResolver(createRoleSchema),
@@ -35,7 +34,7 @@ export function RoleCreateModal({ open, onClose }: RoleCreateModalProps) {
 
   const onSubmit = handleSubmit(
     async (values) => {
-      await createRole.mutateAsync({ ...values, registrant: currentAdmin?.email ?? '' })
+      await createRole.mutateAsync({ ...values, workspaceId })
       handleClose()
     },
     (errors) => showFormErrors(errors, createRoleRules),

@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface AdminRestMapper {
 
-    AdminResponse toResponse(Admin admin, List<Long> roleIds);
+    AdminResponse toResponse(Admin admin, List<Long> roleIds, List<String> groupCodes);
 }

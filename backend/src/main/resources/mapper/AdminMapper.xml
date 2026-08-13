@@ -4,13 +4,17 @@
 
     <resultMap id="adminResultMap" type="com.mict.ebook.admin.domain.Admin">
         <id property="id" column="id" />
+        <result property="loginId" column="login_id" />
         <result property="adminName" column="admin_nm" />
         <result property="email" column="admin_email" />
         <result property="passwordHash" column="admin_pwd" />
+        <result property="department" column="department" />
         <result property="failCount" column="fail_fcnt" />
         <result property="registrantId" column="regr_id" />
         <result property="updaterId" column="updr_id" />
         <result property="activeYn" column="active_yn" />
+        <result property="status" column="status" />
+        <result property="serviceExpiresAt" column="service_expires_at" />
         <result property="lastLoginAt" column="last_login_dtm" />
         <result property="lastLoginIp" column="last_login_ip" />
         <result property="createdAt" column="reg_dtm" />
@@ -18,8 +22,8 @@
     </resultMap>
 
     <sql id="adminColumns">
-        id, admin_nm, admin_email, admin_pwd, fail_fcnt, regr_id, updr_id, active_yn,
-        last_login_dtm, last_login_ip, reg_dtm, upd_dtm
+        id, login_id, admin_nm, admin_email, admin_pwd, department, fail_fcnt, regr_id, updr_id, active_yn,
+        status, service_expires_at, last_login_dtm, last_login_ip, reg_dtm, upd_dtm
     </sql>
 
     <select id="findByEmail" resultMap="adminResultMap">
@@ -42,8 +46,11 @@
                 AND (admin_nm LIKE CONCAT('%', #{keyword}, '%')
                 OR admin_email LIKE CONCAT('%', #{keyword}, '%'))
             </if>
-            <if test="activeYn != null">
-                AND active_yn = #{activeYn}
+            <if test="department != null and department != ''">
+                AND department = #{department}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
             </if>
         </where>
     </sql>
@@ -76,17 +83,38 @@
         )
     </select>
 
+    <select id="existsByLoginId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_admin_bas
+        WHERE login_id = #{loginId}
+        )
+    </select>
+
+    <select id="existsByLoginIdExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_admin_bas
+        WHERE login_id = #{loginId}
+        AND id != #{id}
+        )
+    </select>
+
     <insert id="insert" parameterType="com.mict.ebook.admin.domain.Admin" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO cm_admin_bas (admin_nm, admin_email, admin_pwd, fail_fcnt, active_yn, regr_id, updr_id)
-        VALUES (#{adminName}, #{email}, #{passwordHash}, #{failCount}, #{activeYn}, #{registrantId}, #{updaterId})
+        INSERT INTO cm_admin_bas
+            (login_id, admin_nm, admin_email, admin_pwd, department, fail_fcnt, active_yn, status, regr_id, updr_id)
+        VALUES
+            (#{loginId}, #{adminName}, #{email}, #{passwordHash}, #{department}, #{failCount}, #{activeYn}, #{status},
+             #{registrantId}, #{updaterId})
     </insert>
 
     <update id="update" parameterType="com.mict.ebook.admin.domain.Admin">
         UPDATE cm_admin_bas
-        SET admin_nm  = #{adminName},
-            admin_email = #{email},
-            active_yn = #{activeYn},
-            updr_id   = #{updaterId}
+        SET admin_nm           = #{adminName},
+            admin_email        = #{email},
+            department         = #{department},
+            active_yn          = #{activeYn},
+            status             = #{status},
+            service_expires_at = #{serviceExpiresAt},
+            updr_id            = #{updaterId}
         WHERE id = #{id}
     </update>
 
@@ -127,6 +155,26 @@
         VALUES
         <foreach collection="roleIds" item="roleId" separator=",">
             (#{adminId}, #{roleId})
+        </foreach>
+    </insert>
+
+    <select id="findGroupCodesByAdminId" resultType="string">
+        SELECT group_code
+        FROM cm_admin_group
+        WHERE admin_id = #{adminId}
+    </select>
+
+    <delete id="deleteAdminGroups">
+        DELETE
+        FROM cm_admin_group
+        WHERE admin_id = #{adminId}
+    </delete>
+
+    <insert id="insertAdminGroups">
+        INSERT INTO cm_admin_group (admin_id, group_code)
+        VALUES
+        <foreach collection="groupCodes" item="groupCode" separator=",">
+            (#{adminId}, #{groupCode})
         </foreach>
     </insert>
 

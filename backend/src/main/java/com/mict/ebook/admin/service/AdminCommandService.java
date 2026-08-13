@@ -28,16 +28,20 @@ public class AdminCommandService {
         if (adminMapper.existsByEmail(request.email())) {
             throw new BusinessException(AdminErrorCode.EMAIL_DUPLICATE);
         }
+        if (adminMapper.existsByLoginId(request.loginId())) {
+            throw new BusinessException(AdminErrorCode.LOGIN_ID_DUPLICATE);
+        }
 
         String passwordHash = passwordEncoder.encode(request.password());
-        Admin admin = Admin.createNew(request.adminName(), request.email(), passwordHash, currentAdminPk);
+        Admin admin = Admin.createNew(
+                request.loginId(), request.adminName(), request.email(), passwordHash, request.department(), currentAdminPk);
         adminMapper.insert(admin);
 
         List<Long> roleIds = request.roleIds() == null ? List.of() : request.roleIds();
         if (!roleIds.isEmpty()) {
             adminMapper.insertAdminRoles(admin.getId(), roleIds);
         }
-        return adminRestMapper.toResponse(admin, roleIds);
+        return adminRestMapper.toResponse(admin, roleIds, List.of());
     }
 
     public AdminResponse update(Long id, UpdateAdminRequest request, Long currentAdminPk) {
@@ -46,9 +50,18 @@ public class AdminCommandService {
             throw new BusinessException(AdminErrorCode.EMAIL_DUPLICATE);
         }
 
-        admin.update(request.adminName(), request.email(), request.activeYn(), currentAdminPk);
+        admin.update(
+                request.adminName(), request.email(), request.department(), request.status(),
+                request.serviceExpiresAt(), currentAdminPk);
         adminMapper.update(admin);
-        return adminRestMapper.toResponse(admin, adminMapper.findRoleIdsByAdminId(id));
+
+        List<String> groupCodes = request.groupCodes() == null ? List.of() : request.groupCodes();
+        adminMapper.deleteAdminGroups(id);
+        if (!groupCodes.isEmpty()) {
+            adminMapper.insertAdminGroups(id, groupCodes);
+        }
+
+        return adminRestMapper.toResponse(admin, adminMapper.findRoleIdsByAdminId(id), groupCodes);
     }
 
     public AdminResponse updateRoles(Long id, UpdateAdminRolesRequest request) {
@@ -57,12 +70,14 @@ public class AdminCommandService {
         if (!request.roleIds().isEmpty()) {
             adminMapper.insertAdminRoles(id, request.roleIds());
         }
-        return adminRestMapper.toResponse(admin, request.roleIds());
+        List<String> groupCodes = adminMapper.findGroupCodesByAdminId(id);
+        return adminRestMapper.toResponse(admin, request.roleIds(), groupCodes);
     }
 
     public void delete(Long id) {
         findAdmin(id);
         adminMapper.deleteAdminRoles(id);
+        adminMapper.deleteAdminGroups(id);
         adminMapper.deleteById(id);
     }
 

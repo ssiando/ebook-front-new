@@ -33,12 +33,22 @@ function buildTreeRows(items: ProgramAdminItem[], collapsedIds: Set<number>): Tr
     list.sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id)
   }
 
-  const result: TreeRow[] = []
-  const visited = new Set<number>()
+  // 접힘 상태와 무관하게 루트에서 도달 가능한 id 집합을 먼저 구해둔다 — 그래야 아래
+  // "고아 행 보정"이 (parentProgramId가 깨진) 진짜 고아와 "부모가 접혀서 안 보이는 자식"을
+  // 구분할 수 있다. 이 구분이 없으면 접은 하위 행이 고아로 오인되어 최상위로 다시
+  // 노출되는 문제가 생긴다.
+  const reachable = new Set<number>()
+  function markReachable(parentId: number | null) {
+    for (const item of childrenByParentId.get(parentId) ?? []) {
+      reachable.add(item.id)
+      markReachable(item.id)
+    }
+  }
+  markReachable(null)
 
+  const result: TreeRow[] = []
   function walk(parentId: number | null, depth: number) {
     for (const item of childrenByParentId.get(parentId) ?? []) {
-      visited.add(item.id)
       const hasChildren = (childrenByParentId.get(item.id)?.length ?? 0) > 0
       result.push({ ...item, depth, hasChildren })
       if (hasChildren && !collapsedIds.has(item.id)) {
@@ -48,9 +58,9 @@ function buildTreeRows(items: ProgramAdminItem[], collapsedIds: Set<number>): Tr
   }
   walk(null, 0)
 
-  // parentProgramId가 화면에 없는 행(고아 행)을 놓치지 않도록 최상위로 보정해 추가한다.
+  // parentProgramId가 존재하지 않는 id를 가리키는 진짜 고아 행만 최상위로 보정해 추가한다.
   for (const item of items) {
-    if (!visited.has(item.id)) {
+    if (!reachable.has(item.id) && item.parentProgramId != null) {
       result.push({ ...item, depth: 0, hasChildren: false })
     }
   }

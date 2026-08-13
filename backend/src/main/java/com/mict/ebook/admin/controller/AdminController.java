@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/admins")
+@RequestMapping("/api/admins")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'WORKSPACE_ADMIN')")
 public class AdminController {
@@ -37,8 +37,10 @@ public class AdminController {
 
     @GetMapping
     public ApiResponse<List<AdminResponse>> search(
-            @RequestParam(required = false) String keyword, @RequestParam(required = false) Boolean activeYn) {
-        var request = new AdminSearchRequest(keyword, activeYn);
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String status) {
+        var request = new AdminSearchRequest(keyword, department, status);
         return ApiResponse.success(adminQueryService.search(request));
     }
 

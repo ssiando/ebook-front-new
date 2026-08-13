@@ -42,7 +42,7 @@ export default function ProgramManagement() {
   const [rows, setRows] = useState<ProgramAdminItem[]>([])
   const [checkedIds, setCheckedIds] = useState<number[]>([])
 
-  const methods = useForm<ProgramSearchFormValues>({
+  const { control, reset, handleSubmit } = useForm<ProgramSearchFormValues>({
     resolver: zodResolver(programSearchSchema),
     defaultValues: DEFAULT_SEARCH_FORM,
   })
@@ -57,21 +57,21 @@ export default function ProgramManagement() {
     const workspaces = workspacesQuery.data
     if (!workspaces || workspaces.length === 0 || params.workspaceId > 0) return
     const firstId = workspaces[0].id
-    methods.reset({ ...DEFAULT_SEARCH_FORM, workspaceId: String(firstId) })
+    reset({ ...DEFAULT_SEARCH_FORM, workspaceId: String(firstId) })
     setParams((prev) => ({ ...prev, workspaceId: firstId }))
-  }, [workspacesQuery.data, params.workspaceId, methods])
+  }, [workspacesQuery.data, params.workspaceId])
 
   useEffect(() => {
     if (programsQuery.data) setRows(programsQuery.data.items)
   }, [programsQuery.data])
 
-  const handleSearch = methods.handleSubmit((values) => {
+  const handleSearch = handleSubmit((values) => {
     setParams({ ...values, workspaceId: Number(values.workspaceId) })
   })
 
   const handleReset = () => {
     const defaults = { ...DEFAULT_SEARCH_FORM, workspaceId: String(params.workspaceId) }
-    methods.reset(defaults)
+    reset(defaults)
     setParams({ ...DEFAULT_PARAMS, workspaceId: params.workspaceId })
   }
 
@@ -139,7 +139,7 @@ export default function ProgramManagement() {
 
       {/* 2. 조회 영역 */}
       <PageSearch onReset={handleReset}>
-        <ProgramSearch control={methods.control} />
+        <ProgramSearch control={control} />
       </PageSearch>
 
       {/* 3. 본문 */}
