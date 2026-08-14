@@ -7,6 +7,11 @@
     "children": [{ "id": "adminManagement", "label": "관리자 관리", "path": "/adminManagement" }]
   },
   {
+    "id": "book",
+    "label": "도서 관리",
+    "children": [{ "id": "bookManagement", "label": "도서 관리", "path": "/bookManagement" }]
+  },
+  {
     "id": "system",
     "label": "시스템관리",
     "children": [

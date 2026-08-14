@@ -1,5 +1,6 @@
 import {
   Box,
+  BookOpen,
   CreditCard,
   FileText,
   Home,
@@ -16,6 +17,7 @@ export const menuIcons: Record<string, ComponentType<{ size?: number; className?
   dashboard: LayoutDashboard,
   home: Home,
   admin: User,
+  book: BookOpen,
   common: Settings,
   master: ListTree,
   system: Settings,
