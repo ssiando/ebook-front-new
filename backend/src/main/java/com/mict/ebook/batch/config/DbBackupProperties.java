@@ -6,4 +6,5 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app.batch.db-backup")
-public record DbBackupProperties(String dumpExecutablePath, @NotBlank String targetPath) {}
+public record DbBackupProperties(
+        String dumpExecutablePath, String restoreExecutablePath, @NotBlank String targetPath) {}

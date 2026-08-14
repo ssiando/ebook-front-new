@@ -42,6 +42,7 @@ app:
   batch:
     db-backup:
       dump-executable-path: mariadb-dump # PATH에 등록되어 있으면 파일명만, 아니면 절대경로로 교체
+      restore-executable-path: mariadb # 복원용 클라이언트. PATH에 등록되어 있으면 파일명만, 아니면 절대경로로 교체
       # ${user.home}은 Spring이 JVM 시스템 프로퍼티로 자동 치환 — Windows(C:\Users\{user})와
       # Ubuntu(/home/{user}) 양쪽에서 코드 변경 없이 그대로 동작한다.
       target-path: ${user.home}/ebook-backups

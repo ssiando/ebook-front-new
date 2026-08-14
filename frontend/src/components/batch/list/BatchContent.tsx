@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { confirm } from '@/store/useConfirmStore'
 import { BatchListGrid } from './BatchListGrid'
 import { BatchFormModal } from './BatchFormModal'
 import { AddButton } from '@/components/common/ui/AddButton'
@@ -32,7 +33,7 @@ export function BatchContent({
 
   const handleDelete = async () => {
     if (checkedIds.length === 0) return
-    if (!window.confirm(`선택한 배치 ${checkedIds.length}건을 삭제하시겠습니까?`)) return
+    if (!(await confirm(`선택한 배치 ${checkedIds.length}건을 삭제하시겠습니까?`))) return
     await Promise.all(checkedIds.map((id) => deleteBatch.mutateAsync(id)))
     setCheckedIds([])
   }

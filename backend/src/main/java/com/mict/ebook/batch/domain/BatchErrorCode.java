@@ -14,7 +14,10 @@ public enum BatchErrorCode implements ErrorCode {
     DUMP_TIMEOUT("B004", "DB 백업 실행이 시간 초과되었습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     JOB_EXECUTION_FAILED("B005", "배치 작업 실행에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     BATCH_NOT_FOUND("B006", "배치를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    BATCH_CODE_DUPLICATE("B007", "이미 존재하는 배치 코드입니다.", HttpStatus.CONFLICT);
+    BATCH_CODE_DUPLICATE("B007", "이미 존재하는 배치 코드입니다.", HttpStatus.CONFLICT),
+    RESTORE_SOURCE_NOT_FOUND("B008", "복원할 백업 파일을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+    RESTORE_EXECUTION_FAILED("B009", "DB 복원 실행에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    RESTORE_TIMEOUT("B010", "DB 복원 실행이 시간 초과되었습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String code;
     private final String message;

@@ -21,7 +21,8 @@
       { "id": "programManagement", "label": "프로그램 관리", "path": "/programManagement" },
       { "id": "roleManagement", "label": "역할 관리", "path": "/roleManagement" },
       { "id": "commonCode", "label": "공통관리", "path": "/commonCodeManagement" },
-      { "id": "batchManagement", "label": "배치 관리", "path": "/batchManagement" }
+      { "id": "batchManagement", "label": "배치 관리", "path": "/batchManagement" },
+      { "id": "dbBackupManagement", "label": "DB 백업 관리", "path": "/dbBackupManagement" }
     ]
   }
 ]

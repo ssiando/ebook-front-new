@@ -11,6 +11,7 @@ import {
 } from 'ag-grid-community'
 import { AdminDetailPanel } from './AdminDetailPanel'
 import { AdminCreateModal } from './AdminCreateModal'
+import { confirm } from '@/store/useConfirmStore'
 import { AddButton } from '@/components/common/ui/AddButton'
 import { DeleteButton } from '@/components/common/ui/DeleteButton'
 import { Badge } from '@/components/common/ui/Badge'
@@ -132,7 +133,7 @@ export function AdminContent({ params, searchRevision }: AdminContentProps) {
 
   const handleDelete = async () => {
     if (checkedIds.length === 0) return
-    if (!window.confirm(t('deleteConfirm', { count: checkedIds.length }))) return
+    if (!(await confirm(t('deleteConfirm', { count: checkedIds.length })))) return
     await Promise.all(checkedIds.map((id) => deleteAdmin.mutateAsync(id)))
     setCheckedIds([])
   }

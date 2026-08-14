@@ -1,0 +1,6 @@
+package com.mict.ebook.dbbackup.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record UpdateDbBackupRequest(@NotBlank @Size(max = 200) String backupName) {}

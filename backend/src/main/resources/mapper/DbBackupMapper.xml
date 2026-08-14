@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.dbbackup.repository.mapper.DbBackupMapper">
+
+    <resultMap id="dbBackupResultMap" type="com.mict.ebook.dbbackup.domain.DbBackup">
+        <id property="id" column="id" />
+        <result property="backupName" column="backup_name" />
+        <result property="filePath" column="file_path" />
+        <result property="fileSizeBytes" column="file_size_bytes" />
+        <result property="status" column="status" />
+        <result property="restoredAt" column="restored_at" />
+        <result property="restoreStatus" column="restore_status" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
+    </resultMap>
+
+    <sql id="dbBackupColumns">
+        id, backup_name, file_path, file_size_bytes, status, restored_at, restore_status,
+        regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="search" resultMap="dbBackupResultMap">
+        SELECT <include refid="dbBackupColumns" />
+        FROM cm_db_backup_bas
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND backup_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultMap="dbBackupResultMap">
+        SELECT <include refid="dbBackupColumns" />
+        FROM cm_db_backup_bas
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsByBackupName" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_db_backup_bas
+        WHERE backup_name = #{backupName}
+        )
+    </select>
+
+    <select id="existsByBackupNameExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM cm_db_backup_bas
+        WHERE backup_name = #{backupName}
+        AND id != #{id}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.dbbackup.domain.DbBackup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cm_db_backup_bas (backup_name, file_path, file_size_bytes, status, regr_id, updr_id)
+        VALUES (#{backupName}, #{filePath}, #{fileSizeBytes}, #{status}, #{registrantId}, #{updaterId})
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.dbbackup.domain.DbBackup">
+        UPDATE cm_db_backup_bas
+        SET backup_name = #{backupName},
+            updr_id     = #{updaterId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateRestoreResult">
+        UPDATE cm_db_backup_bas
+        SET restore_status = #{restoreStatus},
+            restored_at    = #{restoredAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM cm_db_backup_bas
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

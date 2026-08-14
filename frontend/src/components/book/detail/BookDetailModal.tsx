@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { confirm } from '@/store/useConfirmStore'
 import { Modal } from '@/components/common/ui/Modal'
 import { Badge } from '@/components/common/ui/Badge'
 import { AddButton } from '@/components/common/ui/AddButton'
@@ -31,8 +32,8 @@ export function BookDetailModal({ open, book, onClose, onEditClick }: BookDetail
 
   if (!book) return null
 
-  const handleDeleteRevision = (revision: BookRevision) => {
-    if (!window.confirm(`v${revision.revisionNo} 버전을 삭제하시겠습니까?`)) return
+  const handleDeleteRevision = async (revision: BookRevision) => {
+    if (!(await confirm(`v${revision.revisionNo} 버전을 삭제하시겠습니까?`))) return
     deleteRevision.mutate(revision.id)
   }
 

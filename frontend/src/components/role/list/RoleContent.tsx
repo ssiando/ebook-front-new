@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { confirm } from '@/store/useConfirmStore'
 import { AddButton } from '@/components/common/ui/AddButton'
 import { SaveButton } from '@/components/common/ui/SaveButton'
 import { DeleteButton } from '@/components/common/ui/DeleteButton'
@@ -60,7 +61,7 @@ export function RoleContent({ params, enabled }: RoleContentProps) {
 
   const handleDeleteRoles = async () => {
     if (checkedRoleIds.length === 0) return
-    if (!window.confirm(`선택한 ${checkedRoleIds.length}건을 삭제하시겠습니까?`)) return
+    if (!(await confirm(`선택한 ${checkedRoleIds.length}건을 삭제하시겠습니까?`))) return
     await Promise.all(checkedRoleIds.map((id) => deleteRole.mutateAsync(id)))
     if (selectedId && checkedRoleIds.includes(selectedId)) setSelectedId(null)
     setCheckedRoleIds([])

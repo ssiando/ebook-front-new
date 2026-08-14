@@ -4,6 +4,7 @@ import { BookListGrid } from './BookListGrid'
 import { BookCardGrid } from './BookCardGrid'
 import { BookFormModal } from './BookFormModal'
 import { BookDetailModal } from '../detail/BookDetailModal'
+import { confirm } from '@/store/useConfirmStore'
 import { AddButton } from '@/components/common/ui/AddButton'
 import { DeleteButton } from '@/components/common/ui/DeleteButton'
 import { useDeleteBookMutation } from '@/query/book-query'
@@ -42,7 +43,7 @@ export function BookContent({ data, isLoading }: BookContentProps) {
 
   const handleDelete = async () => {
     if (checkedIds.length === 0) return
-    if (!window.confirm(`선택한 도서 ${checkedIds.length}건을 삭제하시겠습니까?`)) return
+    if (!(await confirm(`선택한 도서 ${checkedIds.length}건을 삭제하시겠습니까?`))) return
     await Promise.all(checkedIds.map((id) => deleteBook.mutateAsync(id)))
     setCheckedIds([])
   }

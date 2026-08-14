@@ -1,6 +1,7 @@
 import { type ReactNode, Suspense } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastHost } from '@/components/common/ui/ToastHost'
+import { ConfirmDialogHost } from '@/components/common/ui/ConfirmDialogHost'
 import '@/i18n'
 import '@/lib/ag-grid'
 
@@ -18,6 +19,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <Suspense fallback={null}>{children}</Suspense>
       <ToastHost />
+      <ConfirmDialogHost />
     </QueryClientProvider>
   )
 }

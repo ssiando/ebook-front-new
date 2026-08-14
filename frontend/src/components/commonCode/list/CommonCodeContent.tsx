@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { confirm } from '@/store/useConfirmStore'
 import { GridSectionHeader } from './GridSectionHeader'
 import { CodeGroupGrid } from './CodeGroupGrid'
 import { CodeItemGrid } from './CodeItemGrid'
@@ -50,7 +51,7 @@ export function CommonCodeContent({ params }: CommonCodeContentProps) {
 
   const handleRemoveGroups = async () => {
     if (checkedGroupIds.length === 0) return
-    if (!window.confirm(`선택한 ${checkedGroupIds.length}건을 삭제하시겠습니까?`)) return
+    if (!(await confirm(`선택한 ${checkedGroupIds.length}건을 삭제하시겠습니까?`))) return
     await Promise.all(checkedGroupIds.map((id) => deleteGroup.mutateAsync(id)))
     if (selectedGroupId && checkedGroupIds.includes(selectedGroupId)) setSelectedGroupId(null)
     setCheckedGroupIds([])
@@ -68,7 +69,7 @@ export function CommonCodeContent({ params }: CommonCodeContentProps) {
 
   const handleRemoveItems = async () => {
     if (checkedItemIds.length === 0) return
-    if (!window.confirm(`선택한 ${checkedItemIds.length}건을 삭제하시겠습니까?`)) return
+    if (!(await confirm(`선택한 ${checkedItemIds.length}건을 삭제하시겠습니까?`))) return
     await Promise.all(checkedItemIds.map((id) => deleteItem.mutateAsync(id)))
     setCheckedItemIds([])
   }

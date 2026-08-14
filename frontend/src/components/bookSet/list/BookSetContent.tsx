@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { confirm } from '@/store/useConfirmStore'
 import { BookSetGrid } from './BookSetGrid'
 import { BookSetFormModal } from './BookSetFormModal'
 import { BookAssignPanel } from './BookAssignPanel'
@@ -23,7 +24,7 @@ export function BookSetContent({ data, isLoading }: BookSetContentProps) {
 
   const handleDelete = async () => {
     if (!selected) return
-    if (!window.confirm(`"${selected.setName}" 세트를 삭제하시겠습니까?`)) return
+    if (!(await confirm(`"${selected.setName}" 세트를 삭제하시겠습니까?`))) return
     await deleteBookSet.mutateAsync(selected.id)
     setSelectedId(null)
   }
