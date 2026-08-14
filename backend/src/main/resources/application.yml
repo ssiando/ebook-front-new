@@ -13,6 +13,11 @@ spring:
     jdbc:
       initialize-schema: never # BATCH_* 메타데이터 테이블은 다른 스키마와 동일하게 Flyway 마이그레이션으로 생성.
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 # p6spy-spring-boot-starter(gavlyukovskiy)는 기본 설정으로도 실행 SQL을 p6spy 로거로 출력합니다.
 # 로그 포맷/필터를 세밀하게 조정하려면 decorator.datasource.p6spy.* 프로퍼티를 확인해
 # 최신 스타터 문서 기준으로 추가하세요 (여기서는 기본값을 그대로 사용).
@@ -40,6 +45,11 @@ app:
       # ${user.home}은 Spring이 JVM 시스템 프로퍼티로 자동 치환 — Windows(C:\Users\{user})와
       # Ubuntu(/home/{user}) 양쪽에서 코드 변경 없이 그대로 동작한다.
       target-path: ${user.home}/ebook-backups
+  # 도서 커버/썸네일 등 업로드 파일을 저장하는 로컬 디렉터리. common/config/WebConfig가 url-prefix 경로로
+  # 정적 서빙하고, book/service/BookFileStorageService가 이 경로 아래 book/ 하위 폴더에 저장한다.
+  upload:
+    path: C:/tmp
+    url-prefix: /uploads
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

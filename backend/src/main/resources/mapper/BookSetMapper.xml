@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.bookset.repository.mapper.BookSetMapper">
+
+    <resultMap id="bookSetResultMap" type="com.mict.ebook.bookset.domain.BookSet">
+        <id property="id" column="set_id" />
+        <result property="setName" column="set_name" />
+        <result property="description" column="description" />
+        <result property="activeYn" column="active_yn" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
+    </resultMap>
+
+    <sql id="bookSetColumns">
+        set_id, set_name, description, active_yn, regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="search" resultMap="bookSetResultMap">
+        SELECT <include refid="bookSetColumns" />
+        FROM ebk_book_set
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (set_name LIKE CONCAT('%', #{keyword}, '%')
+                OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY set_id DESC
+    </select>
+
+    <select id="findById" resultMap="bookSetResultMap">
+        SELECT <include refid="bookSetColumns" />
+        FROM ebk_book_set
+        WHERE set_id = #{id}
+    </select>
+
+    <select id="existsBySetName" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM ebk_book_set
+        WHERE set_name = #{setName}
+        )
+    </select>
+
+    <select id="existsBySetNameExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM ebk_book_set
+        WHERE set_name = #{setName}
+        AND set_id != #{id}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.bookset.domain.BookSet" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ebk_book_set (set_name, description, active_yn, regr_id, updr_id)
+        VALUES (#{setName}, #{description}, #{activeYn}, #{registrantId}, #{updaterId})
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.bookset.domain.BookSet">
+        UPDATE ebk_book_set
+        SET set_name    = #{setName},
+            description = #{description},
+            active_yn   = #{activeYn},
+            updr_id     = #{updaterId}
+        WHERE set_id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM ebk_book_set
+        WHERE set_id = #{id}
+    </delete>
+
+    <select id="countBooksBySetId" resultType="long">
+        SELECT COUNT(*)
+        FROM ebk_book_set_item
+        WHERE set_id = #{setId}
+    </select>
+
+    <select id="findBookIdsBySetId" resultType="long">
+        SELECT book_id
+        FROM ebk_book_set_item
+        WHERE set_id = #{setId}
+    </select>
+
+    <delete id="deleteBookSetItems">
+        DELETE FROM ebk_book_set_item
+        WHERE set_id = #{setId}
+    </delete>
+
+    <insert id="insertBookSetItems">
+        INSERT INTO ebk_book_set_item (set_id, book_id)
+        VALUES
+        <foreach collection="bookIds" item="bookId" separator=",">
+            (#{setId}, #{bookId})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -10,7 +10,7 @@ import { BookContent } from '@/components/book/list/BookContent'
 import { useBooksQuery } from '@/query/book-query'
 import type { BookSearchParams } from '@/types/book'
 
-const DEFAULT_SEARCH: BookSearchFormValues = { keyword: '', category: 'ALL', status: 'ALL' }
+const DEFAULT_SEARCH: BookSearchFormValues = { keyword: '', bookType: 'ALL', activeYn: 'ALL' }
 
 export default function BookManagement() {
   const [params, setParams] = useState<BookSearchParams>(DEFAULT_SEARCH)

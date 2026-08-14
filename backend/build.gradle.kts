@@ -36,6 +36,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+    // 소스 변경 시 자동 재기동 (로컬 개발 전용, 배포 아티팩트에는 포함되지 않음)
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     // Security / JWT
     // 별도 인가서버(Keycloak 등) 없이 자체 발급 JWT(HS256)를 사용합니다.
     // common/config/SecurityConfig가 oauth2-resource-server의 JwtEncoder/JwtDecoder를

@@ -1,6 +1,7 @@
 package com.mict.ebook.workspace.controller;
 
 import com.mict.ebook.common.response.ApiResponse;
+import com.mict.ebook.common.security.AuthContext;
 import com.mict.ebook.workspace.dto.CreateWorkspaceRequest;
 import com.mict.ebook.workspace.dto.UpdateWorkspaceRequest;
 import com.mict.ebook.workspace.dto.WorkspaceResponse;
@@ -11,8 +12,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,19 +44,14 @@ public class WorkspaceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<WorkspaceResponse> create(
-            @Valid @RequestBody CreateWorkspaceRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(workspaceCommandService.create(request, currentAdminPk));
+    public ApiResponse<WorkspaceResponse> create(@Valid @RequestBody CreateWorkspaceRequest request) {
+        return ApiResponse.success(workspaceCommandService.create(request, AuthContext.getCurrentAdminPk()));
     }
 
     @PutMapping("/{id}")
     public ApiResponse<WorkspaceResponse> update(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateWorkspaceRequest request,
-            @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(workspaceCommandService.update(id, request, currentAdminPk));
+            @PathVariable Long id, @Valid @RequestBody UpdateWorkspaceRequest request) {
+        return ApiResponse.success(workspaceCommandService.update(id, request, AuthContext.getCurrentAdminPk()));
     }
 
     @DeleteMapping("/{id}")

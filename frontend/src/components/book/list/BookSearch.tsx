@@ -1,13 +1,13 @@
 import type { Control } from 'react-hook-form'
 import { FormInput } from '@/components/common/form/FormInput'
 import { FormSelect } from '@/components/common/form/FormSelect'
-import { BOOK_CATEGORIES, BOOK_STATUSES } from '@/types/book'
+import { BOOK_TYPES } from '@/types/book'
 import type { BookSearchFormValues } from './bookSearchSchema'
 
-const STATUS_LABELS: Record<(typeof BOOK_STATUSES)[number], string> = {
-  ON_SALE: '판매중',
-  OUT_OF_STOCK: '품절',
-  DISCONTINUED: '절판',
+const BOOK_TYPE_LABELS: Record<(typeof BOOK_TYPES)[number], string> = {
+  EBOOK: '전자책',
+  PAPER: '종이책',
+  BOTH: '전자책+종이책',
 }
 
 interface BookSearchProps {
@@ -21,27 +21,28 @@ export function BookSearch({ control }: BookSearchProps) {
         name="keyword"
         control={control}
         label="검색어"
-        placeholder="도서명 또는 저자 검색"
+        placeholder="도서명, 발행자, 판권소유자 검색"
         className="w-64"
       />
       <FormSelect
-        name="category"
+        name="bookType"
         control={control}
-        label="카테고리"
-        className="w-36"
+        label="구분"
+        className="w-40"
         options={[
           { label: '전체', value: 'ALL' },
-          ...BOOK_CATEGORIES.map((category) => ({ label: category, value: category })),
+          ...BOOK_TYPES.map((type) => ({ label: BOOK_TYPE_LABELS[type], value: type })),
         ]}
       />
       <FormSelect
-        name="status"
+        name="activeYn"
         control={control}
         label="상태"
-        className="w-32"
+        className="w-28"
         options={[
           { label: '전체', value: 'ALL' },
-          ...BOOK_STATUSES.map((status) => ({ label: STATUS_LABELS[status], value: status })),
+          { label: '활성', value: 'true' },
+          { label: '비활성', value: 'false' },
         ]}
       />
     </>

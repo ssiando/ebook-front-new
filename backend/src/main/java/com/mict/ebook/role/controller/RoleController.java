@@ -1,6 +1,7 @@
 package com.mict.ebook.role.controller;
 
 import com.mict.ebook.common.response.ApiResponse;
+import com.mict.ebook.common.security.AuthContext;
 import com.mict.ebook.role.dto.CreateRoleRequest;
 import com.mict.ebook.role.dto.RoleResponse;
 import com.mict.ebook.role.dto.RoleSearchRequest;
@@ -13,8 +14,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,17 +48,13 @@ public class RoleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<RoleResponse> create(
-            @Valid @RequestBody CreateRoleRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(roleCommandService.create(request, currentAdminPk));
+    public ApiResponse<RoleResponse> create(@Valid @RequestBody CreateRoleRequest request) {
+        return ApiResponse.success(roleCommandService.create(request, AuthContext.getCurrentAdminPk()));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<RoleResponse> update(
-            @PathVariable Long id, @Valid @RequestBody UpdateRoleRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(roleCommandService.update(id, request, currentAdminPk));
+    public ApiResponse<RoleResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateRoleRequest request) {
+        return ApiResponse.success(roleCommandService.update(id, request, AuthContext.getCurrentAdminPk()));
     }
 
     @PutMapping("/{id}/programs")

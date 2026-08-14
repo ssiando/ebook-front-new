@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.book.repository.mapper.BookMapper">
+
+    <resultMap id="bookResultMap" type="com.mict.ebook.book.domain.Book">
+        <id property="id" column="book_id" />
+        <result property="title" column="title" />
+        <result property="subtitle" column="subtitle" />
+        <result property="bookType" column="book_type" />
+        <result property="pageCount" column="page_count" />
+        <result property="copyrightOwner" column="copyright_owner" />
+        <result property="firstPublishDt" column="first_publish_dt" />
+        <result property="publisher" column="publisher" />
+        <result property="isbn" column="isbn" />
+        <result property="freeYn" column="free_yn" typeHandler="com.mict.ebook.book.domain.YnBooleanTypeHandler" />
+        <result property="coverImageUrl" column="cover_image_url" />
+        <result property="thumbnailUrl" column="thumbnail_url" />
+        <result property="activeYn" column="active_yn" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
+    </resultMap>
+
+    <sql id="bookColumns">
+        book_id, title, subtitle, book_type, page_count, copyright_owner, first_publish_dt,
+        publisher, isbn, free_yn, cover_image_url, thumbnail_url, active_yn, regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="search" resultMap="bookResultMap">
+        SELECT <include refid="bookColumns" />
+        FROM ebk_book_bas
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR publisher LIKE CONCAT('%', #{keyword}, '%')
+                OR copyright_owner LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="bookType != null and bookType != ''">
+                AND book_type = #{bookType}
+            </if>
+            <if test="activeYn != null">
+                AND active_yn = #{activeYn}
+            </if>
+        </where>
+        ORDER BY book_id DESC
+    </select>
+
+    <select id="findById" resultMap="bookResultMap">
+        SELECT <include refid="bookColumns" />
+        FROM ebk_book_bas
+        WHERE book_id = #{id}
+    </select>
+
+    <select id="existsByIsbn" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM ebk_book_bas
+        WHERE isbn = #{isbn}
+        )
+    </select>
+
+    <select id="existsByIsbnExcludingId" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM ebk_book_bas
+        WHERE isbn = #{isbn}
+        AND book_id != #{id}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.book.domain.Book" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ebk_book_bas (
+            title, subtitle, book_type, page_count, copyright_owner, first_publish_dt,
+            publisher, isbn, free_yn, cover_image_url, thumbnail_url, active_yn, regr_id, updr_id
+        )
+        VALUES (
+            #{title}, #{subtitle}, #{bookType}, #{pageCount}, #{copyrightOwner}, #{firstPublishDt},
+            #{publisher}, #{isbn}, #{freeYn, typeHandler=com.mict.ebook.book.domain.YnBooleanTypeHandler},
+            #{coverImageUrl}, #{thumbnailUrl}, #{activeYn}, #{registrantId}, #{updaterId}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.book.domain.Book">
+        UPDATE ebk_book_bas
+        SET title            = #{title},
+            subtitle         = #{subtitle},
+            book_type        = #{bookType},
+            page_count       = #{pageCount},
+            copyright_owner  = #{copyrightOwner},
+            first_publish_dt = #{firstPublishDt},
+            publisher        = #{publisher},
+            isbn             = #{isbn},
+            free_yn          = #{freeYn, typeHandler=com.mict.ebook.book.domain.YnBooleanTypeHandler},
+            cover_image_url  = #{coverImageUrl},
+            thumbnail_url    = #{thumbnailUrl},
+            active_yn        = #{activeYn},
+            updr_id          = #{updaterId}
+        WHERE book_id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE
+        FROM ebk_book_bas
+        WHERE book_id = #{id}
+    </delete>
+
+</mapper>

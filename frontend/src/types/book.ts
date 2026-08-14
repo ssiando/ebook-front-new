@@ -1,27 +1,45 @@
-export const BOOK_CATEGORIES = ['소설', '자기계발', '경제경영', '인문', '에세이', '시', '과학'] as const
-export type BookCategory = (typeof BOOK_CATEGORIES)[number]
-
-export const BOOK_STATUSES = ['ON_SALE', 'OUT_OF_STOCK', 'DISCONTINUED'] as const
-export type BookStatus = (typeof BOOK_STATUSES)[number]
+export const BOOK_TYPES = ['EBOOK', 'PAPER', 'BOTH'] as const
+export type BookType = (typeof BOOK_TYPES)[number]
 
 export interface Book {
   id: string
   title: string
-  author: string
-  publisher: string
-  category: BookCategory
-  price: number
-  discountRate: number
-  rating: number
-  reviewCount: number
-  stock: number
-  status: BookStatus
-  publishedAt: string
+  subtitle: string | null
+  bookType: BookType
+  pageCount: number | null
+  copyrightOwner: string | null
+  firstPublishDt: string | null
+  publisher: string | null
+  isbn: string | null
+  freeYn: boolean
+  coverImageUrl: string | null
+  thumbnailUrl: string | null
+  activeYn: boolean
+  createdAt: string
   updatedAt: string
 }
 
 export interface BookSearchParams {
   keyword: string
-  category: BookCategory | 'ALL'
-  status: BookStatus | 'ALL'
+  bookType: BookType | 'ALL'
+  activeYn: 'ALL' | 'true' | 'false'
+}
+
+export interface CreateBookPayload {
+  title: string
+  subtitle?: string
+  bookType: BookType
+  pageCount?: number
+  copyrightOwner?: string
+  firstPublishDt?: string
+  publisher?: string
+  isbn?: string
+  freeYn: boolean
+  coverImageUrl?: string
+  thumbnailUrl?: string
+}
+
+export interface UpdateBookPayload extends CreateBookPayload {
+  id: string
+  activeYn: boolean
 }

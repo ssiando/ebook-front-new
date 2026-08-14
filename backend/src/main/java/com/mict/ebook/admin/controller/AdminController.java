@@ -8,13 +8,12 @@ import com.mict.ebook.admin.dto.UpdateAdminRolesRequest;
 import com.mict.ebook.admin.service.AdminCommandService;
 import com.mict.ebook.admin.service.AdminQueryService;
 import com.mict.ebook.common.response.ApiResponse;
+import com.mict.ebook.common.security.AuthContext;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,17 +50,13 @@ public class AdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AdminResponse> create(
-            @Valid @RequestBody CreateAdminRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(adminCommandService.create(request, currentAdminPk));
+    public ApiResponse<AdminResponse> create(@Valid @RequestBody CreateAdminRequest request) {
+        return ApiResponse.success(adminCommandService.create(request, AuthContext.getCurrentAdminPk()));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<AdminResponse> update(
-            @PathVariable Long id, @Valid @RequestBody UpdateAdminRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(adminCommandService.update(id, request, currentAdminPk));
+    public ApiResponse<AdminResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateAdminRequest request) {
+        return ApiResponse.success(adminCommandService.update(id, request, AuthContext.getCurrentAdminPk()));
     }
 
     @PutMapping("/{id}/roles")

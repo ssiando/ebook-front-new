@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mict.ebook.book.repository.mapper.BookRevisionMapper">
+
+    <resultMap id="bookRevisionResultMap" type="com.mict.ebook.book.domain.BookRevision">
+        <id property="id" column="id" />
+        <result property="bookId" column="book_id" />
+        <result property="revisionNo" column="revision_no" />
+        <result property="publishedYn" column="published_yn" typeHandler="com.mict.ebook.book.domain.YnBooleanTypeHandler" />
+        <result property="publishStatusCd" column="publish_status_cd" />
+        <result property="fileName" column="file_name" />
+        <result property="filePath" column="file_path" />
+        <result property="encryptStatusCd" column="encrypt_status_cd" />
+        <result property="registrantId" column="regr_id" />
+        <result property="updaterId" column="updr_id" />
+        <result property="createdAt" column="reg_dtm" />
+        <result property="updatedAt" column="upd_dtm" />
+    </resultMap>
+
+    <sql id="bookRevisionColumns">
+        id, book_id, revision_no, published_yn, publish_status_cd, file_name, file_path,
+        encrypt_status_cd, regr_id, updr_id, reg_dtm, upd_dtm
+    </sql>
+
+    <select id="findByBookId" resultMap="bookRevisionResultMap">
+        SELECT <include refid="bookRevisionColumns" />
+        FROM ebk_book_revision
+        WHERE book_id = #{bookId}
+        ORDER BY revision_no DESC
+    </select>
+
+    <select id="findById" resultMap="bookRevisionResultMap">
+        SELECT <include refid="bookRevisionColumns" />
+        FROM ebk_book_revision
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsByBookIdAndRevisionNo" resultType="boolean">
+        SELECT EXISTS(
+        SELECT 1 FROM ebk_book_revision
+        WHERE book_id = #{bookId}
+        AND revision_no = #{revisionNo}
+        )
+    </select>
+
+    <insert id="insert" parameterType="com.mict.ebook.book.domain.BookRevision" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ebk_book_revision (
+            book_id, revision_no, published_yn, publish_status_cd, file_name, file_path,
+            encrypt_status_cd, regr_id, updr_id
+        )
+        VALUES (
+            #{bookId}, #{revisionNo}, #{publishedYn, typeHandler=com.mict.ebook.book.domain.YnBooleanTypeHandler},
+            #{publishStatusCd}, #{fileName}, #{filePath}, #{encryptStatusCd}, #{registrantId}, #{updaterId}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.mict.ebook.book.domain.BookRevision">
+        UPDATE ebk_book_revision
+        SET published_yn      = #{publishedYn, typeHandler=com.mict.ebook.book.domain.YnBooleanTypeHandler},
+            publish_status_cd = #{publishStatusCd},
+            file_name         = #{fileName},
+            file_path         = #{filePath},
+            encrypt_status_cd = #{encryptStatusCd},
+            updr_id           = #{updaterId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE
+        FROM ebk_book_revision
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

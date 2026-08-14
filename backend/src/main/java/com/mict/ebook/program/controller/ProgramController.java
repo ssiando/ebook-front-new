@@ -1,6 +1,7 @@
 package com.mict.ebook.program.controller;
 
 import com.mict.ebook.common.response.ApiResponse;
+import com.mict.ebook.common.security.AuthContext;
 import com.mict.ebook.program.dto.DeleteProgramsRequest;
 import com.mict.ebook.program.dto.ProgramListResponse;
 import com.mict.ebook.program.dto.ProgramSearchRequest;
@@ -10,8 +11,6 @@ import com.mict.ebook.program.service.ProgramQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,10 +40,8 @@ public class ProgramController {
     }
 
     @PutMapping
-    public ApiResponse<ProgramListResponse> save(
-            @Valid @RequestBody SaveProgramsRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(programCommandService.saveAll(request, currentAdminPk));
+    public ApiResponse<ProgramListResponse> save(@Valid @RequestBody SaveProgramsRequest request) {
+        return ApiResponse.success(programCommandService.saveAll(request, AuthContext.getCurrentAdminPk()));
     }
 
     @DeleteMapping

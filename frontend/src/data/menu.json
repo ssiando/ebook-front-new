@@ -9,7 +9,10 @@
   {
     "id": "book",
     "label": "도서 관리",
-    "children": [{ "id": "bookManagement", "label": "도서 관리", "path": "/bookManagement" }]
+    "children": [
+      { "id": "bookManagement", "label": "도서 관리", "path": "/bookManagement" },
+      { "id": "bookSetManagement", "label": "도서 세트 관리", "path": "/bookSetManagement" }
+    ]
   },
   {
     "id": "system",

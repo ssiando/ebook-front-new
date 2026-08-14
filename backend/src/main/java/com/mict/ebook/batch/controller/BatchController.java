@@ -9,13 +9,12 @@ import com.mict.ebook.batch.service.BatchCommandService;
 import com.mict.ebook.batch.service.BatchQueryService;
 import com.mict.ebook.batch.service.BatchService;
 import com.mict.ebook.common.response.ApiResponse;
+import com.mict.ebook.common.security.AuthContext;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,17 +53,13 @@ public class BatchController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BatchResponse> create(
-            @Valid @RequestBody CreateBatchRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(batchCommandService.create(request, currentAdminPk));
+    public ApiResponse<BatchResponse> create(@Valid @RequestBody CreateBatchRequest request) {
+        return ApiResponse.success(batchCommandService.create(request, AuthContext.getCurrentAdminPk()));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<BatchResponse> update(
-            @PathVariable Long id, @Valid @RequestBody UpdateBatchRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Long currentAdminPk = jwt.getClaim("adminPk");
-        return ApiResponse.success(batchCommandService.update(id, request, currentAdminPk));
+    public ApiResponse<BatchResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateBatchRequest request) {
+        return ApiResponse.success(batchCommandService.update(id, request, AuthContext.getCurrentAdminPk()));
     }
 
     @DeleteMapping("/{id}")

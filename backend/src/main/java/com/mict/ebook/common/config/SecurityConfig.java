@@ -42,6 +42,7 @@ public class SecurityConfig {
 
     private final JwtProperties jwtProperties;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final FileStorageProperties fileStorageProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -116,7 +117,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/actuator/health",
                                 "/api/**",
-                                "/actuator/info")
+                                "/actuator/info",
+                                fileStorageProperties.urlPrefix() + "/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
